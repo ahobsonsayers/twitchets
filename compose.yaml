@@ -1,8 +1,9 @@
 services:
-  t4g:
+  twitchets:
+    container_name: twitchets
     image: arranhs/twitchets
     restart: unless-stopped
     build:
       context: .
     ports:
-      - 5656:5656
+      - "5555:5555"
