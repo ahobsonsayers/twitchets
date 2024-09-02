@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetLatestTickets(t *testing.T) {
-	tickets, err := twickets.GetLatestTickets(
+	tickets, err := twickets.FetchLatestTickets(
 		context.Background(),
 		twickets.GetTicketsInput{
 			Country:   twickets.CountryUnitedKingdom,

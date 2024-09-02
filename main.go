@@ -9,13 +9,29 @@ import (
 
 	"github.com/ahobsonsayers/twitchets/twickets"
 	"github.com/lithammer/fuzzysearch/fuzzy"
+	"github.com/samber/lo"
 )
 
 var (
-	lastCheckTime       = time.Now()
+	lastCheckTime       = time.Time{}
 	monitoredEventNames = []string{
-		"Foo Fighters",
-		"Liam Gallagher",
+		// Theatre
+		"Back to the Future",
+		"Frozen",
+		"Hamilton",
+		"Harry Potter & the Cursed Child",
+		"Kiss Me Kate",
+		"Lion King",
+		"Matilda",
+		"Mean Girls",
+		"Moulin Rouge",
+		"Starlight Express",
+		"Stranger Things",
+		"The Phantom Opera",
+		"The Wizard of Oz",
+		// Gigs
+		"Coldplay",
+		"Taylor Swift",
 	}
 )
 
@@ -24,54 +40,57 @@ func main() {
 		fmt.Sprintf("Monitoring: %s", strings.Join(monitoredEventNames, ", ")),
 	)
 
+	// Initial execution
+	fetchAndProcessTickets()
+
 	ticker := time.NewTicker(1 * time.Minute)
 	defer ticker.Stop()
 
 	exitChan := make(chan struct{})
 
+	// Loop until exit
 	for {
 		select {
 		case <-ticker.C:
-
-			checkTime := time.Now()
-
-			tickets, err := twickets.GetLatestTickets(
-				context.Background(),
-				twickets.GetTicketsInput{
-					Country:    twickets.CountryUnitedKingdom,
-					Regions:    []twickets.Region{twickets.RegionLondon},
-					MaxNumber:  100,
-					BeforeTime: checkTime,
-				},
-			)
-			if err != nil {
-				slog.Error(err.Error())
-				continue
-			}
-
-			processTickets(tickets)
-
-			lastCheckTime = checkTime
-
+			fetchAndProcessTickets()
 		case <-exitChan:
 			return
 		}
 	}
 }
 
+func fetchAndProcessTickets() {
+	checkTime := time.Now()
+
+	tickets, err := twickets.FetchLatestTickets(
+		context.Background(),
+		twickets.GetTicketsInput{
+			Country: twickets.CountryUnitedKingdom,
+			// Regions:    []twickets.Region{twickets.RegionLondon},
+			MaxNumber:  10,
+			BeforeTime: checkTime,
+		},
+	)
+	if err != nil {
+		slog.Error(err.Error())
+		return
+	}
+
+	processTickets(tickets)
+	lastCheckTime = checkTime
+}
+
 func processTickets(tickets []twickets.Ticket) {
-	for _, ticket := range tickets {
+	for _, ticket := range lo.Reverse(tickets) {
 		if ticket.CreatedAt.Before(lastCheckTime) {
 			continue
 		}
 
-		slog.Info(
-			"found tickets for event",
-			"event", ticket.Event.Name,
-		)
-
 		for _, eventName := range monitoredEventNames {
-			isMonitored := fuzzy.MatchNormalizedFold(ticket.Event.Name, eventName)
+
+			isMonitored := fuzzy.MatchNormalizedFold(eventName, ticket.Event.Name) ||
+				fuzzy.MatchNormalizedFold(ticket.Event.Name, eventName)
+
 			if isMonitored {
 				slog.Info(
 					"found tickets for monitored event",

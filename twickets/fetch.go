@@ -15,14 +15,16 @@ type GetTicketsInput struct {
 	BeforeTime time.Time
 }
 
-// GetLatestTickets gets latest listed tickets in a country and region(s) since the
+// FetchLatestTickets gets latest listed tickets in a country and region(s) since the
 // up to a maximum limit, before any specified time (defaults to now)
-func GetLatestTickets(ctx context.Context, input GetTicketsInput) ([]Ticket, error) {
+func FetchLatestTickets(ctx context.Context, input GetTicketsInput) ([]Ticket, error) {
 	feedUrl := FeedUrl(input)
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, feedUrl, http.NoBody)
 	if err != nil {
 		return nil, err
 	}
+
+	request.Header.Set("User-Agent", "") // Twickets blocks some user agents
 
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {

@@ -6,7 +6,6 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"time"
 )
 
 const (
@@ -48,13 +47,13 @@ func FeedUrl(input GetTicketsInput) string {
 		queryParams.Set("q", locationQuery)
 	}
 
-	var maxTime int64
-	if input.BeforeTime.IsZero() {
-		maxTime = time.Now().UnixMilli()
-	} else {
-		maxTime = input.BeforeTime.UnixMilli()
-	}
-	queryParams.Set("maxTime", strconv.Itoa(int(maxTime)))
+	// var maxTime int64
+	// if input.BeforeTime.IsZero() {
+	// 	maxTime = time.Now().UnixMilli()
+	// } else {
+	// 	maxTime = input.BeforeTime.UnixMilli()
+	// }
+	// queryParams.Set("maxTime", strconv.Itoa(int(maxTime)))
 
 	if input.MaxNumber > 0 {
 		count := strconv.Itoa(input.MaxNumber)
