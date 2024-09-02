@@ -73,7 +73,7 @@ func priceString(cost float64, currency Currency) string {
 	currencyString := currency.Symbol()
 	if currencyString == "" {
 		return costString + currency.Value
-	} else {
-		return currencyString + costString
 	}
+
+	return currencyString + costString
 }

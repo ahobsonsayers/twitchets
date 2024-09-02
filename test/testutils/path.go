@@ -24,7 +24,7 @@ func GetProjectDirectory(t *testing.T) string {
 		}
 		directory = filepath.Dir(directory)
 	}
-	require.NotEqual(t, directory, "/", "failed find project directory")
+	require.NotEqual(t, "failed find project directory", directory, "/")
 
 	return directory
 }

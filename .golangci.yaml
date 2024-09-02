@@ -21,6 +21,7 @@ linters-settings:
   gocritic:
     enable-all: true
     disabled-checks:
+      - commentedOutCode
       - hugeParam # TODO Reenable this?
       - rangeValCopy
       - whyNoLint

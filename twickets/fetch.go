@@ -32,7 +32,7 @@ func FetchLatestTickets(ctx context.Context, input GetTicketsInput) ([]Ticket, e
 	}
 	defer response.Body.Close()
 
-	if response != nil && response.StatusCode >= 300 {
+	if response.StatusCode >= 300 {
 		return nil, fmt.Errorf("got error response: %s", response.Status)
 	}
 

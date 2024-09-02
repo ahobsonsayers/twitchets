@@ -87,7 +87,6 @@ func processTickets(tickets []twickets.Ticket) {
 		}
 
 		for _, eventName := range monitoredEventNames {
-
 			isMonitored := fuzzy.MatchNormalizedFold(eventName, ticket.Event.Name) ||
 				fuzzy.MatchNormalizedFold(ticket.Event.Name, eventName)
 
