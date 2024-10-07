@@ -50,7 +50,7 @@ func main() {
 	// Event names
 	eventNames := make([]string, 0, len(config.TicketsConfig))
 	for _, event := range config.TicketsConfig {
-		eventNames = append(eventNames, event.Event)
+		eventNames = append(eventNames, event.Event.Name)
 	}
 	slog.Info(
 		fmt.Sprintf("Monitoring: %s", strings.Join(eventNames, ", ")),

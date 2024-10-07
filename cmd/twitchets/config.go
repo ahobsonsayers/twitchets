@@ -6,9 +6,10 @@ import (
 
 	"github.com/ahobsonsayers/twitchets/twickets"
 	"github.com/knadh/koanf"
-	"github.com/knadh/koanf/parsers/yaml"
+	yamlparser "github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/mitchellh/mapstructure"
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
@@ -50,13 +51,13 @@ func (c Config) Filters() []twickets.Filter {
 	for _, ticketConfig := range c.TicketsConfig {
 
 		var filter twickets.Filter
-		filter.Event = ticketConfig.Event
+		filter.Event = ticketConfig.Event.Name
 
-		// Set event similarity
-		if ticketConfig.EventSimilarity == nil {
+		// Set name similarity
+		if ticketConfig.Event.Similarity == nil {
 			filter.EventSimilarity = c.GlobalConfig.EventSimilarity
-		} else if *ticketConfig.EventSimilarity > 0 {
-			filter.EventSimilarity = *ticketConfig.EventSimilarity
+		} else if *ticketConfig.Event.Similarity > 0 {
+			filter.EventSimilarity = *ticketConfig.Event.Similarity
 		}
 
 		// Set regions
@@ -114,7 +115,7 @@ func (c GlobalEventConfig) Validate() error {
 }
 
 type TicketConfig struct {
-	Event           string            `json:"event"`
+	Event           Event             `json:"event"`
 	EventSimilarity *float64          `json:"eventSimilarity"`
 	Regions         []twickets.Region `json:"regions"`
 	NumTickets      *int              `json:"numTickets"`
@@ -122,7 +123,7 @@ type TicketConfig struct {
 }
 
 func (t TicketConfig) Validate() error {
-	if t.Event == "" {
+	if t.Event.Name == "" {
 		return errors.New("event name must be set")
 	}
 
@@ -135,10 +136,41 @@ func (t TicketConfig) Validate() error {
 	return nil
 }
 
+type Event struct {
+	Name       string   `json:"name"`
+	Similarity *float64 `json:"Similarity"`
+}
+
+func (e *Event) UnmarshalYAML(node *yaml.Node) error {
+	switch node.Kind {
+
+	case yaml.ScalarNode:
+		var name string
+		err := node.Decode(&name)
+		if err != nil {
+			return err
+		}
+
+		e.Name = name
+
+	case yaml.MappingNode:
+		type eventAlias Event
+		var event eventAlias
+		err := node.Decode(&event)
+		if err != nil {
+			return err
+		}
+
+		*e = Event(event)
+	}
+
+	return nil
+}
+
 func LoadConfig(filePath string) (Config, error) {
 	// Load config.
 	k := koanf.New(".")
-	err := k.Load(file.Provider(filePath), yaml.Parser())
+	err := k.Load(file.Provider(filePath), yamlparser.Parser())
 	if err != nil {
 		return Config{}, fmt.Errorf("error loading config: %w", err)
 	}

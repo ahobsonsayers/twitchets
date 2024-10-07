@@ -1,8 +1,9 @@
-package main
+package config_test
 
 import (
 	"testing"
 
+	"github.com/ahobsonsayers/twitchets/cmd/twitchets/config"
 	"github.com/ahobsonsayers/twitchets/test/testutils"
 	"github.com/ahobsonsayers/twitchets/twickets"
 	"github.com/samber/lo"
@@ -11,7 +12,7 @@ import (
 
 func TestLoadConfig(t *testing.T) {
 	configPath := testutils.ProjectDirectoryJoin(t, "test", "assets", "config", "config.yaml")
-	actualConfig, err := LoadConfig(configPath)
+	actualConfig, err := config.LoadConfig(configPath)
 	require.NoError(t, err)
 
 	country := twickets.CountryUnitedKingdom
@@ -21,43 +22,43 @@ func TestLoadConfig(t *testing.T) {
 	globalNumTickets := 2
 	globalDiscount := 25.0
 
-	expectedConfig := Config{
+	expectedConfig := config.Config{
 		APIKey:  "test",
 		Country: country,
-		GlobalConfig: GlobalEventConfig{
+		GlobalConfig: config.GlobalEventConfig{
 			EventSimilarity: globalEventSimilarity,
 			Regions:         globalRegions,
 			NumTickets:      globalNumTickets,
 			Discount:        globalDiscount,
 		},
-		TicketsConfig: []TicketConfig{
+		TicketsConfig: []config.TicketConfig{
 			{
 				// Ticket with only event set
-				Event: Event{Name: "Event 1"},
+				Event: config.Event{Name: "Event 1"},
 			},
 			{
 				// Ticket with name similarity set
-				Event:           Event{Name: "Event 2"},
+				Event:           config.Event{Name: "Event 2"},
 				EventSimilarity: lo.ToPtr(90.0),
 			},
 			{
 				// Ticket with regions set
-				Event:   Event{Name: "Event 3"},
+				Event:   config.Event{Name: "Event 3"},
 				Regions: []twickets.Region{twickets.RegionSouthWest},
 			},
 			{
 				// Ticket with num tickets set
-				Event:      Event{Name: "Event 4"},
+				Event:      config.Event{Name: "Event 4"},
 				NumTickets: lo.ToPtr(1),
 			},
 			{
 				// Ticket with discount set
-				Event:    Event{Name: "Event 5"},
+				Event:    config.Event{Name: "Event 5"},
 				Discount: lo.ToPtr(15.0),
 			},
 			{
 				// Ticket with globals unset
-				Event:           Event{Name: "Event 6"},
+				Event:           config.Event{Name: "Event 6"},
 				EventSimilarity: lo.ToPtr(-1.0),
 				Regions:         []twickets.Region{},
 				NumTickets:      lo.ToPtr(-1),
@@ -71,7 +72,7 @@ func TestLoadConfig(t *testing.T) {
 
 func TestConfigFilters(t *testing.T) {
 	configPath := testutils.ProjectDirectoryJoin(t, "test", "assets", "config", "config.yaml")
-	config, err := LoadConfig(configPath)
+	config, err := config.LoadConfig(configPath)
 	require.NoError(t, err)
 
 	actualFilters := config.Filters()
