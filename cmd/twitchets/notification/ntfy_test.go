@@ -11,7 +11,7 @@ import (
 )
 
 func TestNtfySendTicketMessage(t *testing.T) {
-	testutils.SkipIfCI(t, "No env set in CI. Fix")
+	t.Skip("Can only be run manually locally with environment variables set. Comment to run.")
 
 	_ = godotenv.Load(testutils.ProjectDirectoryJoin(t, ".env"))
 
@@ -29,7 +29,7 @@ func TestNtfySendTicketMessage(t *testing.T) {
 
 	client, err := notification.NewNtfyClient(notification.NtfyConfig{
 		Url:      ntfyUrl,
-		User:     ntfyUser,
+		Username: ntfyUser,
 		Password: ntfyPassword,
 		Topic:    ntfyTopic,
 	})

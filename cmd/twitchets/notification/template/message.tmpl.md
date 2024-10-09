@@ -1,3 +1,7 @@
+{{ if ne .Event "" -}}
+**{{ .Event }}**
+{{- end }}
+
 {{ .Venue }}, {{ .Location }}
 {{ .Date }} {{ .Time }}
 
@@ -12,3 +16,7 @@ Discount: {{ printf "%.2f" .Discount }}%
 
 Original Ticket Price: {{ .OriginalTicketPrice }}
 Original Total Price: {{ .OriginalTotalPrice }}
+
+{{ if ne .Link "" -}}
+[Buy Link]({{ .Link }})
+{{- end }}

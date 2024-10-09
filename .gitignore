@@ -35,6 +35,7 @@ go.work
 # Local go mod vendor ignore
 vendor/
 
-# Specif files and folders
+# Specific files and folders
 .aider*
-config.yaml
+
+/config.yaml

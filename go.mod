@@ -33,6 +33,7 @@ require (
 	github.com/go-openapi/strfmt v0.17.0 // indirect
 	github.com/go-openapi/swag v0.17.0 // indirect
 	github.com/go-openapi/validate v0.17.0 // indirect
+	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1 // indirect
 	github.com/mailru/easyjson v0.0.0-20180823135443-60711f1a8329 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect

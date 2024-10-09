@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ahobsonsayers/twitchets/cmd/twitchets/config"
 	"github.com/ahobsonsayers/twitchets/cmd/twitchets/notification"
 	"github.com/ahobsonsayers/twitchets/twickets"
 	"github.com/joho/godotenv"
@@ -32,32 +33,32 @@ func main() {
 		log.Fatalf("failed to get working directory:, %v", err)
 	}
 
+	// Twickets client
+	twicketsClient := twickets.NewClient(nil)
+
 	configPath := filepath.Join(cwd, "config.yaml")
-	config, err := LoadConfig(configPath)
+	conf, err := config.Load(configPath)
 	if err != nil {
 		log.Fatalf("config error:, %v", err)
 	}
 
-	// Twickets client
-	twicketsClient := twickets.NewClient(nil)
-
-	// Notification Client
-	notificationClient, err := notification.NewNtfyClientFromEnv()
+	// Notification Clients
+	notificationClients, err := conf.Notification.Clients()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Event names
-	eventNames := make([]string, 0, len(config.TicketsConfig))
-	for _, event := range config.TicketsConfig {
-		eventNames = append(eventNames, event.Event.Name)
+	eventNames := make([]string, 0, len(conf.TicketsConfig))
+	for _, event := range conf.TicketsConfig {
+		eventNames = append(eventNames, event.Event)
 	}
 	slog.Info(
 		fmt.Sprintf("Monitoring: %s", strings.Join(eventNames, ", ")),
 	)
 
 	// Initial execution
-	fetchAndProcessTickets(config, twicketsClient, notificationClient)
+	fetchAndProcessTickets(twicketsClient, conf, notificationClients)
 
 	// Create ticker
 	ticker := time.NewTicker(refetchTime)
@@ -68,7 +69,7 @@ func main() {
 	for {
 		select {
 		case <-ticker.C:
-			fetchAndProcessTickets(config, twicketsClient, notificationClient)
+			fetchAndProcessTickets(twicketsClient, conf, notificationClients)
 		case <-exitChan:
 			return
 		}
@@ -76,9 +77,9 @@ func main() {
 }
 
 func fetchAndProcessTickets(
-	config Config,
 	twicketsClient *twickets.Client,
-	notificationClient notification.Client,
+	conf config.Config,
+	notificationClients map[config.NotificationType]notification.Client,
 ) {
 	checkTime := time.Now()
 	defer func() {
@@ -89,8 +90,8 @@ func fetchAndProcessTickets(
 		context.Background(),
 		twickets.FetchTicketsInput{
 			// Required
-			APIKey:  config.APIKey,
-			Country: config.Country,
+			APIKey:  conf.APIKey,
+			Country: conf.Country,
 			// Optional
 			CreatedBefore: time.Now(),
 			CreatedAfter:  lastCheckTime,
@@ -105,23 +106,36 @@ func fetchAndProcessTickets(
 		slog.Warn("Fetched the max number of tickets allowed. It is possible tickets have been missed.")
 	}
 
-	filteredTickets := tickets.Filter(config.Filters())
-	for _, ticket := range filteredTickets {
-		slog.Info(
-			"Found tickets for monitored event",
-			"eventName", ticket.Event.Name,
-			"numTickets", ticket.TicketQuantity,
-			"ticketPrice", ticket.TotalTicketPrice().String(),
-			"originalTicketPrice", ticket.OriginalTicketPrice().String(),
-			"link", ticket.Link(),
-		)
-
-		err := notificationClient.SendTicketNotification(ticket)
-		if err != nil {
-			slog.Error(
-				"Failed to send notification",
-				"err", err,
+	ticketConfigs := conf.CombineGlobalAndTicketConfig()
+	for _, ticketConfig := range ticketConfigs {
+		filter := ticketConfig.Filter()
+		filteredTickets := tickets.Filter(filter)
+		for _, ticket := range filteredTickets {
+			slog.Info(
+				"Found tickets for monitored event",
+				"eventName", ticket.Event.Name,
+				"numTickets", ticket.TicketQuantity,
+				"ticketPrice", ticket.TotalTicketPrice().String(),
+				"originalTicketPrice", ticket.OriginalTicketPrice().String(),
+				"link", ticket.Link(),
 			)
+
+			for _, notificationType := range ticketConfig.Notification {
+
+				notificationClient, ok := notificationClients[notificationType]
+				if !ok {
+					continue
+				}
+
+				err := notificationClient.SendTicketNotification(ticket)
+				if err != nil {
+					slog.Error(
+						"Failed to send notification",
+						"err", err,
+					)
+				}
+			}
+
 		}
 	}
 }

@@ -31,30 +31,30 @@ func TestFilterName(t *testing.T) {
 	}
 
 	// Stranger Things
-	filteredTickets := gotTickets.Filter([]twickets.Filter{{
+	filteredTickets := gotTickets.Filter(twickets.Filter{
 		Event: strangerThingsAsked,
-	}})
+	})
 	require.Len(t, filteredTickets, 1)
 	require.Equal(t, strangerThingsGot, filteredTickets[0].Event.Name)
 
 	// Back to the Future
-	filteredTickets = gotTickets.Filter([]twickets.Filter{{
+	filteredTickets = gotTickets.Filter(twickets.Filter{
 		Event: backToTheFutureAsked,
-	}})
+	})
 	require.Len(t, filteredTickets, 1)
 	require.Equal(t, backToTheFutureGot, filteredTickets[0].Event.Name)
 
 	// Harry Potter
-	filteredTickets = gotTickets.Filter([]twickets.Filter{{
+	filteredTickets = gotTickets.Filter(twickets.Filter{
 		Event: harryPotterAsked,
-	}})
+	})
 	require.Len(t, filteredTickets, 1)
 	require.Equal(t, harryPotterGot, filteredTickets[0].Event.Name)
 
 	// Wizard of Oz
-	filteredTickets = gotTickets.Filter([]twickets.Filter{{
+	filteredTickets = gotTickets.Filter(twickets.Filter{
 		Event: wizardOfOzAsked,
-	}})
+	})
 	require.Empty(t, filteredTickets)
 }
 

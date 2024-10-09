@@ -147,7 +147,7 @@ func (t Tickets) GetById(id string) *Ticket {
 }
 
 // Filter filters tickets by a set of conditions
-func (t Tickets) Filter(filters []Filter) Tickets {
+func (t Tickets) Filter(filters ...Filter) Tickets {
 	if len(filters) == 0 {
 		return t
 	}

@@ -40,13 +40,34 @@ func testNotificationTicket() twickets.Ticket {
 }
 
 func TestRenderMessage(t *testing.T) {
-	expectedMessagePath := testutils.ProjectDirectoryJoin(t, "test", "assets", "message.md")
+	expectedMessagePath := testutils.ProjectDirectoryJoin(
+		t, "test", "testdata", "message", "message.md",
+	)
 	expectedMessageBytes, err := os.ReadFile(expectedMessagePath)
 	require.NoError(t, err)
 	expectedMessage := string(expectedMessageBytes)
 
 	tickets := testNotificationTicket()
 	actualMessage, err := notification.RenderMessage(tickets)
+	require.NoError(t, err)
+
+	require.Equal(t, expectedMessage, actualMessage)
+}
+
+func TestRenderMessageWithHeaderAndFooter(t *testing.T) {
+	expectedMessagePath := testutils.ProjectDirectoryJoin(
+		t, "test", "testdata", "message", "messageWithHeaderFooter.md",
+	)
+	expectedMessageBytes, err := os.ReadFile(expectedMessagePath)
+	require.NoError(t, err)
+	expectedMessage := string(expectedMessageBytes)
+
+	tickets := testNotificationTicket()
+	actualMessage, err := notification.RenderMessage(
+		tickets,
+		notification.WithHeader(),
+		notification.WithFooter(),
+	)
 	require.NoError(t, err)
 
 	require.Equal(t, expectedMessage, actualMessage)

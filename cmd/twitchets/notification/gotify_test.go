@@ -11,8 +11,7 @@ import (
 )
 
 func TestGotifySendTicketMessage(t *testing.T) {
-	t.Skip("Currently don't have a gotify server. Figure out how to test")
-	testutils.SkipIfCI(t, "No env set in CI. Fix")
+	t.Skip("Can only be run manually locally with environment variables set. Comment to run.")
 
 	_ = godotenv.Load(testutils.ProjectDirectoryJoin(t, ".env"))
 

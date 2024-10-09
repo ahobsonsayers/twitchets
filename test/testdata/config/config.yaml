@@ -1,0 +1,52 @@
+apiKey: test
+country: GB
+
+notification:
+  ntfy:
+    url: example.com
+    topic: test
+    username: test
+    password: test
+  telegram:
+    apiToken: test
+    chatId: 1234
+
+global:
+  eventSimilarity: 75
+  regions:
+    - GBLO
+    - GBNW
+  numTickets: 2
+  discount: 25
+
+tickets:
+  # Ticket with only event set
+  - event: Event 1
+
+  # Ticket with name similarity set
+  - event: Event 2
+    eventSimilarity: 90
+
+  # Ticket with regions set
+  - event: Event 3
+    regions: [GBSW]
+
+  # Ticket with num tickets set
+  - event: Event 4
+    numTickets: 1
+
+  # Ticket with discount set
+  - event: Event 5
+    discount: 15
+
+  # Ticket with notification set
+  - event: Event 6
+    notification: [ntfy]
+
+  # Ticket with globals unset
+  - event: Event 7
+    eventSimilarity: -1
+    regions: []
+    numTickets: -1
+    discount: -1
+    notification: []

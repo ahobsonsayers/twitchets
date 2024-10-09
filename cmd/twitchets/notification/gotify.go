@@ -1,11 +1,9 @@
 package notification
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
-	"os"
 
 	"github.com/ahobsonsayers/twitchets/twickets"
 	"github.com/gotify/go-api-client/v2/auth"
@@ -25,7 +23,7 @@ type GotifyClient struct {
 var _ Client = GotifyClient{}
 
 func (g GotifyClient) SendTicketNotification(ticket twickets.Ticket) error {
-	notificationMessage, err := RenderMessage(ticket)
+	notificationMessage, err := RenderMessage(ticket, WithFooter())
 	if err != nil {
 		return err
 	}
@@ -58,29 +56,15 @@ func (g GotifyClient) SendTicketNotification(ticket twickets.Ticket) error {
 	return nil
 }
 
-func NewGotifyClient(gotifyUrl, gotifyToken string) (*GotifyClient, error) {
+func NewGotifyClient(gotifyUrl, gotifyToken string) (GotifyClient, error) {
 	parsedGotifyUrl, err := url.Parse(gotifyUrl)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse gotify url: %v", err)
+		return GotifyClient{}, fmt.Errorf("failed to parse gotify url: %v", err)
 	}
 
-	return &GotifyClient{
+	return GotifyClient{
 		url:    parsedGotifyUrl,
 		token:  gotifyToken, // TODO validate this token?
 		client: gotify.NewClient(parsedGotifyUrl, &http.Client{}),
 	}, nil
-}
-
-func NewGotifyClientFromEnv() (*GotifyClient, error) {
-	gotifyUrl := os.Getenv("GOTIFY_URL")
-	if gotifyUrl == "" {
-		return nil, errors.New("GOTIFY_URL is not set")
-	}
-
-	gotifyToken := os.Getenv("GOTIFY_TOKEN")
-	if gotifyToken == "" {
-		return nil, errors.New("GOTIFY_TOKEN is not set")
-	}
-
-	return NewGotifyClient(gotifyUrl, gotifyToken)
 }

@@ -2,10 +2,8 @@ package notification
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/url"
-	"os"
 
 	"github.com/ahobsonsayers/twitchets/twickets"
 	"github.com/samber/lo"
@@ -23,7 +21,7 @@ type NtfyClient struct {
 var _ Client = NtfyClient{}
 
 func (c NtfyClient) SendTicketNotification(ticket twickets.Ticket) error {
-	notificationMessage, err := RenderMessage(ticket)
+	notificationMessage, err := RenderMessage(ticket, nil)
 	if err != nil {
 		return err
 	}
@@ -44,56 +42,27 @@ func (c NtfyClient) SendTicketNotification(ticket twickets.Ticket) error {
 }
 
 type NtfyConfig struct {
-	Url      string
-	User     string
-	Password string
-	Topic    string
+	Url      string `json:"url"`
+	Topic    string `json:"topic"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
-func NewNtfyClient(config NtfyConfig) (*NtfyClient, error) {
+func NewNtfyClient(config NtfyConfig) (NtfyClient, error) {
 	ntfyUrl, err := url.Parse(config.Url)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse ntfy url: %v", err)
+		return NtfyClient{}, fmt.Errorf("failed to parse ntfy url: %v", err)
 	}
 
 	ntfyUrl.Path = config.Topic
 
-	return &NtfyClient{
+	return NtfyClient{
 		url:      ntfyUrl,
-		user:     config.User,
+		user:     config.Username,
 		password: config.Password,
 
 		client: client.New(nil),
 	}, nil
-}
-
-func NewNtfyClientFromEnv() (*NtfyClient, error) {
-	ntfyUrl := os.Getenv("NTFY_URL")
-	if ntfyUrl == "" {
-		return nil, errors.New("NTFY_URL is not set")
-	}
-
-	ntfyUser := os.Getenv("NTFY_USER")
-	if ntfyUser == "" {
-		return nil, errors.New("NTFY_USER is not set")
-	}
-
-	ntfyPassword := os.Getenv("NTFY_PASSWORD")
-	if ntfyPassword == "" {
-		return nil, errors.New("NTFY_PASSWORD is not set")
-	}
-
-	ntfyTopic := os.Getenv("NTFY_TOPIC")
-	if ntfyTopic == "" {
-		return nil, errors.New("NTFY_TOPIC is not set")
-	}
-
-	return NewNtfyClient(NtfyConfig{
-		Url:      ntfyUrl,
-		User:     ntfyUser,
-		Password: ntfyPassword,
-		Topic:    ntfyTopic,
-	})
 }
 
 // NtfyViewAction creates a ntfy actions string for a single view actions
