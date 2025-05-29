@@ -26,13 +26,21 @@ func (c NtfyClient) SendTicketNotification(ticket twigots.TicketListing) error {
 		return err
 	}
 
-	_, err = c.client.Publish(
-		c.url.String(),
-		notificationMessage,
+	opts := []client.PublishOption{
 		client.WithTitle(ticket.Event.Name),
 		client.WithActions(NtfyViewAction("Open Link", lo.ToPtr(ticket.URL()))),
 		client.WithHeader("Content-Type", "text/markdown"),
-		client.WithBasicAuth(c.user, c.password),
+	}
+	// If you try to set any auth on an unprotected topic, it will fail
+	//  so only set it if the user and password are set
+	if c.user != "" && c.password != "" {
+		opts = append(opts, client.WithBasicAuth(c.user, c.password))
+	}
+
+	_, err = c.client.Publish(
+		c.url.String(),
+		notificationMessage,
+		opts...,
 	)
 	if err != nil {
 		return err
