@@ -130,8 +130,8 @@ func fetchAndProcessTickets(
 		for _, listing := range filteredListings {
 			slog.Info(
 				"Found tickets for monitored event",
-				"configEvent", ticketConfig.Event,
-				"eventName", listing.Event.Name,
+				"monitoredEventString", ticketConfig.Event,
+				"matchedEventName", listing.Event.Name,
 				"numTickets", listing.NumTickets,
 				"ticketPrice", listing.TotalPriceInclFee().String(),
 				"originalTicketPrice", listing.OriginalTicketPrice().String(),
