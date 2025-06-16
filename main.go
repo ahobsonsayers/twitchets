@@ -34,7 +34,7 @@ func main() {
 	}
 
 	// Twickets client
-	client := twigots.NewClient(nil)
+	client := twigots.NewClient()
 
 	configPath := filepath.Join(cwd, "config.yaml")
 	conf, err := config.Load(configPath)
