@@ -27,7 +27,12 @@ func (c Config) Validate() error {
 		return fmt.Errorf("country '%s' is not valid", c.Country)
 	}
 
-	err := c.GlobalConfig.Validate()
+	err := c.Notification.Validate()
+	if err != nil {
+		return fmt.Errorf("notification config is not valid: %w", err)
+	}
+
+	err = c.GlobalConfig.Validate()
 	if err != nil {
 		return fmt.Errorf("global config is not valid: %w", err)
 	}
