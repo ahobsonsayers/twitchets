@@ -30,15 +30,15 @@ type TicketListingConfig struct {
 // merged with specific ticket listing configuration.
 //
 // If specific ticket listing configuration is provided, it takes precedence over the global configuration.
-func CombineGlobalAndTicketListingConfigs( //nolint:revive
+func CombineGlobalAndTicketListingConfigs( //nolint: revive
 	globalConfig GlobalTicketListingConfig,
 	configs ...TicketListingConfig,
 ) []TicketListingConfig {
 	combinedConfigs := make([]TicketListingConfig, 0, len(configs))
 
 	for _, config := range configs {
-		var combinedConfig TicketListingConfig
 
+		var combinedConfig TicketListingConfig
 		// Set event name
 		combinedConfig.Event = config.Event
 
@@ -50,7 +50,7 @@ func CombineGlobalAndTicketListingConfigs( //nolint:revive
 		}
 
 		// Set regions, using global if not specified
-		if len(config.Regions) == 0 {
+		if config.Regions == nil {
 			combinedConfig.Regions = globalConfig.Regions
 		} else {
 			combinedConfig.Regions = config.Regions
@@ -72,7 +72,7 @@ func CombineGlobalAndTicketListingConfigs( //nolint:revive
 
 		// Set notifications, using global if not specified
 		// Default to all notification types if both are empty
-		if len(config.Notification) == 0 {
+		if config.Notification == nil {
 			combinedConfig.Notification = globalConfig.Notification
 			if len(combinedConfig.Notification) == 0 {
 				combinedConfig.Notification = NotificationTypes.Members()

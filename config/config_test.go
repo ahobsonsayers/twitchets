@@ -34,13 +34,13 @@ func TestLoadConfig(t *testing.T) { // nolint: revive
 		},
 		Notification: config.NotificationConfig{
 			Ntfy: &notification.NtfyConfig{
-				Url:      "example.com",
+				Url:      "http://example.com",
 				Topic:    "test",
 				Username: "test",
 				Password: "test",
 			},
 			Gotify: &notification.GotifyConfig{
-				Url:   "example.com",
+				Url:   "http://example.com",
 				Token: "test",
 			},
 			Telegram: &notification.TelegramConfig{
@@ -98,7 +98,7 @@ func TestCombineConfigs(t *testing.T) { // nolint: revive
 	conf, err := config.Load(configPath)
 	require.NoError(t, err)
 
-	actualCombinedConfigs := conf.CombinedTicketConfigs()
+	actualCombinedConfigs := conf.CombinedTicketListingConfigs()
 
 	globalEventSimilarity := 0.75
 	globalRegions := []twigots.Region{twigots.RegionLondon, twigots.RegionNorthWest}
@@ -163,10 +163,10 @@ func TestCombineConfigs(t *testing.T) { // nolint: revive
 		{
 			// Ticket with globals unset
 			Event:           "Event 7",
-			EventSimilarity: nil,
+			EventSimilarity: lo.ToPtr(-1.0),
 			Regions:         []twigots.Region{},
-			NumTickets:      nil,
-			Discount:        nil,
+			NumTickets:      lo.ToPtr(-1),
+			Discount:        lo.ToPtr(-1.0),
 			Notification:    []config.NotificationType{},
 		},
 	}
