@@ -30,7 +30,7 @@ type TicketListingConfig struct {
 // merged with specific ticket listing configuration.
 //
 // If specific ticket listing configuration is provided, it takes precedence over the global configuration.
-func CombineGlobalAndTicketConfigs( //nolint:revive
+func CombineGlobalAndTicketListingConfigs( //nolint:revive
 	globalConfig GlobalTicketListingConfig,
 	configs ...TicketListingConfig,
 ) []TicketListingConfig {

@@ -35,6 +35,6 @@ func (c Config) Validate() error {
 	return nil
 }
 
-func (c Config) CombinedTicketConfigs() []TicketListingConfig {
-	return CombineGlobalAndTicketConfigs(c.GlobalTicketConfig, c.TicketConfigs...)
+func (c Config) CombinedTicketListingConfigs() []TicketListingConfig {
+	return CombineGlobalAndTicketListingConfigs(c.GlobalTicketConfig, c.TicketConfigs...)
 }
