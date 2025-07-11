@@ -120,5 +120,5 @@ func (c NotificationConfig) Clients() (map[NotificationType]notification.Client,
 }
 
 func beginsWithHttp(url string) bool {
-	return strings.HasPrefix("http://", url) || strings.HasPrefix("https://", url)
+	return strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://")
 }
