@@ -5,15 +5,18 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/ahobsonsayers/twigots"
+	"github.com/ahobsonsayers/twigots/filter"
 	"github.com/ahobsonsayers/twitchets/config"
 	"github.com/ahobsonsayers/twitchets/notification"
 	"github.com/joho/godotenv"
+	"github.com/samber/lo"
 )
 
 const (
@@ -33,24 +36,31 @@ func main() {
 		log.Fatalf("failed to get working directory:, %v", err)
 	}
 
-	// Twickets client
-	client := twigots.NewClient()
-
+	// Load config
 	configPath := filepath.Join(cwd, "config.yaml")
 	conf, err := config.Load(configPath)
 	if err != nil {
 		log.Fatalf("config error:, %v", err)
 	}
 
-	// Notification Clients
+	// Create twickets client
+	client, err := twigots.NewClient(conf.APIKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Create notification clients
 	notificationClients, err := conf.Notification.Clients()
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// Get combined ticket listing configs
+	listingConfigs := conf.CombinedTicketListingConfigs()
+
 	// Event names
-	eventNames := make([]string, 0, len(conf.TicketsConfig))
-	for _, event := range conf.TicketsConfig {
+	eventNames := make([]string, 0, len(conf.TicketConfigs))
+	for _, event := range conf.TicketConfigs {
 		eventNames = append(eventNames, event.Event)
 	}
 	slog.Info(
@@ -58,7 +68,7 @@ func main() {
 	)
 
 	// Initial execution
-	fetchAndProcessTickets(client, conf, notificationClients)
+	fetchAndProcessTickets(client, notificationClients, listingConfigs)
 
 	// Create ticker
 	ticker := time.NewTicker(refetchTime)
@@ -69,7 +79,7 @@ func main() {
 	for {
 		select {
 		case <-ticker.C:
-			fetchAndProcessTickets(client, conf, notificationClients)
+			fetchAndProcessTickets(client, notificationClients, listingConfigs)
 		case <-exitChan:
 			return
 		}
@@ -77,20 +87,19 @@ func main() {
 }
 
 func fetchAndProcessTickets(
-	client *twigots.Client,
-	conf config.Config,
+	twicketsClient *twigots.Client,
 	notificationClients map[config.NotificationType]notification.Client,
+	listingConfigs []config.TicketListingConfig,
 ) {
 	checkTime := time.Now()
 	defer func() {
 		lastCheckTime = checkTime
 	}()
 
-	listings, err := client.FetchTicketListings(
+	fetchedListings, err := twicketsClient.FetchTicketListings(
 		context.Background(),
 		twigots.FetchTicketListingsInput{
 			// Required
-			APIKey:  conf.APIKey,
 			Country: twigots.CountryUnitedKingdom,
 			// Optional
 			CreatedBefore: time.Now(),
@@ -102,56 +111,124 @@ func fetchAndProcessTickets(
 		slog.Error(err.Error())
 		return
 	}
-	if len(listings) == maxNumTickets {
+	if len(fetchedListings) == maxNumTickets {
 		slog.Warn("Fetched the max number of tickets allowed. It is possible tickets have been missed.")
 	}
 
-	ticketConfigs := conf.CombineGlobalAndTicketConfig()
-	for _, ticketConfig := range ticketConfigs {
-		filter := ticketConfig.Filter()
-		filteredListings, err := listings.Filter(
-			twigots.Filter{
-				Event:           filter.Event,
-				EventSimilarity: filter.EventSimilarity,
-				Regions:         filter.Regions,
-				NumTickets:      filter.NumTickets,
-				MinDiscount:     filter.MinDiscount,
-				CreatedAfter:    filter.CreatedAfter,
-			},
+	filteredListings := filterTicketListings(fetchedListings, listingConfigs)
+	for _, matchedListing := range filteredListings {
+		listing := matchedListing.listing
+		config := matchedListing.config
+
+		slog.Info(
+			"found tickets for a wanted event",
+			"wantedEventName", config.Event,
+			"matchedEventName", listing.Event.Name,
+			"numTickets", listing.NumTickets,
+			"ticketPrice", listing.TotalPriceInclFee().String(),
+			"originalTicketPrice", listing.OriginalTicketPrice().String(),
+			"link", listing.URL(),
 		)
-		if err != nil {
-			slog.Error(
-				"Failed to filter listings",
-				"err", err,
-			)
-			continue
-		}
 
-		for _, listing := range filteredListings {
-			slog.Info(
-				"Found tickets for monitored event",
-				"monitoredEventString", ticketConfig.Event,
-				"matchedEventName", listing.Event.Name,
-				"numTickets", listing.NumTickets,
-				"ticketPrice", listing.TotalPriceInclFee().String(),
-				"originalTicketPrice", listing.OriginalTicketPrice().String(),
-				"link", listing.URL(),
-			)
+		for _, notificationType := range config.Notification {
+			notificationClient, ok := notificationClients[notificationType]
+			if !ok {
+				continue
+			}
 
-			for _, notificationType := range ticketConfig.Notification {
-				notificationClient, ok := notificationClients[notificationType]
-				if !ok {
-					continue
-				}
-
-				err := notificationClient.SendTicketNotification(listing)
-				if err != nil {
-					slog.Error(
-						"Failed to send notification",
-						"err", err,
-					)
-				}
+			err := notificationClient.SendTicketNotification(listing)
+			if err != nil {
+				slog.Error(
+					"Failed to send notification",
+					"err", err,
+				)
 			}
 		}
 	}
+}
+
+type matchedListingAndConfig struct {
+	listing twigots.TicketListing
+	config  config.TicketListingConfig
+}
+
+func filterTicketListings(listings twigots.TicketListings, configs []config.TicketListingConfig) []matchedListingAndConfig {
+	matchedListings := make([]matchedListingAndConfig, 0, len(listings))
+	for _, listing := range listings {
+		for _, config := range configs {
+			if ticketListingMatchesConfig(listing, config) {
+				matchedListing := matchedListingAndConfig{
+					config:  config,
+					listing: listing,
+				}
+				matchedListings = append(matchedListings, matchedListing)
+			}
+		}
+	}
+	return matchedListings
+}
+
+func ticketListingMatchesConfig(listing twigots.TicketListing, config config.TicketListingConfig) bool {
+	// Check name
+	checkName := filter.EventName(config.Event, *config.EventSimilarity)
+	if !checkName(listing) {
+		return false
+	}
+
+	// Check regions
+	checkRegions := filter.EventRegion(config.Regions...)
+	if !checkRegions(listing) {
+
+		wantedRegionStrings := make([]string, 0, len(config.Regions))
+		for _, region := range config.Regions {
+			wantedRegionStrings = append(wantedRegionStrings, region.Value)
+		}
+		wantedRegions := strings.Join(wantedRegionStrings, ", ")
+
+		slog.Warn(
+			"found tickets for a wanted event, but region does not match one of the regions wanted",
+			"wantedEvent", config.Event,
+			"listingEvent", listing.Event.Name,
+			"wantedRegions", wantedRegions,
+			"listingRegion", listing.Event.Venue.Location.Region,
+		)
+		return false
+	}
+
+	// Check number of tickets
+	numTickets := lo.FromPtr(config.NumTickets)
+	checkNumTickets := filter.NumTickets(numTickets)
+	if !checkNumTickets(listing) {
+		slog.Warn(
+			"found tickets for a wanted event, but number of tickets does not match the number wanted",
+			"wantedEvent", config.Event,
+			"listingEvent", listing.Event.Name,
+			"wantedNumTickets", config.NumTickets,
+			"listingNumTickets", listing.NumTickets,
+		)
+		return false
+	}
+
+	// Check discount
+	// If discount is close to 0 (e.g. 0 or a floating point error), set to -1 to allow any discount
+	// Otherwise divide by 100 to get a number between 0-1
+	discount := lo.FromPtr(config.Discount)
+	if math.Abs(discount) < 1e-5 {
+		discount = -1
+	} else {
+		discount = discount / 100
+	}
+	checkDiscount := filter.MinDiscount(discount)
+	if !checkDiscount(listing) {
+		slog.Warn(
+			"found tickets for a wanted event, but discount does not match the discount wanted",
+			"wantedEvent", config.Event,
+			"listingEvent", listing.Event.Name,
+			"wantedDiscount", config.Discount,
+			"listingDiscount", listing.Discount(),
+		)
+		return false
+	}
+
+	return true
 }
