@@ -26,7 +26,7 @@ func TestLoadConfig(t *testing.T) { // nolint: revive
 	expectedConfig := config.Config{
 		APIKey:  "test",
 		Country: country,
-		GlobalConfig: config.GlobalEventConfig{
+		GlobalTicketConfig: config.GlobalTicketListingConfig{
 			EventSimilarity: globalEventSimilarity,
 			Regions:         globalRegions,
 			NumTickets:      globalNumTickets,
@@ -48,7 +48,7 @@ func TestLoadConfig(t *testing.T) { // nolint: revive
 				ChatId: 1234,
 			},
 		},
-		TicketsConfig: []config.TicketConfig{
+		TicketConfigs: []config.TicketListingConfig{
 			{
 				// Ticket with only event set
 				Event: "Event 1",
@@ -98,14 +98,14 @@ func TestCombineConfigs(t *testing.T) { // nolint: revive
 	conf, err := config.Load(configPath)
 	require.NoError(t, err)
 
-	actualCombinedConfigs := conf.CombineGlobalAndTicketConfig()
+	actualCombinedConfigs := conf.CombinedTicketConfigs()
 
 	globalEventSimilarity := 0.75
 	globalRegions := []twigots.Region{twigots.RegionLondon, twigots.RegionNorthWest}
 	globalNumTickets := 2
 	globalDiscount := 25.0
 
-	expectedCombinedConfigs := []config.TicketConfig{
+	expectedCombinedConfigs := []config.TicketListingConfig{
 		{
 			// Ticket with only event name set
 			Event:           "Event 1",
