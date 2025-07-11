@@ -118,11 +118,11 @@ func fetchAndProcessTickets(
 	filteredListings := filterTicketListings(fetchedListings, listingConfigs)
 	for _, matchedListing := range filteredListings {
 		listing := matchedListing.listing
-		config := matchedListing.config
+		listingConfig := matchedListing.config
 
 		slog.Info(
 			"found tickets for a wanted event",
-			"wantedEventName", config.Event,
+			"wantedEventName", listingConfig.Event,
 			"matchedEventName", listing.Event.Name,
 			"numTickets", listing.NumTickets,
 			"ticketPrice", listing.TotalPriceInclFee().String(),
@@ -130,7 +130,7 @@ func fetchAndProcessTickets(
 			"link", listing.URL(),
 		)
 
-		for _, notificationType := range config.Notification {
+		for _, notificationType := range listingConfig.Notification {
 			notificationClient, ok := notificationClients[notificationType]
 			if !ok {
 				continue
@@ -152,13 +152,16 @@ type matchedListingAndConfig struct {
 	config  config.TicketListingConfig
 }
 
-func filterTicketListings(listings twigots.TicketListings, configs []config.TicketListingConfig) []matchedListingAndConfig {
+func filterTicketListings(
+	listings twigots.TicketListings,
+	listingConfigs []config.TicketListingConfig,
+) []matchedListingAndConfig {
 	matchedListings := make([]matchedListingAndConfig, 0, len(listings))
 	for _, listing := range listings {
-		for _, config := range configs {
-			if ticketListingMatchesConfig(listing, config) {
+		for _, listingConfig := range listingConfigs {
+			if ticketListingMatchesConfig(listing, listingConfig) {
 				matchedListing := matchedListingAndConfig{
-					config:  config,
+					config:  listingConfig,
 					listing: listing,
 				}
 				matchedListings = append(matchedListings, matchedListing)
@@ -168,26 +171,26 @@ func filterTicketListings(listings twigots.TicketListings, configs []config.Tick
 	return matchedListings
 }
 
-func ticketListingMatchesConfig(listing twigots.TicketListing, config config.TicketListingConfig) bool {
+func ticketListingMatchesConfig(listing twigots.TicketListing, listingConfig config.TicketListingConfig) bool {
 	// Check name
-	checkName := filter.EventName(config.Event, *config.EventSimilarity)
+	checkName := filter.EventName(listingConfig.Event, *listingConfig.EventSimilarity)
 	if !checkName(listing) {
 		return false
 	}
 
 	// Check regions
-	checkRegions := filter.EventRegion(config.Regions...)
+	checkRegions := filter.EventRegion(listingConfig.Regions...)
 	if !checkRegions(listing) {
 
-		wantedRegionStrings := make([]string, 0, len(config.Regions))
-		for _, region := range config.Regions {
+		wantedRegionStrings := make([]string, 0, len(listingConfig.Regions))
+		for _, region := range listingConfig.Regions {
 			wantedRegionStrings = append(wantedRegionStrings, region.Value)
 		}
 		wantedRegions := strings.Join(wantedRegionStrings, ", ")
 
 		slog.Warn(
 			"found tickets for a wanted event, but region does not match one of the regions wanted",
-			"wantedEvent", config.Event,
+			"wantedEvent", listingConfig.Event,
 			"listingEvent", listing.Event.Name,
 			"wantedRegions", wantedRegions,
 			"listingRegion", listing.Event.Venue.Location.Region,
@@ -196,14 +199,14 @@ func ticketListingMatchesConfig(listing twigots.TicketListing, config config.Tic
 	}
 
 	// Check number of tickets
-	numTickets := lo.FromPtr(config.NumTickets)
+	numTickets := lo.FromPtr(listingConfig.NumTickets)
 	checkNumTickets := filter.NumTickets(numTickets)
 	if !checkNumTickets(listing) {
 		slog.Warn(
 			"found tickets for a wanted event, but number of tickets does not match the number wanted",
-			"wantedEvent", config.Event,
+			"wantedEvent", listingConfig.Event,
 			"listingEvent", listing.Event.Name,
-			"wantedNumTickets", config.NumTickets,
+			"wantedNumTickets", listingConfig.NumTickets,
 			"listingNumTickets", listing.NumTickets,
 		)
 		return false
@@ -212,19 +215,19 @@ func ticketListingMatchesConfig(listing twigots.TicketListing, config config.Tic
 	// Check discount
 	// If discount is close to 0 (e.g. 0 or a floating point error), set to -1 to allow any discount
 	// Otherwise divide by 100 to get a number between 0-1
-	discount := lo.FromPtr(config.Discount)
+	discount := lo.FromPtr(listingConfig.Discount)
 	if math.Abs(discount) < 1e-5 {
 		discount = -1
 	} else {
-		discount = discount / 100
+		discount /= 100
 	}
 	checkDiscount := filter.MinDiscount(discount)
 	if !checkDiscount(listing) {
 		slog.Warn(
 			"found tickets for a wanted event, but discount does not match the discount wanted",
-			"wantedEvent", config.Event,
+			"wantedEvent", listingConfig.Event,
 			"listingEvent", listing.Event.Name,
-			"wantedDiscount", config.Discount,
+			"wantedDiscount", listingConfig.Discount,
 			"listingDiscount", listing.Discount(),
 		)
 		return false

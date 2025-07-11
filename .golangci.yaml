@@ -1,6 +1,8 @@
 # Docs: https://golangci-lint.run/usage/configuration/#config-file
+version: "2"
+
 run:
-  go: "1.21"
+  go: "1.24"
   timeout: 30m
 
 linters:
@@ -51,7 +53,7 @@ linters-settings:
 
       - name: var-naming
         arguments:
-          - ["ID", "IDS", "JSON", "URL"] # Allow List
+          - ["ID", "IDS", "HTML", "HTTP", "JSON", "URL"] # Allow List
           - [] # Deny List
 
   stylecheck:
