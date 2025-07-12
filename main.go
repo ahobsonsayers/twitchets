@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"log/slog"
 	"math"
@@ -58,14 +57,8 @@ func main() {
 	// Get combined ticket listing configs
 	listingConfigs := conf.CombinedTicketListingConfigs()
 
-	// Event names
-	eventNames := make([]string, 0, len(conf.TicketConfigs))
-	for _, event := range conf.TicketConfigs {
-		eventNames = append(eventNames, event.Event)
-	}
-	slog.Info(
-		fmt.Sprintf("Monitoring: %s", strings.Join(eventNames, ", ")),
-	)
+	// Print config
+	config.PrintTicketListingConfigs(listingConfigs)
 
 	// Initial execution
 	fetchAndProcessTickets(client, notificationClients, listingConfigs)
