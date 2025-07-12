@@ -29,7 +29,7 @@ func ProjectDirectory(t *testing.T) string {
 	return directory
 }
 
-// ProjectDirectoryJoinPath returns a path joined to the project directory.
+// ProjectDirectoryJoin returns a path joined to the project directory.
 // See `ProjectDirectory` for more information
 func ProjectDirectoryJoin(t *testing.T, pathElems ...string) string {
 	pathElems = append(

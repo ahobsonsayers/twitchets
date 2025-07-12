@@ -90,7 +90,7 @@ func TestLoadConfig(t *testing.T) { // nolint: revive
 		},
 	}
 
-	require.EqualValues(t, expectedConfig, actualConfig)
+	require.Equal(t, expectedConfig, actualConfig)
 }
 
 func TestCombineConfigs(t *testing.T) { // nolint: revive
@@ -171,5 +171,5 @@ func TestCombineConfigs(t *testing.T) { // nolint: revive
 		},
 	}
 
-	require.EqualValues(t, expectedCombinedConfigs, actualCombinedConfigs)
+	require.Equal(t, expectedCombinedConfigs, actualCombinedConfigs)
 }

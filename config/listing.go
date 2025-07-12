@@ -25,7 +25,7 @@ type TicketListingConfig struct {
 }
 
 // CombineGlobalAndTicketConfigs merges global and specific ticket listing configurations.
-
+//
 // It returns a slice of TicketListingConfig where each configuration has global ticket listing configuration
 // merged with specific ticket listing configuration.
 //
