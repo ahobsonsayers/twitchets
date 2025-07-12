@@ -6,8 +6,8 @@ _{{ .Event }}_
 {{ .Date }} {{ .Time }}
 
 {{ .NumTickets }} ticket(s) - {{ .TicketType }}
-Ticket Price: {{ .TotalTicketPrice }}{{ if .AcceptsOffers }} (Offer Accepted){{ end }}
-Total Price: {{ .TotalPrice }}{{ if .AcceptsOffers }} (Offer Accepted){{ end }}
+Ticket Price: {{ .TotalTicketPrice }}{{ if .AcceptsOffers }} (Offers Accepted){{ end }}
+Total Price: {{ .TotalPrice }}{{ if .AcceptsOffers }} (Offers Accepted){{ end }}
 {{ if eq .Discount "0.00%" }}
 Discount: None
 {{- else -}}
