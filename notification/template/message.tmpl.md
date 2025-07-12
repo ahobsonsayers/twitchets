@@ -1,13 +1,13 @@
 {{ if ne .Event "" -}}
-*{{ .Event }}*
+_{{ .Event }}_
 {{- end }}
 
 {{ .Venue }}, {{ .Location }}
 {{ .Date }} {{ .Time }}
 
 {{ .NumTickets }} ticket(s) - {{ .TicketType }}
-Ticket Price: {{ .TotalTicketPrice }}{{ if .AcceptsOffers }}(Accepts Offers){{ end }}
-Total Price: {{ .TotalPrice }}{{ if .AcceptsOffers }}(Accepts Offers){{ end }}
+Ticket Price: {{ .TotalTicketPrice }}{{ if .AcceptsOffers }} (Offer Accepted){{ end }}
+Total Price: {{ .TotalPrice }}{{ if .AcceptsOffers }} (Offer Accepted){{ end }}
 {{ if eq .Discount "0.00%" }}
 Discount: None
 {{- else -}}
