@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"log/slog"
 	"math"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -28,6 +28,13 @@ var lastCheckTime = time.Now()
 
 func init() {
 	_ = godotenv.Load()
+
+	// Set debug level
+	debugEnv := os.Getenv("DEBUG")
+	debug, err := strconv.ParseBool(debugEnv)
+	if err == nil && debug {
+		slog.SetLogLoggerLevel(slog.LevelDebug)
+	}
 }
 
 func main() {
@@ -58,14 +65,7 @@ func main() {
 	// Get combined ticket listing configs
 	listingConfigs := conf.CombinedTicketListingConfigs()
 
-	// Event names
-	eventNames := make([]string, 0, len(conf.TicketConfigs))
-	for _, event := range conf.TicketConfigs {
-		eventNames = append(eventNames, event.Event)
-	}
-	slog.Info(
-		fmt.Sprintf("Monitoring: %s", strings.Join(eventNames, ", ")),
-	)
+	slog.Info("Monitoring...")
 
 	// Initial execution
 	fetchAndProcessTickets(client, notificationClients, listingConfigs)
@@ -111,6 +111,12 @@ func fetchAndProcessTickets(
 		slog.Error(err.Error())
 		return
 	}
+
+	slog.Debug(
+		"Fetched tickets.",
+		"number", len(fetchedListings),
+	)
+
 	if len(fetchedListings) == maxNumTickets {
 		slog.Warn("Fetched the max number of tickets allowed. It is possible tickets have been missed.")
 	}
@@ -121,7 +127,7 @@ func fetchAndProcessTickets(
 		listingConfig := matchedListing.config
 
 		slog.Info(
-			"found tickets for a wanted event",
+			"Found tickets for a wanted event.",
 			"wantedEventName", listingConfig.Event,
 			"matchedEventName", listing.Event.Name,
 			"numTickets", listing.NumTickets,
@@ -139,7 +145,7 @@ func fetchAndProcessTickets(
 			err := notificationClient.SendTicketNotification(listing)
 			if err != nil {
 				slog.Error(
-					"Failed to send notification",
+					"Failed to send notification.",
 					"err", err,
 				)
 			}
@@ -189,7 +195,7 @@ func ticketListingMatchesConfig(listing twigots.TicketListing, listingConfig con
 		wantedRegions := strings.Join(wantedRegionStrings, ", ")
 
 		slog.Warn(
-			"found tickets for a wanted event, but region does not match one of the regions wanted",
+			"Found tickets for a wanted event, but region does not match one of the regions wanted.",
 			"wantedEvent", listingConfig.Event,
 			"listingEvent", listing.Event.Name,
 			"wantedRegions", wantedRegions,
@@ -203,7 +209,7 @@ func ticketListingMatchesConfig(listing twigots.TicketListing, listingConfig con
 	checkNumTickets := filter.NumTickets(numTickets)
 	if !checkNumTickets(listing) {
 		slog.Warn(
-			"found tickets for a wanted event, but number of tickets does not match the number wanted",
+			"Found tickets for a wanted event, but number of tickets does not match the number wanted.",
 			"wantedEvent", listingConfig.Event,
 			"listingEvent", listing.Event.Name,
 			"wantedNumTickets", listingConfig.NumTickets,
@@ -224,7 +230,7 @@ func ticketListingMatchesConfig(listing twigots.TicketListing, listingConfig con
 	checkDiscount := filter.MinDiscount(discount)
 	if !checkDiscount(listing) {
 		slog.Warn(
-			"found tickets for a wanted event, but discount does not match the discount wanted",
+			"Found tickets for a wanted event, but discount does not match the discount wanted.",
 			"wantedEvent", listingConfig.Event,
 			"listingEvent", listing.Event.Name,
 			"wantedDiscount", listingConfig.Discount,
