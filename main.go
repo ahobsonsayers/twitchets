@@ -65,6 +65,9 @@ func main() {
 	// Get combined ticket listing configs
 	listingConfigs := conf.CombinedTicketListingConfigs()
 
+	// Print config
+	config.PrintTicketListingConfigs(listingConfigs)
+
 	slog.Info("Monitoring...")
 
 	// Initial execution
