@@ -1,15 +1,27 @@
 # Reusable Workflow for building and pushing a docker image
-# https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
 name: Build and Push
 
 on:
+  # Manual
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch, tag or commit hash
+        type: string
+        default: main
+      tags:
+        description: Docker Image Tag(s)
+        type: string
+        default: develop
+
+  # From another workflow
   workflow_call:
     inputs:
-      commit:
-        description: Full Commit Hash
+      ref:
+        description: Branch, tag or commit hash
         type: string
-        required: true
+        default: main
       tags:
         description: Docker Image Tag(s)
         type: string
@@ -25,15 +37,15 @@ jobs:
         shell: bash
 
     steps:
-      - name: Checkout Repo
+      - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.commit }}
+          ref: ${{ inputs.ref }}
 
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
 
-      - name: Setup Docker Buildx
+      - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Login to DockerHub
@@ -59,8 +71,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          tags: ${{ steps.tags.outputs.tags }}
           platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.tags.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           push: true
