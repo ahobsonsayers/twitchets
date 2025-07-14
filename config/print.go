@@ -14,7 +14,7 @@ func PrintTicketListingConfigs(configs []TicketListingConfig) {
 	}
 }
 
-func PrintTicketListingConfig(config TicketListingConfig) {
+func PrintTicketListingConfig(config TicketListingConfig) { //nolint
 	fmt.Printf("Event: %s\n", config.Event)
 
 	if config.EventSimilarity == nil || *config.EventSimilarity <= 0.0 {
@@ -26,7 +26,7 @@ func PrintTicketListingConfig(config TicketListingConfig) {
 	if len(config.Regions) == 0 {
 		fmt.Println("Regions: Any")
 	} else {
-		
+
 		// Get regions as a string
 		regionStrings := make([]string, 0, len(config.Regions))
 		for _, region := range config.Regions {
