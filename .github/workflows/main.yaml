@@ -61,8 +61,8 @@ jobs:
     name: Build and Push
     needs: [lint, test]
     if: github.event_name == 'push' && github.ref_name == 'main'
-    uses: ./.github/workflows/build_push.yaml
+    uses: ./.github/workflows/build-push.yaml
     with:
-      commit: ${{ github.sha }}
+      ref: ${{ github.sha }}
       tags: develop,${{ github.sha }}
     secrets: inherit

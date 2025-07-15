@@ -59,8 +59,8 @@ jobs:
   build-push:
     name: Build and Push
     needs: [create-release]
-    uses: ./.github/workflows/build_push.yaml
+    uses: ./.github/workflows/build-push.yaml
     with:
-      commit: ${{ github.sha }}
+      ref: ${{ github.sha }}
       tags: latest,${{ needs.create-release.outputs.tag }}
     secrets: inherit

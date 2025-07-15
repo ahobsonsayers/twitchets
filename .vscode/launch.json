@@ -5,20 +5,19 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Project",
+      "name": "Twitchets",
       "type": "go",
       "request": "launch",
       "mode": "auto",
       "cwd": "${workspaceFolder}",
-      "program": "${workspaceFolder}/cmd/twitchets"
+      "program": "${workspaceFolder}"
     },
     {
       "name": "Scratch",
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "cwd": "${workspaceFolder}",
-      "program": "${workspaceFolder}/scratch/scratch.go"
+      "program": "${workspaceFolder}/scratch"
     }
   ]
 }

@@ -24,7 +24,7 @@ const (
 	refetchTime   = 1 * time.Minute
 )
 
-var lastCheckTime = time.Now()
+var latestTicketTime time.Time
 
 func init() {
 	_ = godotenv.Load()
@@ -94,11 +94,12 @@ func fetchAndProcessTickets(
 	notificationClients map[config.NotificationType]notification.Client,
 	listingConfigs []config.TicketListingConfig,
 ) {
-	checkTime := time.Now()
-	defer func() {
-		lastCheckTime = checkTime
-	}()
+	numTickets := maxNumTickets
+	if latestTicketTime.IsZero() {
+		numTickets = 10
+	}
 
+	// Fetch tickets listings from the twickets live feed
 	fetchedListings, err := twicketsClient.FetchTicketListings(
 		context.Background(),
 		twigots.FetchTicketListingsInput{
@@ -106,8 +107,8 @@ func fetchAndProcessTickets(
 			Country: twigots.CountryUnitedKingdom,
 			// Optional
 			CreatedBefore: time.Now(),
-			CreatedAfter:  lastCheckTime,
-			MaxNumber:     maxNumTickets,
+			CreatedAfter:  latestTicketTime,
+			MaxNumber:     numTickets,
 		},
 	)
 	if err != nil {
@@ -115,20 +116,27 @@ func fetchAndProcessTickets(
 		return
 	}
 
-	slog.Debug(
-		"Fetched tickets.",
-		"number", len(fetchedListings),
-	)
+	slog.Debug("Fetched tickets.", "numNewTickets", len(fetchedListings))
 
-	if len(fetchedListings) == maxNumTickets {
-		slog.Warn("Fetched the max number of tickets allowed. It is possible tickets have been missed.")
+	if len(fetchedListings) == 0 {
+		return
 	}
 
+	if len(fetchedListings) == maxNumTickets {
+		slog.Warn("Fetched the max number of tickets allowed per check. It is possible tickets have been missed.")
+	}
+
+	// Update latest ticket time. Most recent ticket is first
+	latestTicketTime = fetchedListings[0].CreatedAt.Time
+
+	// Filter fetched ticket listings to those wanted
 	filteredListings := filterTicketListings(fetchedListings, listingConfigs)
 	for _, matchedListing := range filteredListings {
+
 		listing := matchedListing.listing
 		listingConfig := matchedListing.config
 
+		// Log info about found ticket listing
 		slog.Info(
 			"Found tickets for a wanted event.",
 			"wantedEventName", listingConfig.Event,
@@ -137,9 +145,12 @@ func fetchAndProcessTickets(
 			"ticketPrice", listing.TotalPriceInclFee().String(),
 			"originalTicketPrice", listing.OriginalTicketPrice().String(),
 			"link", listing.URL(),
+			"timeListed", listing.CreatedAt.Local(),
 		)
 
+		// Send notifications
 		for _, notificationType := range listingConfig.Notification {
+
 			notificationClient, ok := notificationClients[notificationType]
 			if !ok {
 				continue
@@ -215,7 +226,7 @@ func ticketListingMatchesConfig(listing twigots.TicketListing, listingConfig con
 			"Found tickets for a wanted event, but number of tickets does not match the number wanted.",
 			"wantedEvent", listingConfig.Event,
 			"listingEvent", listing.Event.Name,
-			"wantedNumTickets", listingConfig.NumTickets,
+			"wantedNumTickets", numTickets,
 			"listingNumTickets", listing.NumTickets,
 		)
 		return false
@@ -236,7 +247,7 @@ func ticketListingMatchesConfig(listing twigots.TicketListing, listingConfig con
 			"Found tickets for a wanted event, but discount does not match the discount wanted.",
 			"wantedEvent", listingConfig.Event,
 			"listingEvent", listing.Event.Name,
-			"wantedDiscount", listingConfig.Discount,
+			"wantedDiscount", discount,
 			"listingDiscount", listing.Discount(),
 		)
 		return false
