@@ -226,7 +226,7 @@ func ticketListingMatchesConfig(listing twigots.TicketListing, listingConfig con
 			"Found tickets for a wanted event, but number of tickets does not match the number wanted.",
 			"wantedEvent", listingConfig.Event,
 			"listingEvent", listing.Event.Name,
-			"wantedNumTickets", listingConfig.NumTickets,
+			"wantedNumTickets", numTickets,
 			"listingNumTickets", listing.NumTickets,
 		)
 		return false
@@ -247,7 +247,7 @@ func ticketListingMatchesConfig(listing twigots.TicketListing, listingConfig con
 			"Found tickets for a wanted event, but discount does not match the discount wanted.",
 			"wantedEvent", listingConfig.Event,
 			"listingEvent", listing.Event.Name,
-			"wantedDiscount", listingConfig.Discount,
+			"wantedDiscount", discount,
 			"listingDiscount", listing.Discount(),
 		)
 		return false
