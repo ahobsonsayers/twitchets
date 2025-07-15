@@ -8,11 +8,11 @@ import (
 )
 
 type Config struct {
-	APIKey        string             `json:"apiKey"`
-	Country       twigots.Country    `json:"country"`
-	Notification  NotificationConfig `json:"notification"`
-	GlobalConfig  GlobalEventConfig  `json:"global"`
-	TicketsConfig []TicketConfig     `json:"tickets"`
+	APIKey             string                    `json:"apiKey"`
+	Country            twigots.Country           `json:"country"`
+	Notification       NotificationConfig        `json:"notification"`
+	GlobalTicketConfig GlobalTicketListingConfig `json:"global"`
+	TicketConfigs      []TicketListingConfig     `json:"tickets"`
 }
 
 func (c Config) Validate() error {
@@ -27,68 +27,14 @@ func (c Config) Validate() error {
 		return fmt.Errorf("country '%s' is not valid", c.Country)
 	}
 
-	err := c.GlobalConfig.Validate()
+	err := c.Notification.Validate()
 	if err != nil {
-		return fmt.Errorf("global config is not valid: %w", err)
-	}
-
-	for idx, ticketConfig := range c.TicketsConfig {
-		err := ticketConfig.Validate()
-		if err != nil {
-			return fmt.Errorf("event config at index [%d] is not valid: %w", idx, err)
-		}
+		return fmt.Errorf("notification config is not valid: %w", err)
 	}
 
 	return nil
 }
 
-func (c Config) CombineGlobalAndTicketConfig() []TicketConfig { //nolint:revive
-	combinedConfigs := make([]TicketConfig, 0, len(c.TicketsConfig))
-	for _, ticketConfig := range c.TicketsConfig {
-
-		var combinedConfig TicketConfig
-		combinedConfig.Event = ticketConfig.Event
-
-		// Set name similarity
-		if ticketConfig.EventSimilarity == nil {
-			combinedConfig.EventSimilarity = &c.GlobalConfig.EventSimilarity
-		} else if *ticketConfig.EventSimilarity > 0 {
-			combinedConfig.EventSimilarity = ticketConfig.EventSimilarity
-		}
-
-		// Set regions
-		if ticketConfig.Regions == nil {
-			combinedConfig.Regions = c.GlobalConfig.Regions
-		} else {
-			combinedConfig.Regions = ticketConfig.Regions
-		}
-
-		// Set num tickets
-		if ticketConfig.NumTickets == nil {
-			combinedConfig.NumTickets = &c.GlobalConfig.NumTickets
-		} else if *ticketConfig.NumTickets > 0 {
-			combinedConfig.NumTickets = ticketConfig.NumTickets
-		}
-
-		// Set discount
-		if ticketConfig.Discount == nil {
-			combinedConfig.Discount = &c.GlobalConfig.Discount
-		} else if *ticketConfig.Discount > 0 {
-			combinedConfig.Discount = ticketConfig.Discount
-		}
-
-		// Set notification methods
-		if ticketConfig.Notification == nil {
-			combinedConfig.Notification = c.GlobalConfig.Notification
-			if len(combinedConfig.Notification) == 0 {
-				combinedConfig.Notification = NotificationTypes.Members()
-			}
-		} else {
-			combinedConfig.Notification = ticketConfig.Notification
-		}
-
-		combinedConfigs = append(combinedConfigs, combinedConfig)
-	}
-
-	return combinedConfigs
+func (c Config) CombinedTicketListingConfigs() []TicketListingConfig {
+	return CombineGlobalAndTicketListingConfigs(c.GlobalTicketConfig, c.TicketConfigs...)
 }

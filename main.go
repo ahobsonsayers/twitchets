@@ -2,18 +2,21 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"log/slog"
+	"math"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/ahobsonsayers/twigots"
+	"github.com/ahobsonsayers/twigots/filter"
 	"github.com/ahobsonsayers/twitchets/config"
 	"github.com/ahobsonsayers/twitchets/notification"
 	"github.com/joho/godotenv"
+	"github.com/samber/lo"
 )
 
 const (
@@ -25,6 +28,13 @@ var lastCheckTime = time.Now()
 
 func init() {
 	_ = godotenv.Load()
+
+	// Set debug level
+	debugEnv := os.Getenv("DEBUG")
+	debug, err := strconv.ParseBool(debugEnv)
+	if err == nil && debug {
+		slog.SetLogLoggerLevel(slog.LevelDebug)
+	}
 }
 
 func main() {
@@ -33,32 +43,35 @@ func main() {
 		log.Fatalf("failed to get working directory:, %v", err)
 	}
 
-	// Twickets client
-	client := twigots.NewClient()
-
+	// Load config
 	configPath := filepath.Join(cwd, "config.yaml")
 	conf, err := config.Load(configPath)
 	if err != nil {
 		log.Fatalf("config error:, %v", err)
 	}
 
-	// Notification Clients
+	// Create twickets client
+	client, err := twigots.NewClient(conf.APIKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Create notification clients
 	notificationClients, err := conf.Notification.Clients()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Event names
-	eventNames := make([]string, 0, len(conf.TicketsConfig))
-	for _, event := range conf.TicketsConfig {
-		eventNames = append(eventNames, event.Event)
-	}
-	slog.Info(
-		fmt.Sprintf("Monitoring: %s", strings.Join(eventNames, ", ")),
-	)
+	// Get combined ticket listing configs
+	listingConfigs := conf.CombinedTicketListingConfigs()
+
+	// Print config
+	config.PrintTicketListingConfigs(listingConfigs)
+
+	slog.Info("Monitoring...")
 
 	// Initial execution
-	fetchAndProcessTickets(client, conf, notificationClients)
+	fetchAndProcessTickets(client, notificationClients, listingConfigs)
 
 	// Create ticker
 	ticker := time.NewTicker(refetchTime)
@@ -69,7 +82,7 @@ func main() {
 	for {
 		select {
 		case <-ticker.C:
-			fetchAndProcessTickets(client, conf, notificationClients)
+			fetchAndProcessTickets(client, notificationClients, listingConfigs)
 		case <-exitChan:
 			return
 		}
@@ -77,20 +90,19 @@ func main() {
 }
 
 func fetchAndProcessTickets(
-	client *twigots.Client,
-	conf config.Config,
+	twicketsClient *twigots.Client,
 	notificationClients map[config.NotificationType]notification.Client,
+	listingConfigs []config.TicketListingConfig,
 ) {
 	checkTime := time.Now()
 	defer func() {
 		lastCheckTime = checkTime
 	}()
 
-	listings, err := client.FetchTicketListings(
+	fetchedListings, err := twicketsClient.FetchTicketListings(
 		context.Background(),
 		twigots.FetchTicketListingsInput{
 			// Required
-			APIKey:  conf.APIKey,
 			Country: twigots.CountryUnitedKingdom,
 			// Optional
 			CreatedBefore: time.Now(),
@@ -102,56 +114,133 @@ func fetchAndProcessTickets(
 		slog.Error(err.Error())
 		return
 	}
-	if len(listings) == maxNumTickets {
+
+	slog.Debug(
+		"Fetched tickets.",
+		"number", len(fetchedListings),
+	)
+
+	if len(fetchedListings) == maxNumTickets {
 		slog.Warn("Fetched the max number of tickets allowed. It is possible tickets have been missed.")
 	}
 
-	ticketConfigs := conf.CombineGlobalAndTicketConfig()
-	for _, ticketConfig := range ticketConfigs {
-		filter := ticketConfig.Filter()
-		filteredListings, err := listings.Filter(
-			twigots.Filter{
-				Event:           filter.Event,
-				EventSimilarity: filter.EventSimilarity,
-				Regions:         filter.Regions,
-				NumTickets:      filter.NumTickets,
-				MinDiscount:     filter.MinDiscount,
-				CreatedAfter:    filter.CreatedAfter,
-			},
+	filteredListings := filterTicketListings(fetchedListings, listingConfigs)
+	for _, matchedListing := range filteredListings {
+		listing := matchedListing.listing
+		listingConfig := matchedListing.config
+
+		slog.Info(
+			"Found tickets for a wanted event.",
+			"wantedEventName", listingConfig.Event,
+			"matchedEventName", listing.Event.Name,
+			"numTickets", listing.NumTickets,
+			"ticketPrice", listing.TotalPriceInclFee().String(),
+			"originalTicketPrice", listing.OriginalTicketPrice().String(),
+			"link", listing.URL(),
 		)
-		if err != nil {
-			slog.Error(
-				"Failed to filter listings",
-				"err", err,
-			)
-			continue
-		}
 
-		for _, listing := range filteredListings {
-			slog.Info(
-				"Found tickets for monitored event",
-				"monitoredEventString", ticketConfig.Event,
-				"matchedEventName", listing.Event.Name,
-				"numTickets", listing.NumTickets,
-				"ticketPrice", listing.TotalPriceInclFee().String(),
-				"originalTicketPrice", listing.OriginalTicketPrice().String(),
-				"link", listing.URL(),
-			)
+		for _, notificationType := range listingConfig.Notification {
+			notificationClient, ok := notificationClients[notificationType]
+			if !ok {
+				continue
+			}
 
-			for _, notificationType := range ticketConfig.Notification {
-				notificationClient, ok := notificationClients[notificationType]
-				if !ok {
-					continue
-				}
-
-				err := notificationClient.SendTicketNotification(listing)
-				if err != nil {
-					slog.Error(
-						"Failed to send notification",
-						"err", err,
-					)
-				}
+			err := notificationClient.SendTicketNotification(listing)
+			if err != nil {
+				slog.Error(
+					"Failed to send notification.",
+					"err", err,
+				)
 			}
 		}
 	}
+}
+
+type matchedListingAndConfig struct {
+	listing twigots.TicketListing
+	config  config.TicketListingConfig
+}
+
+func filterTicketListings(
+	listings twigots.TicketListings,
+	listingConfigs []config.TicketListingConfig,
+) []matchedListingAndConfig {
+	matchedListings := make([]matchedListingAndConfig, 0, len(listings))
+	for _, listing := range listings {
+		for _, listingConfig := range listingConfigs {
+			if ticketListingMatchesConfig(listing, listingConfig) {
+				matchedListing := matchedListingAndConfig{
+					config:  listingConfig,
+					listing: listing,
+				}
+				matchedListings = append(matchedListings, matchedListing)
+			}
+		}
+	}
+	return matchedListings
+}
+
+func ticketListingMatchesConfig(listing twigots.TicketListing, listingConfig config.TicketListingConfig) bool {
+	// Check name
+	checkName := filter.EventName(listingConfig.Event, *listingConfig.EventSimilarity)
+	if !checkName(listing) {
+		return false
+	}
+
+	// Check regions
+	checkRegions := filter.EventRegion(listingConfig.Regions...)
+	if !checkRegions(listing) {
+
+		wantedRegionStrings := make([]string, 0, len(listingConfig.Regions))
+		for _, region := range listingConfig.Regions {
+			wantedRegionStrings = append(wantedRegionStrings, region.Value)
+		}
+		wantedRegions := strings.Join(wantedRegionStrings, ", ")
+
+		slog.Warn(
+			"Found tickets for a wanted event, but region does not match one of the regions wanted.",
+			"wantedEvent", listingConfig.Event,
+			"listingEvent", listing.Event.Name,
+			"wantedRegions", wantedRegions,
+			"listingRegion", listing.Event.Venue.Location.Region,
+		)
+		return false
+	}
+
+	// Check number of tickets
+	numTickets := lo.FromPtr(listingConfig.NumTickets)
+	checkNumTickets := filter.NumTickets(numTickets)
+	if !checkNumTickets(listing) {
+		slog.Warn(
+			"Found tickets for a wanted event, but number of tickets does not match the number wanted.",
+			"wantedEvent", listingConfig.Event,
+			"listingEvent", listing.Event.Name,
+			"wantedNumTickets", listingConfig.NumTickets,
+			"listingNumTickets", listing.NumTickets,
+		)
+		return false
+	}
+
+	// Check discount
+	// If discount is close to 0 (e.g. 0 or a floating point error), set to -1 to allow any discount
+	// Otherwise divide by 100 to get a number between 0-1
+	discount := lo.FromPtr(listingConfig.Discount)
+	if math.Abs(discount) < 1e-5 {
+		discount = -1
+	} else {
+		discount /= 100
+	}
+	checkDiscount := filter.MinDiscount(discount)
+	if !checkDiscount(listing) {
+		slog.Warn(
+			"Found tickets for a wanted event, but discount does not match the discount wanted.",
+			"wantedEvent", listingConfig.Event,
+			"listingEvent", listing.Event.Name,
+			"wantedDiscount", listingConfig.Discount,
+			"listingDiscount", listing.Discount(),
+		)
+		return false
+	}
+
+	return true
 }

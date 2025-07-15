@@ -36,6 +36,7 @@ func testNotificationTicket() twigots.TicketListing {
 			Currency: twigots.CurrencyGBP,
 			Amount:   400,
 		},
+		SellerWillConsiderOffers: true,
 	}
 }
 

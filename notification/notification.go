@@ -45,6 +45,7 @@ type MessageTemplateData struct {
 	OriginalTicketPrice string
 	OriginalTotalPrice  string
 	Discount            string
+	AcceptsOffers       bool
 
 	// Footer
 	Link string
@@ -96,6 +97,7 @@ func RenderMessage(ticket twigots.TicketListing, options ...RenderMessageOption)
 		OriginalTicketPrice: ticket.OriginalTicketPrice().String(),
 		OriginalTotalPrice:  ticket.OriginalTotalPrice.String(),
 		Discount:            ticket.DiscountString(),
+		AcceptsOffers:       ticket.SellerWillConsiderOffers,
 	}
 
 	// Add optional header and footers

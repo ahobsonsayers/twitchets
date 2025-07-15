@@ -1,61 +1,73 @@
 # Docs: https://golangci-lint.run/usage/configuration/#config-file
+version: "2"
+
 run:
-  go: "1.21"
+  go: "1.24"
   timeout: 30m
+
+formatters:
+  enable:
+    - gofmt # https://golangci-lint.run/usage/linters/#gofmt
+    - goimports # https://golangci-lint.run/usage/linters/#goimports
 
 linters:
   enable:
     # Default linters: https://golangci-lint.run/usage/linters#enabled-by-default
     - gocritic # https://golangci-lint.run/usage/linters/#gocritic
-    - gofmt # https://golangci-lint.run/usage/linters/#gofmt
-    - goimports # https://golangci-lint.run/usage/linters/#goimports
     - makezero # https://golangci-lint.run/usage/linters/#makezero
     - misspell # https://golangci-lint.run/usage/linters/#misspell
     - revive # https://golangci-lint.run/usage/linters/#revive
-    - stylecheck # https://golangci-lint.run/usage/linters/#stylecheck
     - testifylint # https://golangci-lint.run/usage/linters/#testifylint
     - unparam # https://golangci-lint.run/usage/linters/#unparam
     - usestdlibvars # https://golangci-lint.run/usage/linters/#usestdlibvars
 
-linters-settings:
-  gocritic:
-    enable-all: true
-    disabled-checks:
-      - commentedOutCode
-      - hugeParam # TODO Reenable this?
-      - rangeValCopy
-      - whyNoLint
+  settings:
+    gocritic:
+      enable-all: true
+      disabled-checks:
+        - commentedOutCode
+        - hugeParam # TODO Reenable this?
+        - rangeValCopy
+        - whyNoLint
 
-  revive:
-    enable-all-rules: true
-    rules:
-      - name: add-constant
-        disabled: true
+    revive:
+      enable-all-rules: true
+      rules:
+        - name: add-constant
+          disabled: true
 
-      - name: cognitive-complexity
-        disabled: true
+        - name: cognitive-complexity
+          disabled: true
 
-      - name: empty-lines
-        disabled: true
+        - name: empty-lines
+          disabled: true
 
-      - name: line-length-limit
-        arguments: [120]
+        - name: exported
+          arguments:
+            - disable-checks-on-constants
+            - disable-checks-on-functions
+            - disable-checks-on-methods
+            - disable-checks-on-types
+            - disable-checks-on-variables
 
-      - name: max-public-structs
-        disabled: true
+        - name: line-length-limit
+          arguments: [120]
 
-      - name: unhandled-error
-        arguments:
-          - fmt.Printf
-          - fmt.Println
+        - name: max-public-structs
+          disabled: true
 
-      - name: var-naming
-        arguments:
-          - ["ID", "IDS", "JSON", "URL"] # Allow List
-          - [] # Deny List
+        - name: package-comments
+          disabled: true
 
-  stylecheck:
-    checks: ["all", "-ST1003"] # ST1003 is a duplicate check of var-naming from revive
+        - name: unhandled-error
+          arguments:
+            - fmt.Printf
+            - fmt.Println
 
-  unparam:
-    check-exported: true
+        - name: var-naming
+          arguments:
+            - ["ID", "IDS", "HTML", "HTTP", "JSON", "URL"] # Allow List
+            - [] # Deny List
+
+    unparam:
+      check-exported: true

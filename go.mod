@@ -3,7 +3,7 @@ module github.com/ahobsonsayers/twitchets
 go 1.24
 
 require (
-	github.com/ahobsonsayers/twigots v0.2.0
+	github.com/ahobsonsayers/twigots v0.4.0
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/gotify/go-api-client/v2 v2.0.4
 	github.com/joho/godotenv v1.5.1
@@ -22,7 +22,6 @@ require (
 	cloud.google.com/go/storage v1.49.0 // indirect
 	firebase.google.com/go/v4 v4.15.1 // indirect
 	github.com/AlekSi/pointer v1.2.0 // indirect
-	github.com/adrg/strutil v0.3.1 // indirect
 	github.com/andybalholm/brotli v1.1.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/cloudflare/circl v1.6.1 // indirect
@@ -49,6 +48,7 @@ require (
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/hbollon/go-edlib v1.6.0 // indirect
 	github.com/icholy/digest v1.1.0 // indirect
 	github.com/imroc/req/v3 v3.52.2 // indirect
 	github.com/josharian/intern v1.0.0 // indirect

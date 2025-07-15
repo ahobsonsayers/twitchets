@@ -2,7 +2,9 @@ package config
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/ahobsonsayers/twitchets/notification"
 	"github.com/orsinium-labs/enum"
@@ -53,6 +55,37 @@ type NotificationConfig struct {
 	Telegram *notification.TelegramConfig `json:"telegram"`
 }
 
+func (c NotificationConfig) Validate() error {
+	if c.Ntfy != nil {
+		if !beginsWithHttp(c.Ntfy.Url) {
+			return errors.New("ntfy url must begin with 'http://' or 'https://'")
+		}
+		if c.Ntfy.Topic == "" {
+			return errors.New("ntfy topic must be set")
+		}
+	}
+
+	if c.Gotify != nil {
+		if !beginsWithHttp(c.Gotify.Url) {
+			return errors.New("gotify url must begin with 'http://' or 'https://'")
+		}
+		if c.Gotify.Token == "" {
+			return errors.New("gotify token cannot be empty")
+		}
+	}
+
+	if c.Telegram != nil {
+		if c.Telegram.ChatId == 0 {
+			return errors.New("telegram chat id cannot be empty")
+		}
+		if c.Telegram.Token == "" {
+			return errors.New("telegram token cannot be empty")
+		}
+	}
+
+	return nil
+}
+
 func (c NotificationConfig) Clients() (map[NotificationType]notification.Client, error) {
 	clients := map[NotificationType]notification.Client{}
 
@@ -84,4 +117,8 @@ func (c NotificationConfig) Clients() (map[NotificationType]notification.Client,
 	}
 
 	return clients, nil
+}
+
+func beginsWithHttp(url string) bool {
+	return strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://")
 }

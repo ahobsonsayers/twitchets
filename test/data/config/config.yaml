@@ -3,12 +3,12 @@ country: GB
 
 notification:
   ntfy:
-    url: example.com
+    url: http://example.com
     topic: test
     username: test
     password: test
   gotify:
-    url: example.com
+    url: http://example.com
     token: test
   telegram:
     token: test

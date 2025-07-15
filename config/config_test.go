@@ -26,7 +26,7 @@ func TestLoadConfig(t *testing.T) { // nolint: revive
 	expectedConfig := config.Config{
 		APIKey:  "test",
 		Country: country,
-		GlobalConfig: config.GlobalEventConfig{
+		GlobalTicketConfig: config.GlobalTicketListingConfig{
 			EventSimilarity: globalEventSimilarity,
 			Regions:         globalRegions,
 			NumTickets:      globalNumTickets,
@@ -34,13 +34,13 @@ func TestLoadConfig(t *testing.T) { // nolint: revive
 		},
 		Notification: config.NotificationConfig{
 			Ntfy: &notification.NtfyConfig{
-				Url:      "example.com",
+				Url:      "http://example.com",
 				Topic:    "test",
 				Username: "test",
 				Password: "test",
 			},
 			Gotify: &notification.GotifyConfig{
-				Url:   "example.com",
+				Url:   "http://example.com",
 				Token: "test",
 			},
 			Telegram: &notification.TelegramConfig{
@@ -48,7 +48,7 @@ func TestLoadConfig(t *testing.T) { // nolint: revive
 				ChatId: 1234,
 			},
 		},
-		TicketsConfig: []config.TicketConfig{
+		TicketConfigs: []config.TicketListingConfig{
 			{
 				// Ticket with only event set
 				Event: "Event 1",
@@ -90,7 +90,7 @@ func TestLoadConfig(t *testing.T) { // nolint: revive
 		},
 	}
 
-	require.EqualValues(t, expectedConfig, actualConfig)
+	require.Equal(t, expectedConfig, actualConfig)
 }
 
 func TestCombineConfigs(t *testing.T) { // nolint: revive
@@ -98,14 +98,14 @@ func TestCombineConfigs(t *testing.T) { // nolint: revive
 	conf, err := config.Load(configPath)
 	require.NoError(t, err)
 
-	actualCombinedConfigs := conf.CombineGlobalAndTicketConfig()
+	actualCombinedConfigs := conf.CombinedTicketListingConfigs()
 
 	globalEventSimilarity := 0.75
 	globalRegions := []twigots.Region{twigots.RegionLondon, twigots.RegionNorthWest}
 	globalNumTickets := 2
 	globalDiscount := 25.0
 
-	expectedCombinedConfigs := []config.TicketConfig{
+	expectedCombinedConfigs := []config.TicketListingConfig{
 		{
 			// Ticket with only event name set
 			Event:           "Event 1",
@@ -163,13 +163,13 @@ func TestCombineConfigs(t *testing.T) { // nolint: revive
 		{
 			// Ticket with globals unset
 			Event:           "Event 7",
-			EventSimilarity: nil,
+			EventSimilarity: lo.ToPtr(-1.0),
 			Regions:         []twigots.Region{},
-			NumTickets:      nil,
-			Discount:        nil,
+			NumTickets:      lo.ToPtr(-1),
+			Discount:        lo.ToPtr(-1.0),
 			Notification:    []config.NotificationType{},
 		},
 	}
 
-	require.EqualValues(t, expectedCombinedConfigs, actualCombinedConfigs)
+	require.Equal(t, expectedCombinedConfigs, actualCombinedConfigs)
 }
