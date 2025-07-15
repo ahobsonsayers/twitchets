@@ -71,7 +71,7 @@ func (c NotificationConfig) Clients() (map[NotificationType]notification.Client,
 			return nil, fmt.Errorf("failed to setup gotify client: %w", err)
 		}
 
-		clients[NotificationTypeNtfy] = gotifyClient
+		clients[NotificationTypeGotify] = gotifyClient
 	}
 
 	if c.Telegram != nil {
