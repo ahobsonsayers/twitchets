@@ -116,7 +116,7 @@ func fetchAndProcessTickets(
 		return
 	}
 
-	slog.Debug("Fetched tickets.", "number", len(fetchedListings))
+	slog.Debug("Fetched tickets.", "numNewTickets", len(fetchedListings))
 
 	if len(fetchedListings) == 0 {
 		return
