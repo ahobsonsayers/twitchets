@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"log/slog"
 	"math"
@@ -209,7 +210,7 @@ func ticketListingMatchesConfig(listing twigots.TicketListing, listingConfig con
 		wantedRegions := strings.Join(wantedRegionStrings, ", ")
 
 		slog.Warn(
-			"Found tickets for a wanted event, but region does not match one of the regions wanted.",
+			"Found tickets for a wanted event, but region is not in allowed list.",
 			"wantedEvent", listingConfig.Event,
 			"listingEvent", listing.Event.Name,
 			"wantedRegions", wantedRegions,
@@ -223,7 +224,7 @@ func ticketListingMatchesConfig(listing twigots.TicketListing, listingConfig con
 	checkNumTickets := filter.NumTickets(numTickets)
 	if !checkNumTickets(listing) {
 		slog.Warn(
-			"Found tickets for a wanted event, but number of tickets does not match the number wanted.",
+			"Found tickets for a wanted event, but number of tickets is incorrect.",
 			"wantedEvent", listingConfig.Event,
 			"listingEvent", listing.Event.Name,
 			"wantedNumTickets", numTickets,
@@ -233,25 +234,45 @@ func ticketListingMatchesConfig(listing twigots.TicketListing, listingConfig con
 	}
 
 	// Check discount
-	// If discount is close to 0 (e.g. 0 or a floating point error), set to -1 to allow any discount
+	// If value is close to 0 (e.g. 0 or a floating point error), set to -1 to allow any discount
 	// Otherwise divide by 100 to get a number between 0-1
-	discount := lo.FromPtr(listingConfig.Discount)
-	if math.Abs(discount) < 1e-5 {
-		discount = -1
-	} else {
-		discount /= 100
-	}
+	discount := changeZeroToNegative(lo.FromPtr(listingConfig.Discount)) / 100
 	checkDiscount := filter.MinDiscount(discount)
 	if !checkDiscount(listing) {
 		slog.Warn(
-			"Found tickets for a wanted event, but discount does not match the discount wanted.",
+			"Found tickets for a wanted event, but discount is too low.",
 			"wantedEvent", listingConfig.Event,
 			"listingEvent", listing.Event.Name,
-			"wantedDiscount", discount,
-			"listingDiscount", listing.Discount(),
+			"wantedDiscount", fmt.Sprintf("%.2f", discount),
+			"listingDiscount", fmt.Sprintf("%.2f", listing.Discount()),
+		)
+		return false
+	}
+
+	// Check max ticket price including fee
+	// If value is close to 0 (e.g. 0 or a floating point error), set to -1 to allow any discount
+	// Otherwise divide by 100 to get a number between 0-1
+	price := changeZeroToNegative(lo.FromPtr(listingConfig.MaxTicketPriceInclFee))
+	checkMaxTicketPriceInclFee := filter.MaxTicketPriceInclFee(price)
+	if !checkMaxTicketPriceInclFee(listing) {
+		slog.Warn(
+			"Found tickets for a wanted event, but ticket price including fee is too high.",
+			"wantedEvent", listingConfig.Event,
+			"listingEvent", listing.Event.Name,
+			"wantedPrice", fmt.Sprintf("£%.2f", price),
+			"listingPrice", listing.TicketPriceInclFee().String(),
 		)
 		return false
 	}
 
 	return true
+}
+
+// changeZeroToNegative changes a value that is 0 (or close to zero e.g. floating point error)
+// to a negative number - specifically -1
+func changeZeroToNegative(value float64) float64 {
+	if math.Abs(value) < 1e-5 {
+		return -1.0
+	}
+	return value
 }
