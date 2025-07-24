@@ -10,8 +10,8 @@ type GlobalTicketListingConfig struct {
 	EventSimilarity       float64            `json:"eventSimilarity"`
 	Regions               []twigots.Region   `json:"regions"`
 	NumTickets            int                `json:"numTickets"`
-	Discount              float64            `json:"discount"`
-	MaxTicketPriceInclFee float64            `json:"maxTicketPriceInclFee"`
+	Min                   float64            `json:"discount"`
+	MaxTicketPriceInclFee float64            `json:"maxTicketPrice"`
 	Notification          []NotificationType `json:"notification"`
 }
 
@@ -21,8 +21,8 @@ type TicketListingConfig struct {
 	EventSimilarity       *float64           `json:"eventSimilarity"`
 	Regions               []twigots.Region   `json:"regions"`
 	NumTickets            *int               `json:"numTickets"`
-	Discount              *float64           `json:"discount"`
-	MaxTicketPriceInclFee *float64           `json:"maxTicketPriceInclFee"`
+	MinDiscount           *float64           `json:"discount"`
+	MaxTicketPriceInclFee *float64           `json:"maxTicketPrice"`
 	Notification          []NotificationType `json:"notification"`
 }
 
@@ -66,10 +66,10 @@ func CombineGlobalAndTicketListingConfigs( //nolint: revive
 		}
 
 		// Set discount, using global if not specified
-		if config.Discount == nil {
-			combinedConfig.Discount = &globalConfig.Discount
+		if config.MinDiscount == nil {
+			combinedConfig.MinDiscount = &globalConfig.Min
 		} else {
-			combinedConfig.Discount = config.Discount
+			combinedConfig.MinDiscount = config.MinDiscount
 		}
 
 		// Set max ticket price including fee, using global if not specified

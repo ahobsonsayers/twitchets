@@ -11,12 +11,12 @@ I built this tool because the official Twickets app has limitations on the numbe
 
 **Note**: This program does **not** buy tickets, reserve them automatically, or do anything unethical. It simply notifies you of new ticket listings!
 
-Powered by [twigots](https://github.com/ahobsonsayers/twigots), a go package to fetch and filter event ticket listings from Twickets 🎟️
+Powered by [twigots](https://github.com/ahobsonsayers/twigots), a Go package to fetch and filter event ticket listings from Twickets 🎟️
 
 ## Features
 
 - No limit on the number of events you can watch for!
-- On watch for tickets with a certain discount, number of tickets, and location
+- Watch for tickets with a certain discount, number of tickets, and location
 - Show more details in the notifications, such as event date/time, number of tickets, and discount
 - Faster notifications than the official Twickets app
 - No need to have the Twickets app or an account
@@ -26,20 +26,20 @@ Powered by [twigots](https://github.com/ahobsonsayers/twigots), a go package to 
 
 To use this tool, you will need a Twickets API key. Although Twickets doesn't provide a free API, you can easily obtain a key by following these steps:
 
-1.  Visit the [Twickets Live Feed](https://www.twickets.live/app/catalog/browse)
-2.  Open your browser's Developer Tools (F12) and navigate to the Network tab
-3.  Look for the GET request to `https://www.twickets.live/services/catalogue` and copy the `api_key` query parameter. You might need to refresh the page first if nothing appears in this tab.
+1. Visit the [Twickets Live Feed](https://www.twickets.live/app/catalog/browse)
+2. Open your browser's Developer Tools (F12) and navigate to the Network tab
+3. Look for the GET request to `https://www.twickets.live/services/catalogue` and copy the `api_key` query parameter. You might need to refresh the page first if nothing appears in this tab.
 
 This API key is not provided here due to liability concerns, but it appears to be a fixed, unchanging value.
 
-## Running
+## Installation & Running
 
-The best way to run twitchets is using Docker:
+The recommended way to run twitchets is using Docker:
 
 ```bash
 docker run -d \
     --name twitchets \
-    -v <path to config>:/twitchets/config.yaml
+    -v <path to config>:/twitchets/config.yaml \
     --restart unless-stopped \
     arranhs/twitchets:latest
 ```
@@ -64,6 +64,7 @@ The configuration file structure can be seen in [`config.example.yaml`](./config
 
 ```yaml
 apiKey: <your twickets api key> # REQUIRED: See README.md for details on how to obtain
+
 country: GB # Currently only GB is supported
 
 # Notification service configuration
@@ -106,9 +107,9 @@ global:
 
   # Maximum price per ticket (including fee) in pounds (£)
   # Default: Any price
-  maxTicketPriceIncludingFee: 50 # Maximum ticket price of £50 including fee
+  maxTicketPrice: 50 # Maximum ticket price of £50 including fee
 
-  # Minimum ticket discount (including fee) on the original price as a percentage
+  # Minimum discount (including fee) on the original price as a percentage
   # Default: Any discount (including no discount)
   # discount: 10 # At least 10% off original price
 
@@ -126,11 +127,11 @@ global:
 # - -1 for numeric values
 tickets:
   - event: Lion King
-    maxTicketPriceIncludingFee: 30 # Max £30 per ticket
+    maxTicketPrice: 30 # Max £30 per ticket
 
   - event: Coldplay
     numTickets: 4 # Need exactly 4 tickets
-    maxTicketPriceIncludingFee: -1 # Reset to default: Any max price
+    maxTicketPrice: -1 # Reset to default: Any max price
     discount: 25 # Must be at least 25% off
 
   - event: Taylor Swift
@@ -150,10 +151,10 @@ tickets:
 
 ## How does the event name matching/similarity work?
 
-You can see more about how this works in the [twigots readme here](https://github.com/ahobsonsayers/twigots#how-does-the-event-name-matchingsimilarity-work)
+You can see more about how this works in the [twigots readme here](https://github.com/ahobsonsayers/twigots#how-does-the-event-name-matchingsimilarity-work).
 
 ## Why the name twitchets?
 
-Because I feel like sometimes you need to have twitch like reactions to snap up tickets on Twickets before someone else gets them - which this tool helps you do. Therefore the mangling together of **twitch** and **Twickets** seemed fun and appropriate.
+Because I feel like sometimes you need to have twitch-like reactions to snap up tickets on Twickets before someone else gets them - which this tool helps you do. Therefore the mangling together of **twitch** and **Twickets** seemed fun and appropriate.
 
 [![Hits](https://hits.sh/github.com/ahobsonsayers/twitchets.svg?view=today-total&label=Visitors%20Day%20%2F%20Total)](https://hits.sh/github.com/ahobsonsayers/twitchets/)

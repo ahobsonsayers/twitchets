@@ -21,16 +21,18 @@ func TestLoadConfig(t *testing.T) { // nolint: revive
 	globalEventSimilarity := 0.75
 	globalRegions := []twigots.Region{twigots.RegionLondon, twigots.RegionNorthWest}
 	globalNumTickets := 2
+	globalMaxTicketPrice := 25.0
 	globalDiscount := 25.0
 
 	expectedConfig := config.Config{
 		APIKey:  "test",
 		Country: country,
 		GlobalTicketConfig: config.GlobalTicketListingConfig{
-			EventSimilarity: globalEventSimilarity,
-			Regions:         globalRegions,
-			NumTickets:      globalNumTickets,
-			Discount:        globalDiscount,
+			EventSimilarity:       globalEventSimilarity,
+			Regions:               globalRegions,
+			MaxTicketPriceInclFee: globalMaxTicketPrice,
+			NumTickets:            globalNumTickets,
+			Min:                   globalDiscount,
 		},
 		Notification: config.NotificationConfig{
 			Ntfy: &notification.NtfyConfig{
@@ -70,22 +72,28 @@ func TestLoadConfig(t *testing.T) { // nolint: revive
 			},
 			{
 				// Ticket with discount set
-				Event:    "Event 5",
-				Discount: lo.ToPtr(15.0),
+				Event:                 "Event 5",
+				MaxTicketPriceInclFee: lo.ToPtr(15.0),
+			},
+			{
+				// Ticket with discount set
+				Event:       "Event 6",
+				MinDiscount: lo.ToPtr(15.0),
 			},
 			{
 				// Ticket with notification set
-				Event:        "Event 6",
+				Event:        "Event 7",
 				Notification: []config.NotificationType{config.NotificationTypeNtfy},
 			},
 			{
 				// Ticket with globals unset
-				Event:           "Event 7",
-				EventSimilarity: lo.ToPtr(-1.0),
-				Regions:         []twigots.Region{},
-				NumTickets:      lo.ToPtr(-1),
-				Discount:        lo.ToPtr(-1.0),
-				Notification:    []config.NotificationType{},
+				Event:                 "Event 8",
+				EventSimilarity:       lo.ToPtr(-1.0),
+				Regions:               []twigots.Region{},
+				NumTickets:            lo.ToPtr(-1),
+				MaxTicketPriceInclFee: lo.ToPtr(-1.0),
+				MinDiscount:           lo.ToPtr(-1.0),
+				Notification:          []config.NotificationType{},
 			},
 		},
 	}
@@ -103,71 +111,89 @@ func TestCombineConfigs(t *testing.T) { // nolint: revive
 	globalEventSimilarity := 0.75
 	globalRegions := []twigots.Region{twigots.RegionLondon, twigots.RegionNorthWest}
 	globalNumTickets := 2
+	globalMaxTicketPrice := 25.0
 	globalDiscount := 25.0
 
 	expectedCombinedConfigs := []config.TicketListingConfig{
 		{
 			// Ticket with only event name set
-			Event:           "Event 1",
-			EventSimilarity: &globalEventSimilarity,
-			Regions:         globalRegions,
-			NumTickets:      &globalNumTickets,
-			Discount:        &globalDiscount,
-			Notification:    config.NotificationTypes.Members(),
+			Event:                 "Event 1",
+			EventSimilarity:       &globalEventSimilarity,
+			Regions:               globalRegions,
+			NumTickets:            &globalNumTickets,
+			MaxTicketPriceInclFee: &globalMaxTicketPrice,
+			MinDiscount:           &globalDiscount,
+			Notification:          config.NotificationTypes.Members(),
 		},
 		{
 			// Ticket with event similarity set
-			Event:           "Event 2",
-			EventSimilarity: lo.ToPtr(0.90),
-			Regions:         globalRegions,
-			NumTickets:      &globalNumTickets,
-			Discount:        &globalDiscount,
-			Notification:    config.NotificationTypes.Members(),
+			Event:                 "Event 2",
+			EventSimilarity:       lo.ToPtr(0.90),
+			Regions:               globalRegions,
+			NumTickets:            &globalNumTickets,
+			MaxTicketPriceInclFee: &globalMaxTicketPrice,
+			MinDiscount:           &globalDiscount,
+			Notification:          config.NotificationTypes.Members(),
 		},
 		{
 			// Ticket with regions set
-			Event:           "Event 3",
-			EventSimilarity: &globalEventSimilarity,
-			Regions:         []twigots.Region{twigots.RegionSouthWest},
-			NumTickets:      &globalNumTickets,
-			Discount:        &globalDiscount,
-			Notification:    config.NotificationTypes.Members(),
+			Event:                 "Event 3",
+			EventSimilarity:       &globalEventSimilarity,
+			Regions:               []twigots.Region{twigots.RegionSouthWest},
+			NumTickets:            &globalNumTickets,
+			MaxTicketPriceInclFee: &globalMaxTicketPrice,
+			MinDiscount:           &globalDiscount,
+			Notification:          config.NotificationTypes.Members(),
 		},
 		{
 			// Ticket with num tickets set
-			Event:           "Event 4",
-			EventSimilarity: &globalEventSimilarity,
-			Regions:         globalRegions,
-			NumTickets:      lo.ToPtr(1),
-			Discount:        &globalDiscount,
-			Notification:    config.NotificationTypes.Members(),
+			Event:                 "Event 4",
+			EventSimilarity:       &globalEventSimilarity,
+			Regions:               globalRegions,
+			NumTickets:            lo.ToPtr(1),
+			MaxTicketPriceInclFee: &globalMaxTicketPrice,
+			MinDiscount:           &globalDiscount,
+			Notification:          config.NotificationTypes.Members(),
+		},
+		{
+			// Ticket with max ticket price set
+			Event:                 "Event 5",
+			EventSimilarity:       &globalEventSimilarity,
+			Regions:               globalRegions,
+			NumTickets:            &globalNumTickets,
+			MaxTicketPriceInclFee: lo.ToPtr(15.0),
+			MinDiscount:           &globalDiscount,
+			Notification:          config.NotificationTypes.Members(),
 		},
 		{
 			// Ticket with discount set
-			Event:           "Event 5",
-			EventSimilarity: &globalEventSimilarity,
-			Regions:         globalRegions,
-			NumTickets:      &globalNumTickets,
-			Discount:        lo.ToPtr(15.0),
-			Notification:    config.NotificationTypes.Members(),
+			Event:                 "Event 6",
+			EventSimilarity:       &globalEventSimilarity,
+			Regions:               globalRegions,
+			NumTickets:            &globalNumTickets,
+			MaxTicketPriceInclFee: &globalMaxTicketPrice,
+			MinDiscount:           lo.ToPtr(15.0),
+			Notification:          config.NotificationTypes.Members(),
 		},
 		{
 			// Ticket with notification set
-			Event:           "Event 6",
-			EventSimilarity: &globalEventSimilarity,
-			Regions:         globalRegions,
-			NumTickets:      &globalNumTickets,
-			Discount:        &globalDiscount,
-			Notification:    []config.NotificationType{config.NotificationTypeNtfy},
+			Event:                 "Event 7",
+			EventSimilarity:       &globalEventSimilarity,
+			Regions:               globalRegions,
+			NumTickets:            &globalNumTickets,
+			MaxTicketPriceInclFee: &globalMaxTicketPrice,
+			MinDiscount:           &globalDiscount,
+			Notification:          []config.NotificationType{config.NotificationTypeNtfy},
 		},
 		{
 			// Ticket with globals unset
-			Event:           "Event 7",
-			EventSimilarity: lo.ToPtr(-1.0),
-			Regions:         []twigots.Region{},
-			NumTickets:      lo.ToPtr(-1),
-			Discount:        lo.ToPtr(-1.0),
-			Notification:    []config.NotificationType{},
+			Event:                 "Event 8",
+			EventSimilarity:       lo.ToPtr(-1.0),
+			Regions:               []twigots.Region{},
+			NumTickets:            lo.ToPtr(-1),
+			MaxTicketPriceInclFee: lo.ToPtr(-1.0),
+			MinDiscount:           lo.ToPtr(-1.0),
+			Notification:          []config.NotificationType{},
 		},
 	}
 

@@ -20,6 +20,7 @@ global:
     - GBLO
     - GBNW
   numTickets: 2
+  maxTicketPrice: 25
   discount: 25
 
 tickets:
@@ -38,18 +39,23 @@ tickets:
   - event: Event 4
     numTickets: 1
 
-  # Ticket with discount set
+  # Ticket with max ticket price set
   - event: Event 5
+    maxTicketPrice: 15
+
+  # Ticket with discount set
+  - event: Event 6
     discount: 15
 
   # Ticket with notification set
-  - event: Event 6
+  - event: Event 7
     notification: [ntfy]
 
   # Ticket with globals unset
-  - event: Event 7
+  - event: Event 8
     eventSimilarity: -1
     regions: []
     numTickets: -1
+    maxTicketPrice: -1
     discount: -1
     notification: []

@@ -236,7 +236,7 @@ func ticketListingMatchesConfig(listing twigots.TicketListing, listingConfig con
 	// Check discount
 	// If value is close to 0 (e.g. 0 or a floating point error), set to -1 to allow any discount
 	// Otherwise divide by 100 to get a number between 0-1
-	discount := changeZeroToNegative(lo.FromPtr(listingConfig.Discount)) / 100
+	discount := changeZeroToNegative(lo.FromPtr(listingConfig.MinDiscount)) / 100
 	checkDiscount := filter.MinDiscount(discount)
 	if !checkDiscount(listing) {
 		slog.Warn(

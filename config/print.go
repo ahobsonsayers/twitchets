@@ -43,10 +43,10 @@ func PrintTicketListingConfig(config TicketListingConfig) { //nolint
 		fmt.Printf("Number of Tickets: %d\n", *config.NumTickets)
 	}
 
-	if config.Discount == nil || *config.Discount <= 0.0 {
+	if config.MinDiscount == nil || *config.MinDiscount <= 0.0 {
 		fmt.Println("Discount: Any")
 	} else {
-		fmt.Printf("Discount: %.0f%%\n", *config.Discount)
+		fmt.Printf("Discount: %.0f%%\n", *config.MinDiscount)
 	}
 
 	if len(config.Notification) == 0 {
