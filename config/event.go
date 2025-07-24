@@ -1,6 +1,10 @@
 package config
 
-import "gopkg.in/yaml.v3"
+import (
+	"errors"
+
+	"gopkg.in/yaml.v3"
+)
 
 type Event struct {
 	Name       string   `json:"name"`
@@ -28,6 +32,9 @@ func (e *Event) UnmarshalYAML(node *yaml.Node) error {
 		}
 
 		*e = Event(event)
+
+	default:
+		return errors.New("event has wrong type")
 	}
 
 	return nil
