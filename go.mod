@@ -3,7 +3,7 @@ module github.com/ahobsonsayers/twitchets
 go 1.24
 
 require (
-	github.com/ahobsonsayers/twigots v0.5.0
+	github.com/ahobsonsayers/twigots v0.5.1
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/gotify/go-api-client/v2 v2.0.4
 	github.com/joho/godotenv v1.5.1
@@ -26,7 +26,6 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/cloudflare/circl v1.6.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/deckarep/golang-set/v2 v2.8.0 // indirect
 	github.com/emersion/go-sasl v0.0.0-20241020182733-b788ff22d5a6 // indirect
 	github.com/emersion/go-smtp v0.21.3 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
