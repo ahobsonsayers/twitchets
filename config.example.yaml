@@ -1,4 +1,4 @@
-apiKey: <your twickets api key> # REQUIRED: See README.md for details on how to obtain
+apiKey: <83d6ec0c-54bb-4da3-b2a1-f3cb47b984f1> # REQUIRED: See README.md for details on how to obtain
 
 country: GB # Currently only GB is supported
 
@@ -6,8 +6,8 @@ country: GB # Currently only GB is supported
 # Remove/comment out services you don't need
 notification:
   ntfy:
-    url: <your ntfy url> # You can use the public instance at https://ntfy.sh
-    topic: <your ntfy topic> # If using https://ntfy.sh, make sure this is unique to you!
+    url: <https://www.twickets.live> # You can use the public instance at https://ntfy.sh
+    topic: <oasis> # If using https://ntfy.sh, make sure this is unique to you!
     username: <your ntfy username> # Optional: for authenticated instances
     password: <your ntfy password> # Optional: for authenticated instances
 
@@ -42,11 +42,11 @@ global:
 
   # Maximum price per ticket (including fee) in pounds (£)
   # Default: Any price
-  maxTicketPrice: 50 # Maximum ticket price of £50 including fee
+  maxTicketPrice: 1000 # Maximum ticket price of £50 including fee
 
   # Minimum discount (including fee) on the original price as a percentage
   # Default: Any discount (including no discount)
-  # discount: 10 # At least 10% off original price
+  # discount: 0 # At least 10% off original price
 
   # Notification services to use
   # Default: All configured services
