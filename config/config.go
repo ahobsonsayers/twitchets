@@ -9,6 +9,7 @@ import (
 
 type Config struct {
 	APIKey             string                    `json:"apiKey"`
+	FlareSolverrUrl    string                    `json:"flareSolverrUrl"`
 	Country            twigots.Country           `json:"country"`
 	Notification       NotificationConfig        `json:"notification"`
 	GlobalTicketConfig GlobalTicketListingConfig `json:"global"`

@@ -25,7 +25,10 @@ const (
 	refetchTime   = 1 * time.Minute
 )
 
-var latestTicketTime time.Time
+var (
+	flaresolverrUrl  string
+	latestTicketTime time.Time
+)
 
 func init() {
 	_ = godotenv.Load()
@@ -51,8 +54,15 @@ func main() {
 		log.Fatalf("config error:, %v", err)
 	}
 
+	// Get client options
+	clientOpts := []twigots.ClientOpt{}
+	if conf.FlareSolverrUrl != "" {
+		clientOpt := twigots.WithFlareSolverr(conf.FlareSolverrUrl)
+		clientOpts = append(clientOpts, clientOpt)
+	}
+
 	// Create twickets client
-	client, err := twigots.NewClient(conf.APIKey)
+	client, err := twigots.NewClient(conf.APIKey, clientOpts...)
 	if err != nil {
 		log.Fatal(err)
 	}

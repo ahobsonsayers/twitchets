@@ -1,5 +1,7 @@
 apiKey: <your twickets api key> # REQUIRED: See README.md for details on how to obtain
 
+flareSolverrUrl: http://localhost:8191
+
 country: GB # Currently only GB is supported
 
 # Notification service configuration

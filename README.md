@@ -56,6 +56,27 @@ services:
       - <path to config>:/twitchets
 ```
 
+If you want to run with [FlareSolverr](https://github.com/FlareSolverr/FlareSolverr) or [Byparr](https://github.com/ThePhaseless/Byparr) to help prevent CloudFlare blocking, you can run with docker compose like so:
+
+```yaml
+services:
+  twitchets:
+    container_name: twitchets
+    image: arranhs/twitchets:latest
+    restart: unless-stopped
+    volumes:
+      - <path to config>:/twitchets
+
+  flaresolverr:
+    container_name: flaresolverr
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/London
+```
+
+remembering to set the `flareSolverrUrl` in your config file to `http://flaresolverr:8191`
+
 ## Configuration
 
 twitchets looks for a `config.yaml` file in your current working directory and fails to start if it's not found.
@@ -64,6 +85,8 @@ The configuration file structure can be seen in [`config.example.yaml`](./config
 
 ```yaml
 apiKey: <your twickets api key> # REQUIRED: See README.md for details on how to obtain
+
+flareSolverrUrl: http://localhost:8191 # Remove this if not running with FlareSolverr or Byparr
 
 country: GB # Currently only GB is supported
 
