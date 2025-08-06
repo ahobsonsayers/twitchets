@@ -3,6 +3,7 @@
   "files": {
     "ignoreUnknown": true
   },
+
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
@@ -16,6 +17,13 @@
     "enabled": true,
     "rules": {
       "recommended": true
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
     }
   }
 }
