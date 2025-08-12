@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -13,9 +12,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@radix-ui/react-collapsible";
-import { ChevronDown, ChevronRight } from "lucide-react";
-import type React from "react";
-import { useState, useEffect, ReactNode } from "react";
+import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
+import { type ReactNode, useState } from "react";
 
 interface CollapsibleCardProps {
   title: string;
@@ -37,15 +35,17 @@ export function CollapsibleCard({
   return (
     <Card>
       <Collapsible>
-        <CollapsibleTrigger onClick={toggleCollapse}>
-          <CardHeader className="flex items-center">
-            <CardTitle>{title}</CardTitle>
-            {description && <CardDescription>{description}</CardDescription>}
-            <div className="alignRight">
+        <CollapsibleTrigger asChild onClick={toggleCollapse}>
+          <CardHeader className="flex w-full items-center">
+            <div className="flex flex-col">
+              <CardTitle>{title}</CardTitle>
+              {description && <CardDescription>{description}</CardDescription>}
+            </div>
+            <div className="ml-auto">
               {isCollapsed ? (
-                <ChevronRight className="h-4 w-4" />
+                <ChevronsUpDown className="h-5 w-5" />
               ) : (
-                <ChevronDown className="h-4 w-4" />
+                <ChevronsDownUp className="h-5 w-5" />
               )}
             </div>
           </CardHeader>

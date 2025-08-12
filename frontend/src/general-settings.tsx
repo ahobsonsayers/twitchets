@@ -1,25 +1,9 @@
 "use client";
 
 import { CollapsibleCard } from "./components/collapsible-card";
-import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
-interface GeneralSettingsProps {}
+type GeneralSettingsProps = {};
 
 export function GeneralSettings({}: GeneralSettingsProps) {
   const [showApiKey, setShowApiKey] = useState(false);
