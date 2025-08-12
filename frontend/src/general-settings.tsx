@@ -1,5 +1,6 @@
 "use client";
 
+import { CollapsibleCard } from "./components/collapsible-card";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -23,13 +24,11 @@ interface GeneralSettingsProps {}
 export function GeneralSettings({}: GeneralSettingsProps) {
   const [showApiKey, setShowApiKey] = useState(false);
 
-  <Collapsible>
-    <CollapsibleTrigger>Can I use this in my project?</CollapsibleTrigger>
-    <CollapsibleContent>
-      Yes. Free to use for personal and commercial projects. No attribution
-      required.
-    </CollapsibleContent>
-  </Collapsible>;
+  return (
+    <CollapsibleCard title="hello" description="hello">
+      hello
+    </CollapsibleCard>
+  );
 
   //   return (
   //     <CollapsibleSection

@@ -22,9 +22,7 @@ tasks:
 
   test:
     cmds:
-      - |
-        go clean -testcache
-        go test ./...
+      - go test ./...
 
   build:
     cmds:
@@ -34,9 +32,14 @@ tasks:
     cmds:
       - docker build . -t arranhs/twitchets
 
-  run:
+  run:be:
     cmds:
       - go run .
+
+  run:fe:
+    dir: frontend
+    cmds:
+      - pnpm dev
 
   run:docker:
     deps: [build:docker]
