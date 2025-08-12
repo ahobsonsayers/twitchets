@@ -2,13 +2,23 @@
 version: "3"
 
 tasks:
-  lint:
+  format:be:
+    cmds:
+      - go fmt ./...
+
+  lint:be:
     cmds:
       - golangci-lint run
 
-  format:
+  format:fe:
+    dir: frontend
     cmds:
-      - go fmt ./...
+      - pnpm run format
+
+  lint:fe:
+    dir: frontend
+    cmds:
+      - pnpm run lint
 
   test:
     cmds:
