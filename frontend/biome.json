@@ -3,27 +3,13 @@
   "files": {
     "ignoreUnknown": true
   },
-
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "double"
-    }
-  },
   "formatter": {
-    "enabled": true,
-    "indentStyle": "space"
+    "enabled": false
   },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true
-    }
-  },
-  "assist": {
-    "actions": {
-      "source": {
-        "organizeImports": "on"
-      }
     }
   }
 }
