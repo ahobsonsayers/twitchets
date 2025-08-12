@@ -15,7 +15,7 @@ function App() {
         </h1>
       </div>
 
-      <GeneralSettings></GeneralSettings>
+      <GeneralSettings />
 
       <div>{count}</div>
     </div>
