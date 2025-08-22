@@ -53,7 +53,8 @@ global:
   notification:
     - ntfy
 
-  refetchTime: 1m
+# How long should we wait before polling Twickets?
+refetchTime: 1m
 
 # Individual ticket configuration
 # Available settings match the global ones
