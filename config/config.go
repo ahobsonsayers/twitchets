@@ -18,7 +18,7 @@ type Config struct {
 	TicketConfigs       []TicketListingConfig     `json:"tickets"`
 }
 
-func (c Config) Validate() error {
+func (c *Config) Validate() error {
 	if c.APIKey == "" {
 		return errors.New("api key must be set")
 	}
