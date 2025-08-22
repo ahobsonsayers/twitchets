@@ -74,7 +74,7 @@ func main() {
 	fetchAndProcessTickets(client, notificationClients, listingConfigs)
 
 	// Create ticker
-	ticker := time.NewTicker(conf.RefetchTime)
+	ticker := time.NewTicker(conf.RefetchTimeDuration)
 	defer ticker.Stop()
 
 	// Loop until exit

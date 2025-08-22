@@ -9,12 +9,13 @@ import (
 )
 
 type Config struct {
-	APIKey             string                    `json:"apiKey"`
-	Country            twigots.Country           `json:"country"`
-	RefetchTime        time.Duration             `json:"refetchTime"`
-	Notification       NotificationConfig        `json:"notification"`
-	GlobalTicketConfig GlobalTicketListingConfig `json:"global"`
-	TicketConfigs      []TicketListingConfig     `json:"tickets"`
+	APIKey              string                    `json:"apiKey"`
+	Country             twigots.Country           `json:"country"`
+	RefetchTime         string                    `json:"refetchTime"`
+	RefetchTimeDuration time.Duration             `json:"-"`
+	Notification        NotificationConfig        `json:"notification"`
+	GlobalTicketConfig  GlobalTicketListingConfig `json:"global"`
+	TicketConfigs       []TicketListingConfig     `json:"tickets"`
 }
 
 func (c Config) Validate() error {
@@ -29,8 +30,11 @@ func (c Config) Validate() error {
 		return fmt.Errorf("country '%s' is not valid", c.Country)
 	}
 
-	if c.RefetchTime <= 0 {
-		c.RefetchTime = 1 * time.Minute // Default value
+	var timeParseError error
+	c.RefetchTimeDuration, timeParseError = time.ParseDuration(c.RefetchTime)
+
+	if timeParseError != nil {
+		c.RefetchTimeDuration = 1 * time.Minute // Default value
 	}
 
 	err := c.Notification.Validate()
