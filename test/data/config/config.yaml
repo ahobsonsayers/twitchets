@@ -23,6 +23,8 @@ global:
   maxTicketPrice: 25
   discount: 25
 
+refetchTime: 30s
+
 tickets:
   # Ticket with only event set
   - event: Event 1

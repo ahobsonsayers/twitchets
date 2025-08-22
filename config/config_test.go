@@ -2,6 +2,7 @@ package config_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/ahobsonsayers/twigots"
 	"github.com/ahobsonsayers/twitchets/config"
@@ -23,10 +24,14 @@ func TestLoadConfig(t *testing.T) { // nolint: revive
 	globalNumTickets := 2
 	globalMaxTicketPrice := 25.0
 	globalDiscount := 25.0
+	refetchTime := "30s"
+	refetchTimeDuration := 30 * time.Second
 
 	expectedConfig := config.Config{
-		APIKey:  "test",
-		Country: country,
+		APIKey:              "test",
+		Country:             country,
+		RefetchTime:         refetchTime,
+		RefetchTimeDuration: refetchTimeDuration,
 		GlobalTicketConfig: config.GlobalTicketListingConfig{
 			EventSimilarity:       globalEventSimilarity,
 			Regions:               globalRegions,
