@@ -50,7 +50,7 @@ export function CollapsibleCard({
             </div>
           </CardHeader>
         </CollapsibleTrigger>
-        <CollapsibleContent>
+        <CollapsibleContent className="pt-4">
           <CardContent>{children}</CardContent>
         </CollapsibleContent>
       </Collapsible>

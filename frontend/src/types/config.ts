@@ -1,8 +1,6 @@
-type Country = "GB";
-
 export interface Config {
   apiKey: string;
-  country: Country;
+  country: string;
 }
 
 export function newConfig(): Config {

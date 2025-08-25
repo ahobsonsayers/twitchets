@@ -1,17 +1,10 @@
 "use client";
 
-import { Button } from "./components/ui/button";
 import { GeneralSettings } from "./general-settings";
 import { ConfigProvider } from "./providers/config";
 import { ThemeProvider } from "./providers/theme";
-import type { Config } from "./types/config";
-import { useState } from "react";
 
 function App() {
-  const config: Config = {
-    apiKey: "",
-    country: "GB",
-  };
   return (
     <ThemeProvider>
       <ConfigProvider>
@@ -21,7 +14,7 @@ function App() {
               Application Configuration
             </h1>
           </div>
-          <GeneralSettings config={config} />
+          <GeneralSettings />
         </div>
       </ConfigProvider>
     </ThemeProvider>
