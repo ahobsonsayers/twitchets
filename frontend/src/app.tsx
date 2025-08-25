@@ -1,6 +1,6 @@
 "use client";
 
-import { GeneralSettings } from "./general-settings";
+import { GeneralSettings } from "./settings-general";
 import { ConfigProvider } from "./providers/config";
 import { ThemeProvider } from "./providers/theme";
 
