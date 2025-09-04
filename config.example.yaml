@@ -32,11 +32,11 @@ global:
   regions:
     - GBLO # London only
 
-  # Event name similarity matching (0.0 - 1.0)
+  # Required event name similarity (0.0 - 1.0)
   # Default: 0.9 (allows for minor naming differences)
   eventSimilarity: 0.9
 
-  # Minimum number of tickets required in listing
+  # Required Number of tickets
   # Default: Any number of tickets
   numTickets: 2 # Exactly two tickets
 

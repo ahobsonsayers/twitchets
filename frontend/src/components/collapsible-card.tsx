@@ -17,7 +17,7 @@ import { type ReactNode, useState } from "react";
 
 interface CollapsibleCardProps {
   title: string;
-  description: string;
+  description?: string;
   children?: ReactNode;
 }
 

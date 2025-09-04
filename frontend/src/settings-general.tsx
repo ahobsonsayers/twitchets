@@ -37,7 +37,6 @@ export function GeneralSettings() {
           </p>
           <div className="flex">
             <Input
-              id="apiKey"
               type={showApiKey ? "text" : "password"}
               placeholder="Enter your API key"
               value={config.apiKey}
@@ -61,6 +60,7 @@ export function GeneralSettings() {
             </Button>
           </div>
         </div>
+
         <div className="space-y-2">
           <Label>Country</Label>
           <p className="text-muted-foreground text-sm">
