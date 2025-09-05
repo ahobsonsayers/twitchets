@@ -19,7 +19,7 @@ export interface NtfyConfig {
 export interface GlobalConfig {
   regions?: string[];
   eventSimilarity?: number;
-  numTickets?: bigint;
+  numTickets?: number; // Must be an integer
   maxTicketPrice?: number;
   discount?: number;
 }
