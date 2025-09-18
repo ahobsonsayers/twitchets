@@ -4,7 +4,7 @@ import { Label } from "./components/ui/label";
 import { REGIONS } from "./constants/regions";
 import { useConfig } from "./providers/config";
 import { ResetButton } from "./reset";
-import { SettingField } from "@/setting-field";
+import { SettingField } from "@/components/setting-field";
 
 export function GlobalSettings() {
   const { config, updateConfig } = useConfig();
