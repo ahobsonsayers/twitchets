@@ -9,7 +9,7 @@ interface SettingFieldProps<T extends string | number> {
   label: string;
   description: string;
   placeholder?: string;
-  type: "text" | "number" | "integer";
+  type: "text" | "number" | "integer" | "fraction" | "percentage" | "price";
   value?: T;
   onChange: (value?: T) => void;
   onReset?: () => void;
@@ -31,7 +31,7 @@ export function SettingField<T extends string | number>({
         {!!onReset && <ResetButton resetType="default" onClick={onReset} />}
       </div>
       <p className="text-muted-foreground text-sm">{description}</p>
-      {/* TODO use use-mask-input - but currently reverses numbers */}
+      {/* TODO better to use use-mask-input - but this currently reverses numbers??? */}
       {(type === "text" && (
         <Input
           type="text"
@@ -46,8 +46,23 @@ export function SettingField<T extends string | number>({
           placeholder={placeholder}
           allowNegative={false}
           decimalScale={type === "integer" ? 0 : undefined}
-          onValueChange={(values) => onChange(values.floatValue as T)}
+          onValueChange={(values) => {
+            onChange(values.floatValue as T);
+          }}
+          isAllowed={(values) => {
+            if (type === "fraction") {
+              return values.floatValue === undefined || values.floatValue <= 1;
+            }
+            if (type === "percentage") {
+              return (
+                values.floatValue === undefined || values.floatValue <= 100
+              );
+            }
+            return true;
+          }}
           valueIsNumericString={true}
+          suffix={type === "percentage" ? "%" : ""}
+          prefix={type === "price" ? "£" : ""}
         />
       )}
     </div>

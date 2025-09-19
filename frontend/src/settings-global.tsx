@@ -64,7 +64,7 @@ export function GlobalSettings() {
             label="Event Similarity"
             description="Required event name similarity, between 0.0 - 1.0"
             placeholder="0.9"
-            type="number"
+            type="fraction"
             value={config.global.eventSimilarity}
             onChange={(value) =>
               updateConfig((config) => {
@@ -98,7 +98,7 @@ export function GlobalSettings() {
             label="Max Ticket Price"
             description="Maximum price per ticket (including fee) in pounds (£)"
             placeholder="No Max"
-            type="number"
+            type="price"
             value={config.global.maxTicketPrice}
             onChange={(value) =>
               updateConfig((config) => {
@@ -115,7 +115,7 @@ export function GlobalSettings() {
             label="Minimum Discount"
             description="Minimum discount (including fee) on the original price as a percentage"
             placeholder="No Min"
-            type="number"
+            type="percentage"
             value={config.global.discount}
             onChange={(value) =>
               updateConfig((config) => {
