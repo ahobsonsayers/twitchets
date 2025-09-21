@@ -11,8 +11,8 @@ export function GlobalSettings() {
 
   return (
     <CollapsibleCard
-      title="Global Settings"
-      description="Settings that apply to all tickets"
+      title="Global Configuration"
+      description="Configuration that apply to all tickets"
     >
       <div className="space-y-4">
         <div className="space-y-2">

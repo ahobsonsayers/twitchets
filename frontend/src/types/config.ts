@@ -2,7 +2,8 @@ export interface Config {
   apiKey: string;
   country: string;
   notification: NotificationConfig;
-  global: GlobalConfig;
+  global: CommonConfig;
+  tickets: TicketConfig[];
 }
 
 export interface NotificationConfig {
@@ -16,12 +17,16 @@ export interface NtfyConfig {
   password?: string;
 }
 
-export interface GlobalConfig {
+export interface CommonConfig {
   regions?: string[];
   eventSimilarity?: number;
   numTickets?: number; // Must be an integer
   maxTicketPrice?: number;
   discount?: number;
+}
+
+export interface TicketConfig extends CommonConfig {
+  event: string;
 }
 
 export function newConfig(): Config {
@@ -32,5 +37,6 @@ export function newConfig(): Config {
       ntfy: {},
     },
     global: {},
+    tickets: [],
   };
 }

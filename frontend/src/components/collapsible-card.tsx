@@ -18,12 +18,14 @@ import { type ReactNode, useState } from "react";
 interface CollapsibleCardProps {
   title: string;
   description?: string;
+  action?: React.ReactNode;
   children?: ReactNode;
 }
 
 export function CollapsibleCard({
   title,
   description,
+  action,
   children,
 }: CollapsibleCardProps) {
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -41,11 +43,12 @@ export function CollapsibleCard({
               <CardTitle>{title}</CardTitle>
               {description && <CardDescription>{description}</CardDescription>}
             </div>
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-4">
+              {action}
               {isCollapsed ? (
-                <ChevronsUpDown className="h-5 w-5" />
+                <ChevronsUpDown className="size-5" />
               ) : (
-                <ChevronsDownUp className="h-5 w-5" />
+                <ChevronsDownUp className="size-5" />
               )}
             </div>
           </CardHeader>
