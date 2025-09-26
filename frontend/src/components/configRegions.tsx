@@ -39,16 +39,16 @@ export function RegionsField({
   const currentRegions = fieldValue || [];
   const resetValue: string[] = [];
 
-  const handleOnCheckedChange = (region: Region, checked: boolean) => {
-    let newRegions = [...currentRegions];
+  const handleOnCheckedChange = (regionCode: string, checked: boolean) => {
+    const regionSet = new Set(currentRegions);
 
-    if (!checked) {
-      newRegions = newRegions.filter((r) => r !== region.code);
-    } else if (!newRegions.includes(region.code)) {
-      newRegions.push(region.code);
+    if (checked) {
+      regionSet.add(regionCode);
+    } else {
+      regionSet.delete(regionCode);
     }
 
-    updateValue(newRegions);
+    updateValue(Array.from(regionSet).sort());
   };
 
   return (
@@ -108,7 +108,7 @@ export function RegionsField({
             <Checkbox
               checked={currentRegions.includes(region.code)}
               onCheckedChange={(checked: boolean) => {
-                handleOnCheckedChange(region, checked);
+                handleOnCheckedChange(region.code, checked);
               }}
             />
             <Label className="text-sm">{region.name}</Label>
