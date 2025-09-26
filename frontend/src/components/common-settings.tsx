@@ -45,7 +45,7 @@ export function CommonSettings({
           type="integer"
           value={config.numTickets}
           globalValue={globalConfig?.numTickets}
-          resetValue={1234}
+          resetValue={undefined}
           updateValue={(value) => {
             updateConfig({ ...config, numTickets: value });
           }}

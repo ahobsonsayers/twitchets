@@ -40,7 +40,7 @@ export function SettingField<T extends string | number>({
           <ResetButton
             resetType="default"
             onClick={() => {
-              resetValue;
+              updateValue(resetValue);
             }}
           />
         }
