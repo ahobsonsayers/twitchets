@@ -47,6 +47,45 @@ export function SettingField<T extends string | number>({
     resetValue = -1 as T;
   }
 
+  const renderInput = () => {
+    if (type === "text") {
+      return (
+        <Input
+          type="text"
+          value={fieldValue ?? ""}
+          placeholder={placeholder}
+          onChange={(event) => updateValue(event.target.value as T)}
+        />
+      );
+    }
+
+    return (
+      <NumericFormat
+        customInput={Input}
+        value={fieldValue ?? ""}
+        placeholder={placeholder}
+        allowNegative={false}
+        decimalScale={type === "integer" ? 0 : undefined}
+        onValueChange={(values) => {
+          // Only update if the value is not undefined
+          // This prevents reverting from -1 (which is displayed as undefined) back to undefined
+          if (values.floatValue !== undefined) {
+            updateValue(values.floatValue as T);
+          }
+        }}
+        isAllowed={(values) => {
+          const val = values.floatValue;
+          if (val === undefined) return true;
+          if (type === "fraction") return val <= 1;
+          if (type === "percentage") return val <= 100;
+          return true;
+        }}
+        suffix={type === "percentage" ? "%" : ""}
+        prefix={type === "price" ? "£" : ""}
+      />
+    );
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex">
@@ -121,6 +160,7 @@ export function SettingField<T extends string | number>({
           prefix={type === "price" ? "£" : ""}
         />
       )}
+      {renderInput()}
     </div>
   );
 }
