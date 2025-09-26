@@ -117,7 +117,7 @@ export function TicketSettings() {
                     placeholder="Enter event name..."
                     type="text"
                     value={ticket.event}
-                    resetValue={""}
+                    showReset={true}
                     updateValue={(value) => {
                       if (!value) return;
                       handleTicketUpdate(

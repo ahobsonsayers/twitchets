@@ -32,7 +32,8 @@ export function CommonSettings({
           type="fraction"
           value={config.eventSimilarity}
           globalValue={globalConfig?.eventSimilarity}
-          resetValue={undefined}
+          showGlobal={!!globalConfig}
+          showReset={true}
           updateValue={(value) => {
             updateConfig({ ...config, eventSimilarity: value });
           }}
@@ -45,7 +46,8 @@ export function CommonSettings({
           type="integer"
           value={config.numTickets}
           globalValue={globalConfig?.numTickets}
-          resetValue={undefined}
+          showGlobal={!!globalConfig}
+          showReset={true}
           updateValue={(value) => {
             updateConfig({ ...config, numTickets: value });
           }}
@@ -58,7 +60,8 @@ export function CommonSettings({
           type="price"
           value={config.maxTicketPrice}
           globalValue={globalConfig?.maxTicketPrice}
-          resetValue={undefined}
+          showGlobal={!!globalConfig}
+          showReset={true}
           updateValue={(value) => {
             updateConfig({ ...config, maxTicketPrice: value });
           }}
@@ -71,7 +74,8 @@ export function CommonSettings({
           type="percentage"
           value={config.discount}
           globalValue={globalConfig?.discount}
-          resetValue={undefined}
+          showGlobal={!!globalConfig}
+          showReset={true}
           updateValue={(value) => {
             updateConfig({ ...config, discount: value });
           }}

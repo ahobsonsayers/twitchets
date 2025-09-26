@@ -10,7 +10,8 @@ interface SettingFieldProps<T extends string | number> {
   type: "text" | "number" | "integer" | "fraction" | "percentage" | "price";
   value?: T;
   globalValue?: T;
-  resetValue?: T;
+  showGlobal?: boolean;
+  showReset?: boolean;
   updateValue: (newValue?: T) => void;
 }
 
@@ -20,49 +21,76 @@ export function SettingField<T extends string | number>({
   placeholder,
   type,
   value,
+  showGlobal = false,
   globalValue,
-  resetValue,
+  showReset = true,
   updateValue,
 }: SettingFieldProps<T>) {
+  // Determine the field value to display
+  let fieldValue = value;
+  if (fieldValue === undefined && globalValue) {
+    // If no value is set, use global value (if set)
+    fieldValue = globalValue;
+  } else if (typeof fieldValue === "number" && fieldValue < 0) {
+    // If value is negative number, set undefined to show placeholder
+    fieldValue = undefined;
+  }
+
+  // Determine the reset value based on type
+  let resetValue: T;
+  if (type === "text") {
+    resetValue = "" as T;
+  } else {
+    resetValue = -1 as T;
+  }
+
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center">
         <Label>{label}</Label>
-        {globalValue && (
-          <ResetButton
-            resetType="global"
-            onClick={() => {
-              updateValue(globalValue);
-            }}
-          />
-        )}
-        {
-          <ResetButton
-            resetType="default"
-            onClick={() => {
-              updateValue(resetValue);
-            }}
-          />
-        }
+        <div className="ml-auto flex">
+          {showGlobal && (
+            <ResetButton
+              resetType="global"
+              onClick={() => {
+                // The global button sets the value to "undefined".
+                // This causes the global value to be inherited.
+                updateValue(undefined);
+              }}
+            />
+          )}
+          {showReset && (
+            <ResetButton
+              resetType="default"
+              onClick={() => {
+                updateValue(resetValue);
+              }}
+            />
+          )}
+        </div>
       </div>
       <p className="text-muted-foreground text-sm">{description}</p>
       {/* TODO better to use use-mask-input - but this currently reverses numbers??? */}
       {(type === "text" && (
         <Input
           type="text"
+          value={fieldValue ?? ""}
           placeholder={placeholder}
-          value={value ?? ""}
           onChange={(event) => updateValue(event.target.value as T)}
         />
       )) || (
         <NumericFormat
           customInput={Input}
-          value={value ?? ""}
+          value={fieldValue ?? ""}
           placeholder={placeholder}
           allowNegative={false}
           decimalScale={type === "integer" ? 0 : undefined}
           onValueChange={(values) => {
-            updateValue(values.floatValue as T);
+            // Only update if the value is not undefined
+            // This prevents reverting from -1 (which is displayed as undefined) back to undefined
+            if (values.floatValue !== undefined) {
+              updateValue(values.floatValue as T);
+            }
           }}
           isAllowed={(values) => {
             if (type === "fraction") {
