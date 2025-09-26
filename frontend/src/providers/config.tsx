@@ -21,9 +21,17 @@ type ConfigProviderProps = {
 export function ConfigProvider({ children, ...props }: ConfigProviderProps) {
   const [config, setConfig] = useState<Config>(newConfig());
 
+  const setConfigWithLogging = (updater: ConfigUpdater) => {
+    setConfig((prevConfig) => {
+      const newConfig = updater(prevConfig);
+      console.log(newConfig);
+      return newConfig;
+    });
+  };
+
   const value = {
     config,
-    setConfig,
+    setConfig: setConfigWithLogging,
   };
 
   return (

@@ -1,23 +1,11 @@
 "use client";
 
 import { CollapsibleCard } from "./components/collapsibleCard";
-import { CommonSettings } from "./components/configCommonFields";
-import { SettingField } from "./components/configField";
+import { TicketItem } from "./components/configTicket";
 import { useConfig } from "./providers/config";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import type { TicketConfig } from "@/types/config";
-import { Plus, Trash } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export function TicketSettings() {
   const { config, setConfig } = useConfig();
@@ -26,19 +14,16 @@ export function TicketSettings() {
     setConfig((config) => {
       const newTickets = [...config.tickets];
       newTickets.push({
-        event: `New Event ${config.tickets.length + 1}`,
+        event: "New Event",
       });
       return { ...config, tickets: newTickets };
     });
   };
 
-  const handleTicketUpdate = (
-    ticketUpdater: (ticket: TicketConfig) => TicketConfig,
-    ticketIndex: number,
-  ) => {
+  const handleUpdateTicket = (updatedTicket: TicketConfig, index: number) => {
     setConfig((config) => {
       const newTickets = [...config.tickets];
-      newTickets[ticketIndex] = ticketUpdater(newTickets[ticketIndex]);
+      newTickets[index] = updatedTicket;
       return { ...config, tickets: newTickets };
     });
   };
@@ -75,71 +60,15 @@ export function TicketSettings() {
         ) : (
           config.tickets.map((ticket, ticketIndex) => {
             return (
-              <CollapsibleCard
+              <TicketItem
                 key={ticketIndex}
-                title={ticket.event || "New Event"}
-                action={
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="destructive" size="icon">
-                        <Trash />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Ticket</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to delete "{ticket.event}"? This
-                          action cannot be undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveTicket(ticketIndex);
-                          }}
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                ticketConfig={ticket}
+                globalConfig={config.global}
+                onUpdate={(updatedTicket) =>
+                  handleUpdateTicket(updatedTicket, ticketIndex)
                 }
-              >
-                <div className="space-y-4">
-                  <SettingField
-                    label="Event Name"
-                    description="Name of the event to search for"
-                    placeholder="Enter event name..."
-                    type="text"
-                    value={ticket.event}
-                    showReset={true}
-                    updateValue={(value) => {
-                      if (!value) return;
-                      handleTicketUpdate(
-                        (ticket) => ({
-                          ...ticket,
-                          event: value,
-                        }),
-                        ticketIndex,
-                      );
-                    }}
-                  />
-                  <CommonSettings
-                    commonConfig={ticket}
-                    globalCommonConfig={config.global}
-                    updateCommonConfig={(commonConfig) => {
-                      handleTicketUpdate(
-                        (ticket) => ({ ...ticket, ...commonConfig }),
-                        ticketIndex,
-                      );
-                    }}
-                  />
-                </div>
-              </CollapsibleCard>
+                onRemove={() => handleRemoveTicket(ticketIndex)}
+              />
             );
           })
         )}
