@@ -59,6 +59,7 @@ export function SettingField<T extends string | number>({
       );
     }
 
+    //  TODO better to use use-mask-input - but this currently reverses numbers???
     return (
       <NumericFormat
         customInput={Input}
@@ -122,44 +123,6 @@ export function SettingField<T extends string | number>({
 
       <p className="text-muted-foreground text-sm">{description}</p>
 
-      {/* TODO better to use use-mask-input - but this currently reverses numbers??? */}
-      {(type === "text" && (
-        <Input
-          type="text"
-          value={fieldValue ?? ""}
-          placeholder={placeholder}
-          onChange={(event) => updateValue(event.target.value as T)}
-        />
-      )) || (
-        <NumericFormat
-          customInput={Input}
-          value={fieldValue ?? ""}
-          placeholder={placeholder}
-          allowNegative={false}
-          decimalScale={type === "integer" ? 0 : undefined}
-          onValueChange={(values) => {
-            // Only update if the value is not undefined
-            // This prevents reverting from -1 (which is displayed as undefined) back to undefined
-            if (values.floatValue !== undefined) {
-              updateValue(values.floatValue as T);
-            }
-          }}
-          isAllowed={(values) => {
-            if (type === "fraction") {
-              return values.floatValue === undefined || values.floatValue <= 1;
-            }
-            if (type === "percentage") {
-              return (
-                values.floatValue === undefined || values.floatValue <= 100
-              );
-            }
-            return true;
-          }}
-          valueIsNumericString={true}
-          suffix={type === "percentage" ? "%" : ""}
-          prefix={type === "price" ? "£" : ""}
-        />
-      )}
       {renderInput()}
     </div>
   );
