@@ -1,9 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ResetButton } from "@/reset";
-import type { ChangeEvent } from "react";
-import { NumericFormat, useNumericFormat } from "react-number-format";
-import { withMask } from "use-mask-input";
+import { NumericFormat } from "react-number-format";
 
 interface SettingFieldProps<T extends string | number> {
   label: string;
@@ -11,8 +9,9 @@ interface SettingFieldProps<T extends string | number> {
   placeholder?: string;
   type: "text" | "number" | "integer" | "fraction" | "percentage" | "price";
   value?: T;
-  onChange: (value?: T) => void;
-  onReset?: () => void;
+  globalValue?: T;
+  resetValue?: T;
+  updateValue: (newValue?: T) => void;
 }
 
 export function SettingField<T extends string | number>({
@@ -21,14 +20,30 @@ export function SettingField<T extends string | number>({
   placeholder,
   type,
   value,
-  onChange,
-  onReset,
+  globalValue,
+  resetValue,
+  updateValue,
 }: SettingFieldProps<T>) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <Label>{label}</Label>
-        {!!onReset && <ResetButton resetType="default" onClick={onReset} />}
+        {globalValue && (
+          <ResetButton
+            resetType="global"
+            onClick={() => {
+              updateValue(globalValue);
+            }}
+          />
+        )}
+        {
+          <ResetButton
+            resetType="default"
+            onClick={() => {
+              resetValue;
+            }}
+          />
+        }
       </div>
       <p className="text-muted-foreground text-sm">{description}</p>
       {/* TODO better to use use-mask-input - but this currently reverses numbers??? */}
@@ -37,7 +52,7 @@ export function SettingField<T extends string | number>({
           type="text"
           placeholder={placeholder}
           value={value ?? ""}
-          onChange={(event) => onChange(event.target.value as T)}
+          onChange={(event) => updateValue(event.target.value as T)}
         />
       )) || (
         <NumericFormat
@@ -47,7 +62,7 @@ export function SettingField<T extends string | number>({
           allowNegative={false}
           decimalScale={type === "integer" ? 0 : undefined}
           onValueChange={(values) => {
-            onChange(values.floatValue as T);
+            updateValue(values.floatValue as T);
           }}
           isAllowed={(values) => {
             if (type === "fraction") {

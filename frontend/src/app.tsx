@@ -16,7 +16,7 @@ function App() {
           <GeneralSettings />
           <NotificationSettings />
           <GlobalSettings />
-          <TicketSettings />
+          {/* <TicketSettings /> */}
         </div>
       </ConfigProvider>
     </ThemeProvider>

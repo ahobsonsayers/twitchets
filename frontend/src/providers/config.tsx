@@ -1,39 +1,29 @@
 import type { Config } from "../types/config";
 import { newConfig } from "../types/config";
-import { produce } from "immer";
-import { createContext, useContext, useState } from "react";
+import { createContext, type ReactNode, useContext, useState } from "react";
 
-// ConfigUpdater is a function used to update a config
-type ConfigUpdater = (config: Config) => void;
+type ConfigUpdater = (config: Config) => Config;
 
 type ConfigProviderState = {
   config: Config;
-  updateConfig: (updater: ConfigUpdater) => void;
+  setConfig: (updater: ConfigUpdater) => void;
 };
 
 const ConfigProviderContext = createContext<ConfigProviderState>({
   config: newConfig(),
-  updateConfig: () => null,
+  setConfig: () => null,
 });
 
 type ConfigProviderProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export function ConfigProvider({ children, ...props }: ConfigProviderProps) {
   const [config, setConfig] = useState<Config>(newConfig());
 
-  const updateConfig = (updater: ConfigUpdater) => {
-    setConfig(
-      produce(config, (draft) => {
-        updater(draft);
-      }),
-    );
-  };
-
   const value = {
     config,
-    updateConfig,
+    setConfig,
   };
 
   return (

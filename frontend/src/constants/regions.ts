@@ -1,4 +1,9 @@
-export const REGIONS = [
+export interface Region {
+  code: string;
+  name: string;
+}
+
+export const REGIONS: Region[] = [
   { code: "GBLO", name: "London" },
   { code: "GBSO", name: "South" },
   { code: "GBSW", name: "South West" },

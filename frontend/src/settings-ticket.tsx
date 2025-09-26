@@ -1,6 +1,9 @@
 "use client";
 
 import { CollapsibleCard } from "./components/collapsible-card";
+import { CommonSettings } from "./components/common-settings";
+import { SettingField } from "./components/setting-field";
+import { Label } from "./components/ui/label";
 import { useConfig } from "./providers/config";
 import {
   AlertDialog,
@@ -29,11 +32,13 @@ export function TicketSettings() {
     });
   };
 
-  const handleRemoveTicket = (index: number) => {
-    updateConfig((config) => {
-      config.tickets.splice(index, 1);
-    });
-  };
+  const handleRemoveTicket =
+    (index: number) => (e: MouseEvent<HTMLElement>) => {
+      e.stopPropagation();
+      updateConfig((config) => {
+        config.tickets.splice(index, 1);
+      });
+    };
 
   return (
     <CollapsibleCard
@@ -55,8 +60,8 @@ export function TicketSettings() {
           config.tickets.map((ticket, index) => {
             return (
               <CollapsibleCard
-                key={ticket.event}
-                title={ticket.event}
+                key={index}
+                title={ticket.event || "New Event"}
                 action={
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
@@ -76,7 +81,7 @@ export function TicketSettings() {
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          onClick={() => handleRemoveTicket(index)}
+                          onClick={handleRemoveTicket(index)}
                         >
                           Delete
                         </AlertDialogAction>
@@ -84,7 +89,39 @@ export function TicketSettings() {
                     </AlertDialogContent>
                   </AlertDialog>
                 }
-              ></CollapsibleCard>
+              >
+                <div className="space-y-4">
+                  <SettingField
+                    label="Event Name"
+                    description="Name of the event to search for"
+                    placeholder="Enter event name..."
+                    type="text"
+                    value={ticket.event}
+                    onChange={(value) =>
+                      updateConfig((config) => {
+                        config.tickets[index].event = value;
+                      })
+                    }
+                    onReset={() =>
+                      updateConfig((config) => {
+                        config.tickets[index].event = undefined;
+                      })
+                    }
+                  />
+                  <CommonSettings
+                    commonConfig={ticket}
+                    globalCommonConfig={undefined}
+                    updateCommonConfig={(commonConfig) => {
+                      updateConfig((config) => {
+                        config.tickets[index] = {
+                          ...config.tickets[index],
+                          ...commonConfig,
+                        };
+                      });
+                    }}
+                  />
+                </div>
+              </CollapsibleCard>
             );
           })
         )}
