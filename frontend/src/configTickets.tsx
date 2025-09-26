@@ -1,8 +1,8 @@
 "use client";
 
-import { CollapsibleCard } from "./components/collapsible-card";
-import { CommonSettings } from "./components/common-settings";
-import { SettingField } from "./components/setting-field";
+import { CollapsibleCard } from "./components/collapsibleCard";
+import { CommonSettings } from "./components/configCommonFields";
+import { SettingField } from "./components/configField";
 import { useConfig } from "./providers/config";
 import {
   AlertDialog,

@@ -1,5 +1,5 @@
-import { RegionsField } from "./regions-setting";
-import { SettingField } from "./setting-field";
+import { SettingField } from "./configField";
+import { RegionsField } from "./configRegions";
 import type { CommonConfig } from "@/types/config";
 
 interface CommonSettingsProps {

@@ -1,5 +1,5 @@
-import { CollapsibleCard } from "./components/collapsible-card";
-import { CommonSettings } from "./components/common-settings";
+import { CollapsibleCard } from "./components/collapsibleCard";
+import { CommonSettings } from "./components/configCommonFields";
 import { useConfig } from "./providers/config";
 
 export function GlobalSettings() {

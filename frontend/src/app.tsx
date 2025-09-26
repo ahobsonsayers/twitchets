@@ -2,9 +2,9 @@
 
 import { ConfigProvider } from "./providers/config";
 import { ThemeProvider } from "./providers/theme";
-import { GeneralSettings } from "./settings-general";
-import { GlobalSettings } from "./settings-global";
-import { NotificationSettings } from "./settings-notification";
+import { GeneralSettings } from "./configGeneral";
+import { GlobalSettings } from "./configGlobal";
+import { NotificationSettings } from "./configNotification";
 
 function App() {
   return (

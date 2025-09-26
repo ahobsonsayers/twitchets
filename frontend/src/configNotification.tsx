@@ -1,6 +1,6 @@
 "use client";
 
-import { CollapsibleCard } from "./components/collapsible-card";
+import { CollapsibleCard } from "./components/collapsibleCard";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { Label } from "./components/ui/label";
