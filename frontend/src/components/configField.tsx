@@ -1,13 +1,7 @@
-import {
-  TooltipProvider,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "./ui/tooltip";
+import { LinkedStatusTooltip } from "./linkedStatusTooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ResetButton } from "@/reset";
-import { Link, Unlink } from "lucide-react";
 import { NumericFormat } from "react-number-format";
 
 interface SettingFieldProps<T extends string | number> {
@@ -60,24 +54,7 @@ export function SettingField<T extends string | number>({
           <Label>{label}</Label>
 
           {withGlobalFallback && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  {(isLinkedToGlobal && (
-                    <Link className="text-muted-foreground hover:text-foreground size-4" />
-                  )) || (
-                    <Unlink className="text-muted-foreground hover:text-foreground size-4" />
-                  )}
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>
-                    {isLinkedToGlobal
-                      ? "Linked to global value"
-                      : "Unlinked from global value"}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <LinkedStatusTooltip isLinked={isLinkedToGlobal} />
           )}
         </div>
 

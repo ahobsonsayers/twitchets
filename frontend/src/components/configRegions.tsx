@@ -1,14 +1,8 @@
+import { LinkedStatusTooltip } from "./linkedStatusTooltip";
 import { Checkbox } from "./ui/checkbox";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip";
 import { Label } from "@/components/ui/label";
 import { type Region, REGIONS } from "@/constants/regions";
 import { ResetButton } from "@/reset";
-import { Link, Unlink } from "lucide-react";
 
 interface RegionsFieldProps {
   label?: string;
@@ -58,24 +52,7 @@ export function RegionsField({
           <Label>{label}</Label>
 
           {withGlobalFallback && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  {isLinkedToGlobal ? (
-                    <Link className="text-muted-foreground hover:text-foreground size-4" />
-                  ) : (
-                    <Unlink className="text-muted-foreground hover:text-foreground size-4" />
-                  )}
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>
-                    {isLinkedToGlobal
-                      ? "Linked to global value"
-                      : "Unlinked from global value"}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <LinkedStatusTooltip isLinked={isLinkedToGlobal} />
           )}
         </div>
 
