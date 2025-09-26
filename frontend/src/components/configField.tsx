@@ -1,6 +1,14 @@
+
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "./ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ResetButton } from "@/reset";
+import { Link, Unlink } from "lucide-react";
 import { NumericFormat } from "react-number-format";
 
 interface SettingFieldProps<T extends string | number> {
@@ -28,9 +36,11 @@ export function SettingField<T extends string | number>({
 }: SettingFieldProps<T>) {
   // Determine the field value to display
   let fieldValue = value;
-  if (fieldValue === undefined && globalValue) {
+  let isLinkedToGlobal = false;
+  if (fieldValue === undefined && showGlobal) {
     // If no value is set, use global value (if set)
     fieldValue = globalValue;
+    isLinkedToGlobal = true;
   } else if (typeof fieldValue === "number" && fieldValue < 0) {
     // If value is negative number, set undefined to show placeholder
     fieldValue = undefined;
@@ -46,9 +56,33 @@ export function SettingField<T extends string | number>({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center">
-        <Label>{label}</Label>
-        <div className="ml-auto flex">
+      <div className="flex">
+        <div className="flex items-center space-x-2">
+          <Label>{label}</Label>
+
+          {showGlobal && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  {(isLinkedToGlobal && (
+                    <Link className="text-muted-foreground hover:text-foreground size-4" />
+                  )) || (
+                    <Unlink className="text-muted-foreground hover:text-foreground size-4" />
+                  )}
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    {isLinkedToGlobal
+                      ? "Linked to global value"
+                      : "Unlinked from global value"}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
+
+        <div className="ml-auto flex items-center">
           {showGlobal && (
             <ResetButton
               resetType="global"
@@ -59,6 +93,7 @@ export function SettingField<T extends string | number>({
               }}
             />
           )}
+
           {showReset && (
             <ResetButton
               resetType="default"
@@ -69,7 +104,9 @@ export function SettingField<T extends string | number>({
           )}
         </div>
       </div>
+
       <p className="text-muted-foreground text-sm">{description}</p>
+
       {/* TODO better to use use-mask-input - but this currently reverses numbers??? */}
       {(type === "text" && (
         <Input

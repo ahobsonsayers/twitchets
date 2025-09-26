@@ -18,7 +18,6 @@ import {
 import { Button } from "@/components/ui/button";
 import type { TicketConfig } from "@/types/config";
 import { Plus, Trash } from "lucide-react";
-import type { MouseEvent } from "react";
 
 export function TicketSettings() {
   const { config, setConfig } = useConfig();

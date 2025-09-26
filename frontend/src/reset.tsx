@@ -29,7 +29,7 @@ export function ResetButton({ onClick, resetType }: ResetButtonProps) {
             size="sm"
             onClick={onClick}
           >
-            <Icon className="h-3 w-3" />
+            <Icon className="size-4" />
           </Button>
         </TooltipTrigger>
         <TooltipContent>
