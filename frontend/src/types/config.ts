@@ -26,7 +26,7 @@ export interface CommonConfig {
 }
 
 export interface TicketConfig extends CommonConfig {
-  event?: string;
+  event: string;
 }
 
 export function newConfig(): Config {

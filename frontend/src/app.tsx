@@ -1,10 +1,11 @@
 "use client";
 
-import { ConfigProvider } from "./providers/config";
-import { ThemeProvider } from "./providers/theme";
 import { GeneralSettings } from "./configGeneral";
 import { GlobalSettings } from "./configGlobal";
 import { NotificationSettings } from "./configNotification";
+import { TicketSettings } from "./configTickets";
+import { ConfigProvider } from "./providers/config";
+import { ThemeProvider } from "./providers/theme";
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
           <GeneralSettings />
           <NotificationSettings />
           <GlobalSettings />
-          {/* <TicketSettings /> */}
+          <TicketSettings />
         </div>
       </ConfigProvider>
     </ThemeProvider>

@@ -16,26 +16,42 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import type { TicketConfig } from "@/types/config";
 import { Plus, Trash } from "lucide-react";
 import type { MouseEvent } from "react";
 
 export function TicketSettings() {
-  const { config, updateConfig } = useConfig();
+  const { config, setConfig } = useConfig();
 
   const handleAddTicket = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation();
-    updateConfig((config) => {
-      config.tickets.push({
+    setConfig((config) => {
+      const newTickets = [...config.tickets];
+      newTickets.push({
         event: `New Event ${config.tickets.length + 1}`,
       });
+      return { ...config, tickets: newTickets };
+    });
+  };
+
+  const handleTicketUpdate = (
+    ticketUpdater: (ticket: TicketConfig) => TicketConfig,
+    ticketIndex: number,
+  ) => {
+    setConfig((config) => {
+      const newTickets = [...config.tickets];
+      newTickets[ticketIndex] = ticketUpdater(newTickets[ticketIndex]);
+      return { ...config, tickets: newTickets };
     });
   };
 
   const handleRemoveTicket =
     (index: number) => (e: MouseEvent<HTMLElement>) => {
       e.stopPropagation();
-      updateConfig((config) => {
-        config.tickets.splice(index, 1);
+      setConfig((config) => {
+        const newTickets = [...config.tickets];
+        newTickets.splice(index, 1);
+        return { ...config, tickets: newTickets };
       });
     };
 
@@ -56,10 +72,10 @@ export function TicketSettings() {
             No tickets configured. Click "Add Ticket" to get started.
           </p>
         ) : (
-          config.tickets.map((ticket, index) => {
+          config.tickets.map((ticket, ticketIndex) => {
             return (
               <CollapsibleCard
-                key={index}
+                key={ticket.event}
                 title={ticket.event || "New Event"}
                 action={
                   <AlertDialog>
@@ -80,7 +96,7 @@ export function TicketSettings() {
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          onClick={handleRemoveTicket(index)}
+                          onClick={handleRemoveTicket(ticketIndex)}
                         >
                           Delete
                         </AlertDialogAction>
@@ -96,27 +112,26 @@ export function TicketSettings() {
                     placeholder="Enter event name..."
                     type="text"
                     value={ticket.event}
-                    onChange={(value) =>
-                      updateConfig((config) => {
-                        config.tickets[index].event = value;
-                      })
-                    }
-                    onReset={() =>
-                      updateConfig((config) => {
-                        config.tickets[index].event = undefined;
-                      })
-                    }
+                    resetValue={""}
+                    updateValue={(value) => {
+                      if (!value) return;
+                      handleTicketUpdate(
+                        (ticket) => ({
+                          ...ticket,
+                          event: value,
+                        }),
+                        ticketIndex,
+                      );
+                    }}
                   />
                   <CommonSettings
                     commonConfig={ticket}
-                    globalCommonConfig={undefined}
+                    globalCommonConfig={config.global}
                     updateCommonConfig={(commonConfig) => {
-                      updateConfig((config) => {
-                        config.tickets[index] = {
-                          ...config.tickets[index],
-                          ...commonConfig,
-                        };
-                      });
+                      handleTicketUpdate(
+                        (ticket) => ({ ...ticket, ...commonConfig }),
+                        ticketIndex,
+                      );
                     }}
                   />
                 </div>
