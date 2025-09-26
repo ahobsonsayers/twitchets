@@ -3,7 +3,6 @@
 import { CollapsibleCard } from "./components/collapsible-card";
 import { CommonSettings } from "./components/common-settings";
 import { SettingField } from "./components/setting-field";
-import { Label } from "./components/ui/label";
 import { useConfig } from "./providers/config";
 import {
   AlertDialog,

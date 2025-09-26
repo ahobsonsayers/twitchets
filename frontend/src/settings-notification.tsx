@@ -2,16 +2,8 @@
 
 import { CollapsibleCard } from "./components/collapsible-card";
 import { Button } from "./components/ui/button";
-import { Checkbox } from "./components/ui/checkbox";
 import { Input } from "./components/ui/input";
 import { Label } from "./components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-  SelectItem,
-} from "./components/ui/select";
 import { Separator } from "./components/ui/separator";
 import { useConfig } from "./providers/config";
 import { Eye, EyeOff } from "lucide-react";

@@ -5,7 +5,6 @@ import { ThemeProvider } from "./providers/theme";
 import { GeneralSettings } from "./settings-general";
 import { GlobalSettings } from "./settings-global";
 import { NotificationSettings } from "./settings-notification";
-import { TicketSettings } from "./settings-ticket";
 
 function App() {
   return (
