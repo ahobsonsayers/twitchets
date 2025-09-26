@@ -23,8 +23,7 @@ import type { MouseEvent } from "react";
 export function TicketSettings() {
   const { config, setConfig } = useConfig();
 
-  const handleAddTicket = (e: MouseEvent<HTMLElement>) => {
-    e.stopPropagation();
+  const handleAddTicket = () => {
     setConfig((config) => {
       const newTickets = [...config.tickets];
       newTickets.push({
@@ -45,22 +44,25 @@ export function TicketSettings() {
     });
   };
 
-  const handleRemoveTicket =
-    (index: number) => (e: MouseEvent<HTMLElement>) => {
-      e.stopPropagation();
-      setConfig((config) => {
-        const newTickets = [...config.tickets];
-        newTickets.splice(index, 1);
-        return { ...config, tickets: newTickets };
-      });
-    };
+  const handleRemoveTicket = (index: number) => {
+    setConfig((config) => {
+      const newTickets = [...config.tickets];
+      newTickets.splice(index, 1);
+      return { ...config, tickets: newTickets };
+    });
+  };
 
   return (
     <CollapsibleCard
       title="Tickets Configuration"
       description="Individual ticket configurations (overrides global settings)"
       action={
-        <Button onClick={handleAddTicket}>
+        <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleAddTicket();
+          }}
+        >
           <Plus className="size-5" />
           Add Ticket
         </Button>
@@ -96,7 +98,10 @@ export function TicketSettings() {
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          onClick={handleRemoveTicket(ticketIndex)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveTicket(ticketIndex);
+                          }}
                         >
                           Delete
                         </AlertDialogAction>
