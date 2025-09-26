@@ -1,4 +1,3 @@
-
 import {
   TooltipProvider,
   Tooltip,
@@ -17,8 +16,8 @@ interface SettingFieldProps<T extends string | number> {
   placeholder?: string;
   type: "text" | "number" | "integer" | "fraction" | "percentage" | "price";
   value?: T;
-  globalValue?: T;
-  showGlobal?: boolean;
+  globalFallbackValue?: T;
+  withGlobalFallback?: boolean;
   showReset?: boolean;
   updateValue: (newValue?: T) => void;
 }
@@ -29,17 +28,17 @@ export function SettingField<T extends string | number>({
   placeholder,
   type,
   value,
-  showGlobal = false,
-  globalValue,
+  withGlobalFallback = false,
+  globalFallbackValue = undefined,
   showReset = true,
   updateValue,
 }: SettingFieldProps<T>) {
   // Determine the field value to display
   let fieldValue = value;
   let isLinkedToGlobal = false;
-  if (fieldValue === undefined && showGlobal) {
-    // If no value is set, use global value (if set)
-    fieldValue = globalValue;
+  if (fieldValue === undefined && withGlobalFallback) {
+    // If no value is set, and we want to use global fallback
+    fieldValue = globalFallbackValue;
     isLinkedToGlobal = true;
   } else if (typeof fieldValue === "number" && fieldValue < 0) {
     // If value is negative number, set undefined to show placeholder
@@ -60,7 +59,7 @@ export function SettingField<T extends string | number>({
         <div className="flex items-center space-x-2">
           <Label>{label}</Label>
 
-          {showGlobal && (
+          {withGlobalFallback && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -83,7 +82,7 @@ export function SettingField<T extends string | number>({
         </div>
 
         <div className="ml-auto flex items-center">
-          {showGlobal && (
+          {withGlobalFallback && (
             <ResetButton
               resetType="global"
               onClick={() => {

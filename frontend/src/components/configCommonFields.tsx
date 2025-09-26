@@ -17,8 +17,8 @@ export function CommonSettings({
     <div className="space-y-4">
       <RegionsField
         value={config.regions}
-        globalValue={globalConfig?.regions}
-        resetValue={[]}
+        withGlobalFallback={!!globalConfig}
+        globalFallbackValue={globalConfig?.regions}
         updateValue={(value) => {
           updateConfig({ ...config, regions: value });
         }}
@@ -31,8 +31,8 @@ export function CommonSettings({
           placeholder="0.9"
           type="fraction"
           value={config.eventSimilarity}
-          globalValue={globalConfig?.eventSimilarity}
-          showGlobal={!!globalConfig}
+          withGlobalFallback={!!globalConfig}
+          globalFallbackValue={globalConfig?.eventSimilarity}
           showReset={true}
           updateValue={(value) => {
             updateConfig({ ...config, eventSimilarity: value });
@@ -45,8 +45,8 @@ export function CommonSettings({
           placeholder="Any"
           type="integer"
           value={config.numTickets}
-          globalValue={globalConfig?.numTickets}
-          showGlobal={!!globalConfig}
+          globalFallbackValue={globalConfig?.numTickets}
+          withGlobalFallback={!!globalConfig}
           showReset={true}
           updateValue={(value) => {
             updateConfig({ ...config, numTickets: value });
@@ -59,8 +59,8 @@ export function CommonSettings({
           placeholder="No Max"
           type="price"
           value={config.maxTicketPrice}
-          globalValue={globalConfig?.maxTicketPrice}
-          showGlobal={!!globalConfig}
+          globalFallbackValue={globalConfig?.maxTicketPrice}
+          withGlobalFallback={!!globalConfig}
           showReset={true}
           updateValue={(value) => {
             updateConfig({ ...config, maxTicketPrice: value });
@@ -73,8 +73,8 @@ export function CommonSettings({
           placeholder="No Min"
           type="percentage"
           value={config.discount}
-          globalValue={globalConfig?.discount}
-          showGlobal={!!globalConfig}
+          globalFallbackValue={globalConfig?.discount}
+          withGlobalFallback={!!globalConfig}
           showReset={true}
           updateValue={(value) => {
             updateConfig({ ...config, discount: value });

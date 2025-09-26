@@ -1,14 +1,21 @@
 import { Checkbox } from "./ui/checkbox";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 import { Label } from "@/components/ui/label";
 import { type Region, REGIONS } from "@/constants/regions";
 import { ResetButton } from "@/reset";
+import { Link, Unlink } from "lucide-react";
 
 interface RegionsFieldProps {
   label?: string;
   description?: string;
   value?: string[];
-  globalValue?: string[];
-  resetValue?: string[];
+  withGlobalFallback?: boolean;
+  globalFallbackValue?: string[];
   updateValue: (newValue?: string[]) => void;
 }
 
@@ -16,19 +23,29 @@ export function RegionsField({
   label = "Regions",
   description = "If no regions selected, all regions will be used",
   value,
-  globalValue,
-  resetValue,
+  withGlobalFallback = false,
+  globalFallbackValue,
   updateValue,
 }: RegionsFieldProps) {
-  const currentRegions = value || [];
+  // Determine the field value to display
+  let fieldValue = value;
+  let isLinkedToGlobal = false;
+  if (fieldValue === undefined && withGlobalFallback) {
+    // If no value is set, and we want to use global fallback
+    fieldValue = globalFallbackValue;
+    isLinkedToGlobal = true;
+  }
+
+  const currentRegions = fieldValue || [];
+  const resetValue: string[] = [];
 
   const handleOnCheckedChange = (region: Region, checked: boolean) => {
-    var newRegions = currentRegions;
+    let newRegions = [...currentRegions];
 
     if (!checked) {
       newRegions = newRegions.filter((r) => r !== region.code);
     } else if (!newRegions.includes(region.code)) {
-      newRegions = [...newRegions, region.code];
+      newRegions.push(region.code);
     }
 
     updateValue(newRegions);
@@ -36,22 +53,51 @@ export function RegionsField({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <Label>{label}</Label>
-        {globalValue && (
+      <div className="flex">
+        <div className="flex items-center space-x-2">
+          <Label>{label}</Label>
+
+          {withGlobalFallback && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  {isLinkedToGlobal ? (
+                    <Link className="text-muted-foreground hover:text-foreground size-4" />
+                  ) : (
+                    <Unlink className="text-muted-foreground hover:text-foreground size-4" />
+                  )}
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    {isLinkedToGlobal
+                      ? "Linked to global value"
+                      : "Unlinked from global value"}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
+
+        <div className="ml-auto flex items-center">
+          {withGlobalFallback && (
+            <ResetButton
+              resetType="global"
+              onClick={() => {
+                // The global button sets the value to "undefined".
+                // This causes the global value to be inherited.
+                updateValue(undefined);
+              }}
+            />
+          )}
+
           <ResetButton
-            resetType="global"
+            resetType="default"
             onClick={() => {
-              updateValue(globalValue);
+              updateValue(resetValue);
             }}
           />
-        )}
-        <ResetButton
-          resetType="default"
-          onClick={() => {
-            updateValue(resetValue);
-          }}
-        />
+        </div>
       </div>
 
       <p className="text-muted-foreground text-sm">{description}</p>
