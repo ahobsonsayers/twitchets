@@ -75,7 +75,7 @@ export function TicketSettings() {
           config.tickets.map((ticket, ticketIndex) => {
             return (
               <CollapsibleCard
-                key={ticket.event}
+                key={ticketIndex}
                 title={ticket.event || "New Event"}
                 action={
                   <AlertDialog>
