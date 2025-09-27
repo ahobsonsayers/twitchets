@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 interface TicketItemProps {
   ticketConfig: TicketConfig;
   globalConfig: CommonConfig;
+  isOpen?: boolean;
   onUpdate: (updatedTicket: TicketConfig) => void;
   onRemove: () => void;
 }

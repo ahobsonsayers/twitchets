@@ -6,10 +6,13 @@ import { useConfig } from "./providers/config";
 import { Button } from "@/components/ui/button";
 import type { TicketConfig } from "@/types/config";
 import { Plus } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
-export function TicketSettings() {
+export function TicketsConfig() {
   const { config, setConfig } = useConfig();
+  const [isTicketsConfigOpen, setIsTicketsConfigOpen] = useState(false);
+
+  const newEventName = "New Event";
 
   // Get tickets (ensuring they are ordered)
   const tickets = useMemo(() => {
@@ -17,16 +20,18 @@ export function TicketSettings() {
   }, [config.tickets]);
 
   const handleAddTicket = () => {
-    const newTickets = [...tickets, { event: "New Event" }];
+    const newTickets = [...tickets, { event: newEventName }];
     setConfig((config) => ({
       ...config,
       tickets: sortTickets(newTickets),
     }));
+    setIsTicketsConfigOpen(true);
   };
 
   const handleUpdateTicket = (updatedTicket: TicketConfig, index: number) => {
-    const newTickets = [...tickets, { event: "New Event" }];
+    const newTickets = [...tickets];
     newTickets[index] = updatedTicket;
+
     setConfig((config) => ({
       ...config,
       tickets: sortTickets(newTickets),
@@ -45,6 +50,8 @@ export function TicketSettings() {
     <CollapsibleCard
       title="Tickets Configuration"
       description="Individual ticket configurations (overrides global settings)"
+      isOpen={isTicketsConfigOpen}
+      setIsOpen={setIsTicketsConfigOpen}
       action={
         <Button
           onClick={(e) => {

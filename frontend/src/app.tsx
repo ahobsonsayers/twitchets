@@ -3,7 +3,7 @@
 import { GeneralSettings } from "./configGeneral";
 import { GlobalSettings } from "./configGlobal";
 import { NotificationSettings } from "./configNotification";
-import { TicketSettings } from "./configTickets";
+import { TicketsConfig } from "./configTickets";
 import { ConfigProvider } from "./providers/config";
 import { ThemeProvider } from "./providers/theme";
 
@@ -16,7 +16,7 @@ function App() {
           <GeneralSettings />
           <NotificationSettings />
           <GlobalSettings />
-          <TicketSettings />
+          <TicketsConfig />
         </div>
       </ConfigProvider>
     </ThemeProvider>

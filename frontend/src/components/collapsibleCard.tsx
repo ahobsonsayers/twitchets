@@ -13,30 +13,37 @@ import {
   CollapsibleTrigger,
 } from "@radix-ui/react-collapsible";
 import { ChevronsDownUp, ChevronsUpDown } from "lucide-react";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 interface CollapsibleCardProps {
   title: string;
   description?: string;
-  action?: React.ReactNode;
+  isOpen?: boolean;
+  setIsOpen?: (isOpen: boolean) => void;
+  action?: ReactNode;
   children?: ReactNode;
 }
 
 export function CollapsibleCard({
   title,
   description,
+  isOpen: isOpenProp,
+  setIsOpen: setIsOpenProp,
   action,
   children,
 }: CollapsibleCardProps) {
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isOpenInternal, setIsOpenInteral] = useState(false);
+
+  const isOpen = isOpenProp ?? isOpenInternal;
+  const setIsOpen = setIsOpenProp ?? setIsOpenInteral;
 
   const toggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
+    setIsOpen(!isOpen);
   };
 
   return (
     <Card>
-      <Collapsible>
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild onClick={toggleCollapse}>
           <CardHeader className="flex w-full items-center">
             <div className="flex flex-col">
@@ -45,10 +52,10 @@ export function CollapsibleCard({
             </div>
             <div className="ml-auto flex items-center gap-4">
               {action}
-              {isCollapsed ? (
-                <ChevronsUpDown className="size-5" />
-              ) : (
+              {isOpen ? (
                 <ChevronsDownUp className="size-5" />
+              ) : (
+                <ChevronsUpDown className="size-5" />
               )}
             </div>
           </CardHeader>
