@@ -1,10 +1,10 @@
-import { LinkedStatusTooltip } from "./linkedStatusTooltip";
+import { LinkedStatusTooltip } from "./linkedStatus";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ResetButton } from "@/reset";
 import { NumericFormat } from "react-number-format";
 
-interface SettingFieldProps<T extends string | number> {
+interface ConfigFieldProps<T extends string | number> {
   label: string;
   description: string;
   placeholder?: string;
@@ -16,7 +16,7 @@ interface SettingFieldProps<T extends string | number> {
   updateValue: (newValue?: T) => void;
 }
 
-export function SettingField<T extends string | number>({
+export function ConfigField<T extends string | number>({
   label,
   description,
   placeholder,
@@ -26,7 +26,7 @@ export function SettingField<T extends string | number>({
   globalFallbackValue = undefined,
   showReset = true,
   updateValue,
-}: SettingFieldProps<T>) {
+}: ConfigFieldProps<T>) {
   // Determine the field value to display
   let fieldValue = value;
   let isLinkedToGlobal = false;

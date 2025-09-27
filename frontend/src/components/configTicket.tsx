@@ -1,8 +1,8 @@
 "use client";
 
 import { CollapsibleCard } from "./collapsibleCard";
-import { CommonSettings } from "./configCommonFields";
-import { SettingField } from "./configField";
+import { CommonFields } from "./configCommon";
+import { ConfigField } from "./configField";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,7 +20,7 @@ import { isEqual } from "lodash";
 import { Save, Trash, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-interface TicketItemProps {
+interface TicketProps {
   ticketConfig: TicketConfig;
   globalConfig: CommonConfig;
   isOpen?: boolean;
@@ -28,12 +28,12 @@ interface TicketItemProps {
   onRemove: () => void;
 }
 
-export function TicketItem({
+export function Ticket({
   ticketConfig,
   globalConfig,
   onUpdate,
   onRemove,
-}: TicketItemProps) {
+}: TicketProps) {
   const [localTicket, setLocalTicket] = useState<TicketConfig>(ticketConfig);
 
   // If the canonical ticket changes, reset the local state
@@ -108,7 +108,7 @@ export function TicketItem({
       }
     >
       <div className="space-y-4">
-        <SettingField
+        <ConfigField
           label="Event Name"
           description="Name of the event to search for"
           placeholder="Enter event name..."
@@ -122,7 +122,7 @@ export function TicketItem({
           }}
         />
 
-        <CommonSettings
+        <CommonFields
           commonConfig={localTicket}
           globalCommonConfig={globalConfig}
           updateCommonConfig={(commonConfig) => {

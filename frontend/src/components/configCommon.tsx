@@ -1,21 +1,21 @@
-import { SettingField } from "./configField";
-import { RegionsField } from "./configRegions";
+import { ConfigField } from "./configField";
+import { Regions } from "./configRegions";
 import type { CommonConfig } from "@/types/config";
 
-interface CommonSettingsProps {
+interface CommonFieldsProps {
   commonConfig: CommonConfig;
   globalCommonConfig?: CommonConfig; // Unset if common config IS global config
   updateCommonConfig: (config: CommonConfig) => void;
 }
 
-export function CommonSettings({
+export function CommonFields({
   commonConfig: config,
   globalCommonConfig: globalConfig,
   updateCommonConfig: updateConfig,
-}: CommonSettingsProps) {
+}: CommonFieldsProps) {
   return (
     <div className="space-y-4">
-      <RegionsField
+      <Regions
         value={config.regions}
         withGlobalFallback={!!globalConfig}
         globalFallbackValue={globalConfig?.regions}
@@ -25,7 +25,7 @@ export function CommonSettings({
       />
 
       <div className="grid grid-cols-2 gap-4">
-        <SettingField
+        <ConfigField
           label="Event Similarity"
           description="Required event name similarity, between 0.0 - 1.0"
           placeholder="0.9"
@@ -39,7 +39,7 @@ export function CommonSettings({
           }}
         />
 
-        <SettingField
+        <ConfigField
           label="Number of Tickets"
           description="Required number of tickets"
           placeholder="Any"
@@ -53,7 +53,7 @@ export function CommonSettings({
           }}
         />
 
-        <SettingField
+        <ConfigField
           label="Max Ticket Price"
           description="Maximum price per ticket (including fee) in pounds (£)"
           placeholder="No Max"
@@ -67,7 +67,7 @@ export function CommonSettings({
           }}
         />
 
-        <SettingField
+        <ConfigField
           label="Minimum Discount"
           description="Minimum discount (including fee) on the original price as a percentage"
           placeholder="No Min"

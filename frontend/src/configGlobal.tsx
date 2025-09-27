@@ -1,5 +1,5 @@
 import { CollapsibleCard } from "./components/collapsibleCard";
-import { CommonSettings } from "./components/configCommonFields";
+import { CommonFields } from "./components/configCommon";
 import { useConfig } from "./providers/config";
 
 export function GlobalSettings() {
@@ -10,7 +10,7 @@ export function GlobalSettings() {
       title="Global Configuration"
       description="Configuration that apply to all tickets"
     >
-      <CommonSettings
+      <CommonFields
         commonConfig={config.global}
         updateCommonConfig={(commonConfig) => {
           setConfig((config) => ({

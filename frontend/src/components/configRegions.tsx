@@ -1,10 +1,10 @@
-import { LinkedStatusTooltip } from "./linkedStatusTooltip";
+import { LinkedStatusTooltip } from "./linkedStatus";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { type Region, REGIONS } from "@/constants/regions";
 import { ResetButton } from "@/reset";
 
-interface RegionsFieldProps {
+interface RegionsProps {
   label?: string;
   description?: string;
   value?: string[];
@@ -13,14 +13,14 @@ interface RegionsFieldProps {
   updateValue: (newValue?: string[]) => void;
 }
 
-export function RegionsField({
+export function Regions({
   label = "Regions",
   description = "If no regions selected, all regions will be used",
   value,
   withGlobalFallback = false,
   globalFallbackValue,
   updateValue,
-}: RegionsFieldProps) {
+}: RegionsProps) {
   // Determine the field value to display
   let fieldValue = value;
   let isLinkedToGlobal = false;

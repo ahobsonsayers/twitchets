@@ -1,7 +1,7 @@
 "use client";
 
 import { CollapsibleCard } from "./components/collapsibleCard";
-import { TicketItem } from "./components/configTicket";
+import { Ticket } from "./components/configTicket";
 import { useConfig } from "./providers/config";
 import { Button } from "@/components/ui/button";
 import type { TicketConfig } from "@/types/config";
@@ -72,7 +72,7 @@ export function TicketsConfig() {
         ) : (
           tickets.map((ticket, ticketIndex) => {
             return (
-              <TicketItem
+              <Ticket
                 key={ticketIndex}
                 ticketConfig={ticket}
                 globalConfig={config.global}
