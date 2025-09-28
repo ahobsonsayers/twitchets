@@ -18,9 +18,9 @@ import (
 	"github.com/samber/lo"
 )
 
-func NewTicketsScanner(config TicketsScannerConfig) *TicketsScanner {
+func NewTicketsScanner(tsc TicketsScannerConfig) *TicketsScanner {
 	return &TicketsScanner{
-		config: config,
+		config: tsc,
 	}
 }
 
@@ -94,14 +94,14 @@ func (w *TicketsScanner) Stop() {
 	w.WaitUntilStopped()
 }
 
-func fetchAndProcessTickets(config TicketsScannerConfig) {
+func fetchAndProcessTickets(tsc TicketsScannerConfig) {
 	numTickets := maxNumTickets
 	if latestTicketTime.IsZero() {
 		numTickets = 10
 	}
 
 	// Fetch tickets listings from the twickets live feed
-	fetchedListings, err := config.twicketsClient.FetchTicketListings(
+	fetchedListings, err := tsc.twicketsClient.FetchTicketListings(
 		context.Background(),
 		twigots.FetchTicketListingsInput{
 			// Required
@@ -131,7 +131,7 @@ func fetchAndProcessTickets(config TicketsScannerConfig) {
 	latestTicketTime = fetchedListings[0].CreatedAt.Time
 
 	// Filter fetched ticket listings to those wanted
-	filteredListings := filterTicketListings(fetchedListings, config.listingConfigs)
+	filteredListings := filterTicketListings(fetchedListings, tsc.listingConfigs)
 	for _, matchedListing := range filteredListings {
 
 		listing := matchedListing.listing
@@ -152,7 +152,7 @@ func fetchAndProcessTickets(config TicketsScannerConfig) {
 		// Send notifications
 		for _, notificationType := range listingConfig.Notification {
 
-			notificationClient, ok := config.notificationClients[notificationType]
+			notificationClient, ok := tsc.notificationClients[notificationType]
 			if !ok {
 				continue
 			}

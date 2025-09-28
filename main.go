@@ -64,11 +64,16 @@ func main() {
 	config.PrintTicketListingConfigs(listingConfigs)
 
 	slog.Info("Scanning Tickets...")
+
 	scanner := NewTicketsScanner(TicketsScannerConfig{
 		twicketsClient:      client,
 		notificationClients: notificationClients,
 		listingConfigs:      listingConfigs,
 		refetchTime:         refetchTime,
 	})
-	scanner.Start(context.Background())
+
+	err = scanner.Start(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
 }
