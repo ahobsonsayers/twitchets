@@ -20,6 +20,8 @@ import (
 	"github.com/samber/lo"
 )
 
+//go:generate go tool oapi-codegen -config ./oapi.models.yaml ./schema/openapi.yaml
+
 const (
 	maxNumTickets = 250
 	refetchTime   = 1 * time.Minute
