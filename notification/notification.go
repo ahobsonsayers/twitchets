@@ -9,6 +9,7 @@ import (
 	"text/template"
 
 	"github.com/ahobsonsayers/twigots"
+	"github.com/ahobsonsayers/twitchets/config"
 )
 
 var (
@@ -119,4 +120,37 @@ func RenderMessage(ticket twigots.TicketListing, options ...RenderMessageOption)
 	message = strings.TrimSpace(message)
 
 	return message, nil
+}
+
+func GetNotificationClients(conf config.NotificationConfig) (map[config.NotificationType]Client, error) {
+	clients := map[config.NotificationType]Client{}
+
+	if conf.Ntfy != nil {
+		ntfyClient, err := NewNtfyClient(*conf.Ntfy)
+		if err != nil {
+			return nil, fmt.Errorf("failed to setup ntfy client: %w", err)
+		}
+
+		clients[config.NotificationTypeNtfy] = ntfyClient
+	}
+
+	if conf.Gotify != nil {
+		gotifyClient, err := NewGotifyClient(*conf.Gotify)
+		if err != nil {
+			return nil, fmt.Errorf("failed to setup gotify client: %w", err)
+		}
+
+		clients[config.NotificationTypeGotify] = gotifyClient
+	}
+
+	if conf.Telegram != nil {
+		telegramClient, err := NewTelegramClient(*conf.Telegram)
+		if err != nil {
+			return nil, fmt.Errorf("failed to setup telegram client: %w", err)
+		}
+
+		clients[config.NotificationTypeTelegram] = telegramClient
+	}
+
+	return clients, nil
 }

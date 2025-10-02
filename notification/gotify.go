@@ -6,6 +6,7 @@ import (
 	"net/url"
 
 	"github.com/ahobsonsayers/twigots"
+	"github.com/ahobsonsayers/twitchets/config"
 	"github.com/gotify/go-api-client/v2/auth"
 	"github.com/gotify/go-api-client/v2/client"
 	"github.com/gotify/go-api-client/v2/client/message"
@@ -56,12 +57,7 @@ func (g GotifyClient) SendTicketNotification(ticket twigots.TicketListing) error
 	return nil
 }
 
-type GotifyConfig struct {
-	Url   string `json:"url"`
-	Token string `json:"token"`
-}
-
-func NewGotifyClient(config GotifyConfig) (GotifyClient, error) {
+func NewGotifyClient(config config.GotifyConfig) (GotifyClient, error) {
 	gotifyUrl, err := url.Parse(config.Url)
 	if err != nil {
 		return GotifyClient{}, fmt.Errorf("failed to parse gotify url: %v", err)

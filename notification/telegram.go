@@ -2,6 +2,7 @@ package notification
 
 import (
 	"github.com/ahobsonsayers/twigots"
+	"github.com/ahobsonsayers/twitchets/config"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -29,12 +30,7 @@ func (c TelegramClient) SendTicketNotification(ticket twigots.TicketListing) err
 	return nil
 }
 
-type TelegramConfig struct {
-	Token  string `json:"token"`
-	ChatId int    `json:"chatId"`
-}
-
-func NewTelegramClient(config TelegramConfig) (TelegramClient, error) {
+func NewTelegramClient(config config.TelegramConfig) (TelegramClient, error) {
 	client, err := tgbotapi.NewBotAPI(config.Token)
 	if err != nil {
 		return TelegramClient{}, err

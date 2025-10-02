@@ -3,3 +3,6 @@ package: config
 output: ./config/config.gen.go
 generate:
   models: true
+output-options:
+  user-templates:
+    enum: ./templates/enum.tmpl

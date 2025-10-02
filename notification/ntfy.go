@@ -6,6 +6,7 @@ import (
 	"net/url"
 
 	"github.com/ahobsonsayers/twigots"
+	"github.com/ahobsonsayers/twitchets/config"
 	"github.com/samber/lo"
 	"heckel.io/ntfy/client"
 )
@@ -49,14 +50,7 @@ func (c NtfyClient) SendTicketNotification(ticket twigots.TicketListing) error {
 	return nil
 }
 
-type NtfyConfig struct {
-	Url      string `json:"url"`
-	Topic    string `json:"topic"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-func NewNtfyClient(config NtfyConfig) (NtfyClient, error) {
+func NewNtfyClient(config config.NtfyConfig) (NtfyClient, error) {
 	ntfyUrl, err := url.Parse(config.Url)
 	if err != nil {
 		return NtfyClient{}, fmt.Errorf("failed to parse ntfy url: %v", err)
