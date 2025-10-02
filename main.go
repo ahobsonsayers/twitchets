@@ -60,7 +60,7 @@ func main() {
 	}
 
 	// Create notification clients
-	notificationClients, err := conf.Notification.Clients()
+	notificationClients, err := notification.GetNotificationClients(conf.Notification)
 	if err != nil {
 		log.Fatal(err)
 	}
