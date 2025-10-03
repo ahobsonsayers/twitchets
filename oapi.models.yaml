@@ -5,4 +5,5 @@ generate:
   models: true
 output-options:
   user-templates:
-    enum: ./templates/enum.tmpl
+    constants.tmpl: ./templates/constants.tmpl
+    typedef.tmpl: ./templates/typedef.tmpl

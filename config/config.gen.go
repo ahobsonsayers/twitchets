@@ -5,6 +5,18 @@ package config
 
 import (
 	"github.com/ahobsonsayers/twigots"
+	"github.com/orsinium-labs/enum"
+)
+
+// Defines values for NotificationType.
+var (
+	notificationTypeBuilder = enum.NewBuilder[string, NotificationType]()
+
+	NotificationTypeGotify   = notificationTypeBuilder.Add(NotificationType{"gotify"})
+	NotificationTypeNtfy     = notificationTypeBuilder.Add(NotificationType{"ntfy"})
+	NotificationTypeTelegram = notificationTypeBuilder.Add(NotificationType{"telegram"})
+
+	NotificationTypes = notificationTypeBuilder.Enum()
 )
 
 // Config defines model for Config.
@@ -71,6 +83,9 @@ type NotificationConfig struct {
 	Gotify   *GotifyConfig   `json:"gotify,omitempty"`
 	Telegram *TelegramConfig `json:"telegram,omitempty"`
 }
+
+// NotificationType defines model for NotificationType.
+type NotificationType enum.Member[string]
 
 // NtfyConfig defines model for NtfyConfig.
 type NtfyConfig struct {
