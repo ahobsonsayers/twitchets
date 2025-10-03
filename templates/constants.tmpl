@@ -3,14 +3,14 @@
 {{- if gt (len .SecuritySchemeProviderNames) 0 }}
 const (
 {{ range $ProviderName := .SecuritySchemeProviderNames }}
-  {{- $ProviderName | sanitizeGoIdentity | ucFirst }}Scopes = "{{ $ProviderName }}.Scopes"
+	{{- $ProviderName | sanitizeGoIdentity | ucFirst }}Scopes = "{{ $ProviderName }}.Scopes"
 {{ end }}
 )
 {{ end }}
 {{ range $Enum := .EnumDefinitions }}
 // Defines values for {{ $Enum.TypeName }}.
 var (
-	{{ $Enum.TypeName | lcFirst }}Builder = enum.NewBuilder[string, {{ $Enum.TypeName }}]()
+	{{ $Enum.TypeName | lcFirst }}Builder = enum.NewBuilder[{{$Enum.Schema.TypeDecl}}, {{ $Enum.TypeName }}]()
 	
 	{{ range $name, $value := $Enum.GetValues -}}
 		{{ $Enum.TypeName }}{{ $name }} = {{ $Enum.TypeName | lcFirst }}Builder.Add({{ $Enum.TypeName }}{ {{ $Enum.ValueWrapper }}{{ $value }}{{ $Enum.ValueWrapper }} })
