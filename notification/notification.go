@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	//go:embed template/message.tmpl.md
+	//go:embed templates/message.tmpl.md
 	messageTemplateFS embed.FS
 	messageTemplate   *template.Template
 )

@@ -5,5 +5,5 @@ generate:
   models: true
 output-options:
   user-templates:
-    constants.tmpl: ./templates/constants.tmpl
-    typedef.tmpl: ./templates/typedef.tmpl
+    constants.tmpl: ./schema/templates/constants.tmpl.go
+    typedef.tmpl: ./schema/templates/typedef.tmpl.go
