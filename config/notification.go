@@ -5,8 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-
-	"github.com/ahobsonsayers/twitchets/notification"
 )
 
 func (c *NotificationType) UnmarshalJSON(data []byte) error {
@@ -65,39 +63,6 @@ func (c NotificationConfig) Validate() error {
 	}
 
 	return nil
-}
-
-func (c NotificationConfig) Clients() (map[NotificationType]notification.Client, error) {
-	clients := map[NotificationType]notification.Client{}
-
-	if c.Ntfy != nil {
-		ntfyClient, err := notification.NewNtfyClient(*c.Ntfy)
-		if err != nil {
-			return nil, fmt.Errorf("failed to setup ntfy client: %w", err)
-		}
-
-		clients[NotificationTypeNtfy] = ntfyClient
-	}
-
-	if c.Gotify != nil {
-		gotifyClient, err := notification.NewGotifyClient(*c.Gotify)
-		if err != nil {
-			return nil, fmt.Errorf("failed to setup gotify client: %w", err)
-		}
-
-		clients[NotificationTypeGotify] = gotifyClient
-	}
-
-	if c.Telegram != nil {
-		telegramClient, err := notification.NewTelegramClient(*c.Telegram)
-		if err != nil {
-			return nil, fmt.Errorf("failed to setup telegram client: %w", err)
-		}
-
-		clients[NotificationTypeTelegram] = telegramClient
-	}
-
-	return clients, nil
 }
 
 func beginsWithHttp(url string) bool {
