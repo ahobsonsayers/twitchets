@@ -11,6 +11,7 @@ import (
 
 	"github.com/ahobsonsayers/twigots"
 	"github.com/ahobsonsayers/twitchets/config"
+	"github.com/ahobsonsayers/twitchets/notification"
 	"github.com/joho/godotenv"
 )
 
