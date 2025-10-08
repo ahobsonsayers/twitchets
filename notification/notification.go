@@ -84,7 +84,7 @@ func WithFooter() RenderMessageOption {
 }
 
 func RenderMessage(ticket twigots.TicketListing, options ...RenderMessageOption) (string, error) {
-	config := newRenderMessageConfig(options...)
+	conf := newRenderMessageConfig(options...)
 
 	templateData := MessageTemplateData{
 		Date:                ticket.Event.Date.Format("Monday 2 January 2006"),
@@ -102,11 +102,11 @@ func RenderMessage(ticket twigots.TicketListing, options ...RenderMessageOption)
 	}
 
 	// Add optional header and footers
-	if config.includeHeader {
+	if conf.includeHeader {
 		templateData.Event = ticket.Event.Name
 	}
 
-	if config.includeFooter {
+	if conf.includeFooter {
 		templateData.Link = ticket.URL()
 	}
 
