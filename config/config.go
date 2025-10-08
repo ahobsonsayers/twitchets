@@ -7,14 +7,6 @@ import (
 	"github.com/ahobsonsayers/twigots"
 )
 
-type Config struct {
-	APIKey             string                    `json:"apiKey"`
-	Country            twigots.Country           `json:"country"`
-	Notification       NotificationConfig        `json:"notification"`
-	GlobalTicketConfig GlobalTicketListingConfig `json:"global"`
-	TicketConfigs      []TicketListingConfig     `json:"tickets"`
-}
-
 func (c Config) Validate() error {
 	if c.APIKey == "" {
 		return errors.New("api key must be set")

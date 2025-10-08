@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/ahobsonsayers/twitchets/config"
 	"github.com/ahobsonsayers/twitchets/notification"
 	"github.com/ahobsonsayers/twitchets/test"
 	"github.com/joho/godotenv"
@@ -25,7 +26,7 @@ func TestTelegramSendTicketMessage(t *testing.T) {
 	telegramChatId, err := strconv.Atoi(telegramChatIdString)
 	require.NoError(t, err, "TELEGRAM_CHAT_ID is not an integer")
 
-	client, err := notification.NewTelegramClient(notification.TelegramConfig{
+	client, err := notification.NewTelegramClient(config.TelegramConfig{
 		Token:  telegramAPIKey,
 		ChatId: telegramChatId,
 	})

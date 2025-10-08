@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/ahobsonsayers/twitchets/config"
 	"github.com/ahobsonsayers/twitchets/notification"
 	"github.com/ahobsonsayers/twitchets/test"
 	"github.com/joho/godotenv"
@@ -27,7 +28,7 @@ func TestNtfySendTicketMessage(t *testing.T) {
 	ntfyTopic := os.Getenv("NTFY_TOPIC")
 	require.NotEmpty(t, ntfyTopic, "NTFY_PASSWORD is not set")
 
-	client, err := notification.NewNtfyClient(notification.NtfyConfig{
+	client, err := notification.NewNtfyClient(config.NtfyConfig{
 		Url:      ntfyUrl,
 		Username: ntfyUser,
 		Password: ntfyPassword,
@@ -51,7 +52,7 @@ func TestNtfySendTicketMessageWithoutAuth(t *testing.T) {
 	ntfyUser := os.Getenv("NTFY_USER")
 	require.NotEmpty(t, ntfyUser, "NTFY_USER is not set")
 
-	client, err := notification.NewNtfyClient(notification.NtfyConfig{
+	client, err := notification.NewNtfyClient(config.NtfyConfig{
 		Url:      ntfyUrl,
 		Username: ntfyUser,
 		Password: "",

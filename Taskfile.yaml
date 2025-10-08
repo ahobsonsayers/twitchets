@@ -2,19 +2,21 @@
 version: "3"
 
 tasks:
-  lint:
-    cmds:
-      - golangci-lint run
-
   format:
     cmds:
-      - go fmt ./...
+      - go tool gofumpt -l -w .
+
+  lint:
+    cmds:
+      - go tool golangci-lint run .
+
+  generate:
+    cmds:
+      - go generate ./...
 
   test:
     cmds:
-      - |
-        go clean -testcache
-        go test ./...
+      - go test ./...
 
   build:
     cmds:

@@ -11,8 +11,11 @@ import (
 
 	"github.com/ahobsonsayers/twigots"
 	"github.com/ahobsonsayers/twitchets/config"
+	"github.com/ahobsonsayers/twitchets/notification"
 	"github.com/joho/godotenv"
 )
+
+//go:generate go tool oapi-codegen -config ./oapi.models.yaml ./schema/openapi.yaml
 
 const (
 	maxNumTickets = 250
@@ -52,7 +55,7 @@ func main() {
 	}
 
 	// Create notification clients
-	notificationClients, err := conf.Notification.Clients()
+	notificationClients, err := notification.GetNotificationClients(conf.Notification)
 	if err != nil {
 		log.Fatal(err)
 	}

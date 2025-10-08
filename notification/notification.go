@@ -9,17 +9,18 @@ import (
 	"text/template"
 
 	"github.com/ahobsonsayers/twigots"
+	"github.com/ahobsonsayers/twitchets/config"
 )
 
 var (
-	//go:embed template/message.tmpl.md
+	//go:embed templates/message.tmpl.md
 	messageTemplateFS embed.FS
 	messageTemplate   *template.Template
 )
 
 func init() {
 	var err error
-	messageTemplate, err = template.ParseFS(messageTemplateFS, "template/message.tmpl.md")
+	messageTemplate, err = template.ParseFS(messageTemplateFS, "templates/message.tmpl.md")
 	if err != nil {
 		log.Fatalf("failed to read notification message template: %v", err)
 	}
@@ -57,13 +58,13 @@ type renderMessageConfig struct {
 }
 
 func newRenderMessageConfig(options ...RenderMessageOption) renderMessageConfig {
-	config := new(renderMessageConfig)
+	conf := new(renderMessageConfig)
 	for _, option := range options {
 		if option != nil {
-			option(config)
+			option(conf)
 		}
 	}
-	return *config
+	return *conf
 }
 
 type RenderMessageOption func(*renderMessageConfig)
@@ -83,7 +84,7 @@ func WithFooter() RenderMessageOption {
 }
 
 func RenderMessage(ticket twigots.TicketListing, options ...RenderMessageOption) (string, error) {
-	config := newRenderMessageConfig(options...)
+	conf := newRenderMessageConfig(options...)
 
 	templateData := MessageTemplateData{
 		Date:                ticket.Event.Date.Format("Monday 2 January 2006"),
@@ -101,11 +102,11 @@ func RenderMessage(ticket twigots.TicketListing, options ...RenderMessageOption)
 	}
 
 	// Add optional header and footers
-	if config.includeHeader {
+	if conf.includeHeader {
 		templateData.Event = ticket.Event.Name
 	}
 
-	if config.includeFooter {
+	if conf.includeFooter {
 		templateData.Link = ticket.URL()
 	}
 
@@ -119,4 +120,37 @@ func RenderMessage(ticket twigots.TicketListing, options ...RenderMessageOption)
 	message = strings.TrimSpace(message)
 
 	return message, nil
+}
+
+func GetNotificationClients(conf config.NotificationConfig) (map[config.NotificationType]Client, error) {
+	clients := map[config.NotificationType]Client{}
+
+	if conf.Ntfy != nil {
+		ntfyClient, err := NewNtfyClient(*conf.Ntfy)
+		if err != nil {
+			return nil, fmt.Errorf("failed to setup ntfy client: %w", err)
+		}
+
+		clients[config.NotificationTypeNtfy] = ntfyClient
+	}
+
+	if conf.Gotify != nil {
+		gotifyClient, err := NewGotifyClient(*conf.Gotify)
+		if err != nil {
+			return nil, fmt.Errorf("failed to setup gotify client: %w", err)
+		}
+
+		clients[config.NotificationTypeGotify] = gotifyClient
+	}
+
+	if conf.Telegram != nil {
+		telegramClient, err := NewTelegramClient(*conf.Telegram)
+		if err != nil {
+			return nil, fmt.Errorf("failed to setup telegram client: %w", err)
+		}
+
+		clients[config.NotificationTypeTelegram] = telegramClient
+	}
+
+	return clients, nil
 }
