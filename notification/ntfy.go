@@ -50,18 +50,18 @@ func (c NtfyClient) SendTicketNotification(ticket twigots.TicketListing) error {
 	return nil
 }
 
-func NewNtfyClient(config config.NtfyConfig) (NtfyClient, error) {
-	ntfyUrl, err := url.Parse(config.Url)
+func NewNtfyClient(conf config.NtfyConfig) (NtfyClient, error) {
+	ntfyUrl, err := url.Parse(conf.Url)
 	if err != nil {
 		return NtfyClient{}, fmt.Errorf("failed to parse ntfy url: %v", err)
 	}
 
-	ntfyUrl.Path = config.Topic
+	ntfyUrl.Path = conf.Topic
 
 	return NtfyClient{
 		url:      ntfyUrl,
-		user:     config.Username,
-		password: config.Password,
+		user:     conf.Username,
+		password: conf.Password,
 
 		client: client.New(nil),
 	}, nil

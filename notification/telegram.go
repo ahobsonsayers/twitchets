@@ -30,14 +30,14 @@ func (c TelegramClient) SendTicketNotification(ticket twigots.TicketListing) err
 	return nil
 }
 
-func NewTelegramClient(config config.TelegramConfig) (TelegramClient, error) {
-	client, err := tgbotapi.NewBotAPI(config.Token)
+func NewTelegramClient(conf config.TelegramConfig) (TelegramClient, error) {
+	client, err := tgbotapi.NewBotAPI(conf.Token)
 	if err != nil {
 		return TelegramClient{}, err
 	}
 
 	return TelegramClient{
 		client: client,
-		chatId: config.ChatId,
+		chatId: conf.ChatId,
 	}, nil
 }

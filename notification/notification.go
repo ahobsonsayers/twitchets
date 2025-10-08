@@ -58,13 +58,13 @@ type renderMessageConfig struct {
 }
 
 func newRenderMessageConfig(options ...RenderMessageOption) renderMessageConfig {
-	config := new(renderMessageConfig)
+	conf := new(renderMessageConfig)
 	for _, option := range options {
 		if option != nil {
-			option(config)
+			option(conf)
 		}
 	}
-	return *config
+	return *conf
 }
 
 type RenderMessageOption func(*renderMessageConfig)

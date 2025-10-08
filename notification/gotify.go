@@ -57,15 +57,15 @@ func (g GotifyClient) SendTicketNotification(ticket twigots.TicketListing) error
 	return nil
 }
 
-func NewGotifyClient(config config.GotifyConfig) (GotifyClient, error) {
-	gotifyUrl, err := url.Parse(config.Url)
+func NewGotifyClient(conf config.GotifyConfig) (GotifyClient, error) {
+	gotifyUrl, err := url.Parse(conf.Url)
 	if err != nil {
 		return GotifyClient{}, fmt.Errorf("failed to parse gotify url: %v", err)
 	}
 
 	return GotifyClient{
 		url:   gotifyUrl,
-		token: config.Token, // TODO validate this token?
+		token: conf.Token, // TODO validate this token?
 
 		client: gotify.NewClient(gotifyUrl, &http.Client{}),
 	}, nil
