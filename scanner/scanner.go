@@ -99,7 +99,10 @@ func (s *TicketScanner) Stop() {
 	s.WaitUntilStopped()
 }
 
-// Stop the worker - blocks until stopped
+// UpdateConfig updates the config of the scanner.
+// This can be called while the scanner is running.
+// Note: RefetchTime cannot be changed while the scanner is running,
+// so, UpdateConfig will ignore any changes to it
 func (s *TicketScanner) UpdateConfig(config TicketScannerConfig) {
 	s.configMutex.Lock()
 	defer s.configMutex.Unlock()
