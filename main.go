@@ -61,18 +61,7 @@ func main() {
 	// Watch config file for changes (in a goroutine)
 	go config.Watch(
 		userConfigPath,
-		func(conf config.Config) error {
-			// Get scanner config
-			scannerConfig, err := ticketScannerConfigFromUserConfig(conf)
-			if err != nil {
-				return err
-			}
-
-			// Update scanner config
-			ticketScanner.UpdateConfig(scannerConfig)
-
-			return nil
-		},
+		getUserConfigUpdateCallback(ticketScanner),
 	)
 
 	// Start scanning for tickets
@@ -105,4 +94,19 @@ func ticketScannerConfigFromUserConfig(conf config.Config) (scanner.TicketScanne
 		ListingConfigs:      listingConfigs,
 		RefetchTime:         refetchTime,
 	}, nil
+}
+
+func getUserConfigUpdateCallback(ticketScanner *scanner.TicketScanner) func(config.Config) error {
+	return func(userConfig config.Config) error {
+		// Get scanner config
+		scannerConfig, err := ticketScannerConfigFromUserConfig(userConfig)
+		if err != nil {
+			return err
+		}
+
+		// Update scanner config
+		ticketScanner.UpdateConfig(scannerConfig)
+
+		return nil
+	}
 }
