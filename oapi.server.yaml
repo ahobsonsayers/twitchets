@@ -2,6 +2,7 @@
 package: server
 output: ./server/server.gen.go
 generate:
+  models: true # No types are in this schema
   chi-server: true
   strict-server: true
 import-mapping:
