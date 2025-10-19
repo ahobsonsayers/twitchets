@@ -19,7 +19,7 @@ components:
           x-go-name: GlobalTicketConfig
           x-order: 4
           allOf:
-            # Hack to get x-go-name working with ref
+            # Hack to get x-* fields working with $ref
             # See:
             # https://github.com/oapi-codegen/oapi-codegen/issues/863
             - $ref: "#/components/schemas/GlobalTicketListingConfig"
@@ -190,12 +190,16 @@ components:
         regions:
           x-order: 3
           x-go-type-skip-optional-pointer: true
+          x-omitempty: false
+          x-omitzero: true
           description: |
             Geographic regions to search for tickets
             Overrides global setting. To reset to default (all regions), use an empty array [].
-          type: array
-          items:
-            $ref: "#/components/schemas/Region"
+          allOf:
+            # Hack to get x-* fields working with $ref
+            # See:
+            # https://github.com/oapi-codegen/oapi-codegen/issues/863
+            - $ref: "#/components/schemas/Regions"
         numTickets:
           x-order: 4
           description: |
@@ -221,12 +225,16 @@ components:
         notification:
           x-order: 7
           x-go-type-skip-optional-pointer: true
+          x-omitempty: false
+          x-omitzero: true
           description: |
             Notification services to use
             Overrides global setting. To reset to default (all configured services), use an empty array [].
-          type: array
-          items:
-            $ref: "#/components/schemas/NotificationType"
+          allOf:
+            # Hack to get x-* fields working with $ref
+            # See:
+            # https://github.com/oapi-codegen/oapi-codegen/issues/863
+            - $ref: "#/components/schemas/Notifications"
       required:
         - event
 
@@ -243,6 +251,11 @@ components:
         Currently only GB is supported.
       enum:
         - GB
+
+    Regions:
+      type: array
+      items:
+        $ref: "#/components/schemas/Region"
 
     Region:
       # Valid regions come from twigots.
@@ -280,6 +293,11 @@ components:
         - GBSC
         - GBWA
         - GBNI
+
+    Notifications:
+      type: array
+      items:
+        $ref: "#/components/schemas/NotificationType"
 
     NotificationType:
       type: string
