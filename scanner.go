@@ -46,7 +46,7 @@ type TicketsScanner struct {
 func (w *TicketsScanner) IsRunning() bool   { return w.running.Load() }
 func (w *TicketsScanner) WaitUntilStopped() { w.runningWg.Wait() }
 
-// Start the worker - blocks until stopped
+// Start the scanner - blocks until stopped
 func (w *TicketsScanner) Start(ctx context.Context) error {
 	swapped := w.running.CompareAndSwap(false, true)
 	if !swapped {

@@ -15,7 +15,7 @@ import (
 	oapimiddleware "github.com/oapi-codegen/nethttp-middleware"
 )
 
-func Serve(port int, configPath string) error {
+func Start(port int, configPath string) error {
 	address := fmt.Sprintf("0.0.0.0:%d", port)
 
 	loggerMiddleware := createLoggerMiddleware()

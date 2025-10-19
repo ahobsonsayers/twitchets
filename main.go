@@ -12,6 +12,7 @@ import (
 	"github.com/ahobsonsayers/twigots"
 	"github.com/ahobsonsayers/twitchets/config"
 	"github.com/ahobsonsayers/twitchets/notification"
+	"github.com/ahobsonsayers/twitchets/server"
 	"github.com/joho/godotenv"
 )
 
@@ -80,9 +81,13 @@ func main() {
 	go func() {
 		err = scanner.Start(context.Background())
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalf("error running scanner: %v", err)
 		}
 	}()
 
 	// Run server
+	err = server.Start(9000, configPath)
+	if err != nil {
+		log.Fatalf("error running server: %v", err)
+	}
 }
