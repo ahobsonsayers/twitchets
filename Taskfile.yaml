@@ -11,6 +11,8 @@ tasks:
       - go tool golangci-lint run .
 
   generate:
+    aliases:
+      - gen
     cmds:
       - go generate ./...
 

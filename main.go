@@ -15,7 +15,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
-//go:generate go tool oapi-codegen -config ./oapi.models.yaml ./schema/openapi.yaml
+//go:generate go tool oapi-codegen -config ./oapi.models.yaml ./schema/models.openapi.yaml
+//go:generate go tool oapi-codegen -config ./oapi.server.yaml ./schema/server.openapi.yaml
 
 const (
 	maxNumTickets = 250
@@ -75,8 +76,13 @@ func main() {
 		refetchTime:         refetchTime,
 	})
 
-	err = scanner.Start(context.Background())
-	if err != nil {
-		log.Fatal(err)
-	}
+	// Run scanner in gorountine
+	go func() {
+		err = scanner.Start(context.Background())
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	// Run server
 }

@@ -161,6 +161,3 @@ type TicketListingConfig struct {
 	// Overrides global setting. To reset to default (all configured services), use an empty array [].
 	Notification []NotificationType `json:"notification,omitempty"`
 }
-
-// PutConfigJSONRequestBody defines body for PutConfig for application/json ContentType.
-type PutConfigJSONRequestBody = Config
