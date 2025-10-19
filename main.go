@@ -49,32 +49,32 @@ func main() {
 	// Get scanner config
 	scannerConfig, err := ticketScannerConfigFromUserConfig(userConfig)
 	if err != nil {
-		log.Fatalf("failed to create scanner config: %v", err)
+		log.Fatal(err)
 	}
 
-	// Print ticket being scanned for
+	// Print the tickets being scanned for
 	config.PrintTicketListingConfigs(scannerConfig.ListingConfigs)
 
 	// Create ticket scanner
-	ticketScanner := scanner.NewTicketScanner(scannerConfig)
+	scanner := scanner.NewTicketScanner(scannerConfig)
 
-	// Watch config file for changes and update scanner
+	// Watch config file for changes
 	config.Watch(userConfigPath, func(conf config.Config) error {
 		// Get scanner config
 		scannerConfig, err := ticketScannerConfigFromUserConfig(userConfig)
 		if err != nil {
-			return fmt.Errorf("failed to create scanner config: %w", err)
+			return err
 		}
 
 		// Update scanner config
-		ticketScanner.UpdateConfig(scannerConfig)
+		scanner.UpdateConfig(scannerConfig)
 
 		return nil
 	})
 
-	// Start scanning gof tickets
+	// Start scanning for tickets
 	slog.Info("Scanning for tickets...")
-	err = ticketScanner.Start(context.Background())
+	err = scanner.Start(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
