@@ -114,16 +114,16 @@ components:
         Any setting not specified will use the default.
       properties:
         eventSimilarity:
-          x-go-type-skip-optional-pointer: true
           x-order: 1
+          x-go-type-skip-optional-pointer: true
           description: |
             Event name similarity matching (0.0 - 1.0).
             Default: 0.9 (allows for minor naming differences)
           type: number
           format: double
         regions:
-          x-go-type-skip-optional-pointer: true
           x-order: 2
+          x-go-type-skip-optional-pointer: true
           description: |
             Geographic regions to search for tickets.
             Default: All regions if not specified.
@@ -132,33 +132,33 @@ components:
           items:
             $ref: "#/components/schemas/Region"
         numTickets:
-          x-go-type-skip-optional-pointer: true
           x-order: 3
+          x-go-type-skip-optional-pointer: true
           description: |
             Minimum number of tickets required in listing
             Default: Any number of tickets.
           type: integer
         discount:
+          x-order: 4
           x-go-name: MinDiscount
           x-go-type-skip-optional-pointer: true
-          x-order: 4
           description: |
             Minimum discount (including fee) on the original price as a percentage
             Default: Any discount (including no discount).
           type: number
           format: double
         maxTicketPrice:
+          x-order: 5
           x-go-name: MaxTicketPriceInclFee
           x-go-type-skip-optional-pointer: true
-          x-order: 5
           description: |
             Maximum price per ticket (including fee) in pounds (£)
             Default: Any price.
           type: number
           format: double
         notification:
-          x-go-type-skip-optional-pointer: true
           x-order: 6
+          x-go-type-skip-optional-pointer: true
           description: |
             Notification services to use
             Default: All configured services.
