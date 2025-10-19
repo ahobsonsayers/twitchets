@@ -54,6 +54,7 @@ type MiddlewareFunc func(http.Handler) http.Handler
 
 // GetConfig operation middleware
 func (siw *ServerInterfaceWrapper) GetConfig(w http.ResponseWriter, r *http.Request) {
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetConfig(w, r)
 	}))
@@ -67,6 +68,7 @@ func (siw *ServerInterfaceWrapper) GetConfig(w http.ResponseWriter, r *http.Requ
 
 // PutConfig operation middleware
 func (siw *ServerInterfaceWrapper) PutConfig(w http.ResponseWriter, r *http.Request) {
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PutConfig(w, r)
 	}))
@@ -201,7 +203,8 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	return r
 }
 
-type GetConfigRequestObject struct{}
+type GetConfigRequestObject struct {
+}
 
 type GetConfigResponseObject interface {
 	VisitGetConfigResponse(w http.ResponseWriter) error
@@ -216,7 +219,8 @@ func (response GetConfig200JSONResponse) VisitGetConfigResponse(w http.ResponseW
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetConfig500Response struct{}
+type GetConfig500Response struct {
+}
 
 func (response GetConfig500Response) VisitGetConfigResponse(w http.ResponseWriter) error {
 	w.WriteHeader(500)
@@ -231,21 +235,24 @@ type PutConfigResponseObject interface {
 	VisitPutConfigResponse(w http.ResponseWriter) error
 }
 
-type PutConfig200Response struct{}
+type PutConfig200Response struct {
+}
 
 func (response PutConfig200Response) VisitPutConfigResponse(w http.ResponseWriter) error {
 	w.WriteHeader(200)
 	return nil
 }
 
-type PutConfig400Response struct{}
+type PutConfig400Response struct {
+}
 
 func (response PutConfig400Response) VisitPutConfigResponse(w http.ResponseWriter) error {
 	w.WriteHeader(400)
 	return nil
 }
 
-type PutConfig500Response struct{}
+type PutConfig500Response struct {
+}
 
 func (response PutConfig500Response) VisitPutConfigResponse(w http.ResponseWriter) error {
 	w.WriteHeader(500)
@@ -262,10 +269,8 @@ type StrictServerInterface interface {
 	PutConfig(ctx context.Context, request PutConfigRequestObject) (PutConfigResponseObject, error)
 }
 
-type (
-	StrictHandlerFunc    = strictnethttp.StrictHTTPHandlerFunc
-	StrictMiddlewareFunc = strictnethttp.StrictHTTPMiddlewareFunc
-)
+type StrictHandlerFunc = strictnethttp.StrictHTTPHandlerFunc
+type StrictMiddlewareFunc = strictnethttp.StrictHTTPMiddlewareFunc
 
 type StrictHTTPServerOptions struct {
 	RequestErrorHandlerFunc  func(w http.ResponseWriter, r *http.Request, err error)
