@@ -58,8 +58,8 @@ func main() {
 	// Create ticket scanner
 	scanner := scanner.NewTicketScanner(scannerConfig)
 
-	// Watch config file for changes
-	config.Watch(userConfigPath, func(conf config.Config) error {
+	// Watch config file for changes (in a goroutine)
+	go config.Watch(userConfigPath, func(conf config.Config) error {
 		// Get scanner config
 		scannerConfig, err := ticketScannerConfigFromUserConfig(userConfig)
 		if err != nil {
