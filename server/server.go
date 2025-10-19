@@ -3,11 +3,8 @@ package server
 import (
 	"context"
 	"fmt"
-	"log"
-	"net/http"
 
 	"github.com/ahobsonsayers/twitchets/config"
-	"github.com/go-chi/chi/v5"
 )
 
 type Server struct {
@@ -40,21 +37,4 @@ func NewServer(configPath string) ServerInterface {
 		configPath: configPath,
 	}
 	return NewStrictHandler(server, nil)
-}
-
-func Serve(port int, configPath string) error {
-	address := fmt.Sprintf("0.0.0.0:%d", port)
-
-	router := chi.NewMux()
-	server := NewServer(configPath)
-	handler := HandlerFromMux(server, router)
-
-	// Start the Server
-	log.Printf("Server listening on %s\n", address)
-	err := http.ListenAndServe(address, handler)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
