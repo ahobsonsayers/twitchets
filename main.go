@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"log/slog"
 	"os"
@@ -38,42 +39,67 @@ func main() {
 		log.Fatalf("failed to get working directory:, %v", err)
 	}
 
-	// Load config
-	configPath := filepath.Join(cwd, "config.yaml")
-	conf, err := config.Load(configPath)
+	// Load user config
+	userConfigPath := filepath.Join(cwd, "config.yaml")
+	userConfig, err := config.Load(userConfigPath)
 	if err != nil {
 		log.Fatalf("config error:, %v", err)
 	}
 
+	// Get scanner config
+	scannerConfig, err := ticketScannerConfigFromUserConfig(userConfig)
+	if err != nil {
+		log.Fatalf("failed to create scanner config: %v", err)
+	}
+
+	// Print ticket being scanned for
+	config.PrintTicketListingConfigs(scannerConfig.ListingConfigs)
+
+	// Create ticket scanner
+	ticketScanner := scanner.NewTicketScanner(scannerConfig)
+
+	// Watch config file for changes and update scanner
+	config.Watch(userConfigPath, func(conf config.Config) error {
+		// Get scanner config
+		scannerConfig, err := ticketScannerConfigFromUserConfig(userConfig)
+		if err != nil {
+			return fmt.Errorf("failed to create scanner config: %w", err)
+		}
+
+		// Update scanner config
+		ticketScanner.UpdateConfig(scannerConfig)
+
+		return nil
+	})
+
+	// Start scanning gof tickets
+	slog.Info("Scanning for tickets...")
+	err = ticketScanner.Start(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func ticketScannerConfigFromUserConfig(conf config.Config) (scanner.TicketScannerConfig, error) {
 	// Create twickets client
 	client, err := twigots.NewClient(conf.APIKey)
 	if err != nil {
-		log.Fatal(err)
+		return scanner.TicketScannerConfig{}, fmt.Errorf("failed to create twickets client: %w", err)
 	}
 
 	// Create notification clients
 	notificationClients, err := notification.GetNotificationClients(conf.Notification)
 	if err != nil {
-		log.Fatal(err)
+		return scanner.TicketScannerConfig{}, fmt.Errorf("failed to create notification clients: %w", err)
 	}
 
 	// Get combined ticket listing configs
 	listingConfigs := conf.CombinedTicketListingConfigs()
 
-	// Print config
-	config.PrintTicketListingConfigs(listingConfigs)
-
-	slog.Info("Scanning Tickets...")
-
-	scanner := scanner.NewTicketScanner(scanner.TicketScannerConfig{
+	return scanner.TicketScannerConfig{
 		TwicketsClient:      client,
 		NotificationClients: notificationClients,
 		ListingConfigs:      listingConfigs,
 		RefetchTime:         refetchTime,
-	})
-
-	err = scanner.Start(context.Background())
-	if err != nil {
-		log.Fatal(err)
-	}
+	}, nil
 }

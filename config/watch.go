@@ -21,7 +21,7 @@ func Watch(filePath string, callback func(Config) error) {
 				return
 			}
 
-			slog.Error("config file changed. reloading")
+			slog.Info("config file changed. reloading")
 
 			// Reload config
 			config, err := Load(filePath)
