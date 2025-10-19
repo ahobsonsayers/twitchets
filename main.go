@@ -47,34 +47,37 @@ func main() {
 	}
 
 	// Get scanner config
-	scannerConfig, err := ticketScannerConfigFromUserConfig(userConfig)
+	ticketScannerConfig, err := ticketScannerConfigFromUserConfig(userConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Print the tickets being scanned for
-	config.PrintTicketListingConfigs(scannerConfig.ListingConfigs)
+	config.PrintTicketListingConfigs(ticketScannerConfig.ListingConfigs)
 
-	// Create ticket scanner
-	scanner := scanner.NewTicketScanner(scannerConfig)
+	// Create ticket ticketScanner
+	ticketScanner := scanner.NewTicketScanner(ticketScannerConfig)
 
 	// Watch config file for changes (in a goroutine)
-	go config.Watch(userConfigPath, func(conf config.Config) error {
-		// Get scanner config
-		scannerConfig, err := ticketScannerConfigFromUserConfig(userConfig)
-		if err != nil {
-			return err
-		}
+	go config.Watch(
+		userConfigPath,
+		func(conf config.Config) error {
+			// Get scanner config
+			scannerConfig, err := ticketScannerConfigFromUserConfig(conf)
+			if err != nil {
+				return err
+			}
 
-		// Update scanner config
-		scanner.UpdateConfig(scannerConfig)
+			// Update scanner config
+			ticketScanner.UpdateConfig(scannerConfig)
 
-		return nil
-	})
+			return nil
+		},
+	)
 
 	// Start scanning for tickets
 	slog.Info("Scanning for tickets...")
-	err = scanner.Start(context.Background())
+	err = ticketScanner.Start(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
