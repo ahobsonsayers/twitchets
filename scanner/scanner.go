@@ -34,7 +34,8 @@ type TicketScannerConfig struct {
 }
 
 type TicketScanner struct {
-	config TicketScannerConfig
+	config      TicketScannerConfig
+	configMutex sync.Mutex
 
 	latestTicketTime time.Time // No need to lock this
 
@@ -98,7 +99,19 @@ func (s *TicketScanner) Stop() {
 	s.WaitUntilStopped()
 }
 
+// Stop the worker - blocks until stopped
+func (s *TicketScanner) UpdateConfig(config TicketScannerConfig) {
+	s.configMutex.Lock()
+	defer s.configMutex.Unlock()
+	s.config = config
+}
+
 func (s *TicketScanner) fetchAndProcessTickets() {
+	// Lock config while fetching and processing tickets,
+	// as the config is used throughout this method
+	s.configMutex.Lock()
+	defer s.configMutex.Unlock()
+
 	numTickets := maxNumTickets
 	if s.latestTicketTime.IsZero() {
 		numTickets = 10
