@@ -1,4 +1,4 @@
-package main
+package scanner
 
 import (
 	"context"
@@ -18,21 +18,25 @@ import (
 	"github.com/samber/lo"
 )
 
-func NewTicketsScanner(tsc TicketsScannerConfig) *TicketsScanner {
-	return &TicketsScanner{
+const maxNumTickets = 250
+
+func NewTicketScanner(tsc TicketScannerConfig) *TicketScanner {
+	return &TicketScanner{
 		config: tsc,
 	}
 }
 
-type TicketsScannerConfig struct {
-	twicketsClient      *twigots.Client
-	notificationClients map[config.NotificationType]notification.Client
-	listingConfigs      []config.TicketListingConfig
-	refetchTime         time.Duration
+type TicketScannerConfig struct {
+	TwicketsClient      *twigots.Client
+	NotificationClients map[config.NotificationType]notification.Client
+	ListingConfigs      []config.TicketListingConfig
+	RefetchTime         time.Duration
 }
 
-type TicketsScanner struct {
-	config TicketsScannerConfig
+type TicketScanner struct {
+	config TicketScannerConfig
+
+	latestTicketTime time.Time // No need to lock this
 
 	// Synchronisation
 	running      atomic.Bool
@@ -43,34 +47,34 @@ type TicketsScanner struct {
 	cancel context.CancelFunc
 }
 
-func (w *TicketsScanner) IsRunning() bool   { return w.running.Load() }
-func (w *TicketsScanner) WaitUntilStopped() { w.runningWg.Wait() }
+func (s *TicketScanner) IsRunning() bool   { return s.running.Load() }
+func (s *TicketScanner) WaitUntilStopped() { s.runningWg.Wait() }
 
 // Start the worker - blocks until stopped
-func (w *TicketsScanner) Start(ctx context.Context) error {
-	swapped := w.running.CompareAndSwap(false, true)
+func (s *TicketScanner) Start(ctx context.Context) error {
+	swapped := s.running.CompareAndSwap(false, true)
 	if !swapped {
 		return errors.New("worker already running")
 	}
-	w.runningWg.Add(1)
-	defer w.cleanup()
+	s.runningWg.Add(1)
+	defer s.cleanup()
 
 	// Initial ticket scan
-	fetchAndProcessTickets(w.config)
+	s.fetchAndProcessTickets()
 
 	// Create ticker
-	ticker := time.NewTicker(w.config.refetchTime)
+	ticker := time.NewTicker(s.config.RefetchTime)
 	defer ticker.Stop()
 
 	// Create cancellable context
 	ctx, cancel := context.WithCancel(ctx)
-	w.cancel = cancel
+	s.cancel = cancel
 
 	// Start ticket scanning
 	for {
 		select {
 		case <-ticker.C:
-			fetchAndProcessTickets(w.config)
+			s.fetchAndProcessTickets()
 
 		case <-ctx.Done():
 			return ctx.Err()
@@ -78,37 +82,37 @@ func (w *TicketsScanner) Start(ctx context.Context) error {
 	}
 }
 
-func (w *TicketsScanner) cleanup() {
-	w.shutdownOnce.Do(func() {
+func (s *TicketScanner) cleanup() {
+	s.shutdownOnce.Do(func() {
 		// Signal we are no longer running
-		w.running.Store(false)
-		w.runningWg.Done()
+		s.running.Store(false)
+		s.runningWg.Done()
 	})
 }
 
 // Stop the worker - blocks until stopped
-func (w *TicketsScanner) Stop() {
-	if w.cancel != nil {
-		w.cancel()
+func (s *TicketScanner) Stop() {
+	if s.cancel != nil {
+		s.cancel()
 	}
-	w.WaitUntilStopped()
+	s.WaitUntilStopped()
 }
 
-func fetchAndProcessTickets(tsc TicketsScannerConfig) {
+func (s *TicketScanner) fetchAndProcessTickets() {
 	numTickets := maxNumTickets
-	if latestTicketTime.IsZero() {
+	if s.latestTicketTime.IsZero() {
 		numTickets = 10
 	}
 
 	// Fetch tickets listings from the twickets live feed
-	fetchedListings, err := tsc.twicketsClient.FetchTicketListings(
+	fetchedListings, err := s.config.TwicketsClient.FetchTicketListings(
 		context.Background(),
 		twigots.FetchTicketListingsInput{
 			// Required
 			Country: twigots.CountryUnitedKingdom,
 			// Optional
 			CreatedBefore: time.Now(),
-			CreatedAfter:  latestTicketTime,
+			CreatedAfter:  s.latestTicketTime,
 			MaxNumber:     numTickets,
 		},
 	)
@@ -128,10 +132,10 @@ func fetchAndProcessTickets(tsc TicketsScannerConfig) {
 	}
 
 	// Update latest ticket time. Most recent ticket is first
-	latestTicketTime = fetchedListings[0].CreatedAt.Time
+	s.latestTicketTime = fetchedListings[0].CreatedAt.Time
 
 	// Filter fetched ticket listings to those wanted
-	filteredListings := filterTicketListings(fetchedListings, tsc.listingConfigs)
+	filteredListings := filterTicketListings(fetchedListings, s.config.ListingConfigs)
 	for _, matchedListing := range filteredListings {
 
 		listing := matchedListing.listing
@@ -152,7 +156,7 @@ func fetchAndProcessTickets(tsc TicketsScannerConfig) {
 		// Send notifications
 		for _, notificationType := range listingConfig.Notification {
 
-			notificationClient, ok := tsc.notificationClients[notificationType]
+			notificationClient, ok := s.config.NotificationClients[notificationType]
 			if !ok {
 				continue
 			}

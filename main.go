@@ -12,18 +12,14 @@ import (
 	"github.com/ahobsonsayers/twigots"
 	"github.com/ahobsonsayers/twitchets/config"
 	"github.com/ahobsonsayers/twitchets/notification"
+	"github.com/ahobsonsayers/twitchets/scanner"
 	"github.com/joho/godotenv"
 )
 
 //go:generate go tool oapi-codegen -config ./oapi.models.yaml ./schema/models.openapi.yaml
 //go:generate go tool oapi-codegen -config ./oapi.server.yaml ./schema/server.openapi.yaml
 
-const (
-	maxNumTickets = 250
-	refetchTime   = 1 * time.Minute
-)
-
-var latestTicketTime time.Time
+const refetchTime = 1 * time.Minute
 
 func init() {
 	_ = godotenv.Load()
@@ -69,20 +65,15 @@ func main() {
 
 	slog.Info("Scanning Tickets...")
 
-	scanner := NewTicketsScanner(TicketsScannerConfig{
-		twicketsClient:      client,
-		notificationClients: notificationClients,
-		listingConfigs:      listingConfigs,
-		refetchTime:         refetchTime,
+	scanner := scanner.NewTicketScanner(scanner.TicketScannerConfig{
+		TwicketsClient:      client,
+		NotificationClients: notificationClients,
+		ListingConfigs:      listingConfigs,
+		RefetchTime:         refetchTime,
 	})
 
-	// Run scanner in gorountine
-	go func() {
-		err = scanner.Start(context.Background())
-		if err != nil {
-			log.Fatal(err)
-		}
-	}()
-
-	// Run server
+	err = scanner.Start(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
 }
