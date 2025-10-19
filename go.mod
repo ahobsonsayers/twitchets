@@ -10,11 +10,13 @@ tool (
 
 require (
 	github.com/ahobsonsayers/twigots v0.6.0
+	github.com/go-chi/chi/v5 v5.2.3
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/gotify/go-api-client/v2 v2.0.4
 	github.com/joho/godotenv v1.5.1
 	github.com/knadh/koanf v1.5.0
 	github.com/mitchellh/mapstructure v1.5.0
+	github.com/oapi-codegen/runtime v1.1.2
 	github.com/orsinium-labs/enum v1.4.0
 	github.com/samber/lo v1.51.0
 	github.com/stretchr/testify v1.11.1

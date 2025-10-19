@@ -4,6 +4,7 @@ output: ./config/config.gen.go
 generate:
   models: true
 output-options:
+  skip-prune: true
   user-templates:
     constants.tmpl: ./schema/templates/constants.tmpl
     typedef.tmpl: ./schema/templates/typedef.tmpl
