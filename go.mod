@@ -12,6 +12,7 @@ require (
 	github.com/ahobsonsayers/twigots v0.6.0
 	github.com/go-chi/chi/v5 v5.2.3
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
+	github.com/goccy/go-yaml v1.18.0
 	github.com/gotify/go-api-client/v2 v2.0.4
 	github.com/joho/godotenv v1.5.1
 	github.com/knadh/koanf v1.5.0
