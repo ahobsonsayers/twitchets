@@ -1,0 +1,289 @@
+# yaml-language-server: $schema=https://spec.openapis.org/oas/3.0/schema/2024-10-18
+components:
+  schemas:
+    Config:
+      type: object
+      properties:
+        apiKey:
+          x-go-name: APIKey
+          x-order: 1
+          description: "REQUIRED: See README.md for details on how to obtain"
+          type: string
+        country:
+          x-order: 2
+          $ref: "#/components/schemas/Country"
+        notification:
+          x-order: 3
+          $ref: "#/components/schemas/NotificationConfig"
+        global:
+          x-go-name: GlobalTicketConfig
+          x-order: 4
+          allOf:
+            # Hack to get x-go-name working with ref
+            # See:
+            # https://github.com/oapi-codegen/oapi-codegen/issues/863
+            - $ref: "#/components/schemas/GlobalTicketListingConfig"
+        tickets:
+          x-go-name: TicketConfigs
+          x-order: 5
+          type: array
+          items:
+            $ref: "#/components/schemas/TicketListingConfig"
+      required:
+        - apiKey
+        - country
+        - notification
+        - global
+        - tickets
+
+    NotificationConfig:
+      type: object
+      description: |
+        Notification service configuration
+      properties:
+        ntfy:
+          x-order: 1
+          $ref: "#/components/schemas/NtfyConfig"
+        gotify:
+          x-order: 2
+          $ref: "#/components/schemas/GotifyConfig"
+        telegram:
+          x-order: 3
+          $ref: "#/components/schemas/TelegramConfig"
+
+    NtfyConfig:
+      type: object
+      properties:
+        url:
+          x-order: 1
+          description: You can use the public instance at https://ntfy.sh
+          type: string
+        topic:
+          x-order: 2
+          description: "If using https://ntfy.sh, make sure this is unique to you!"
+          type: string
+        username:
+          x-order: 3
+          description: "Optional: for authenticated instances"
+          type: string
+        password:
+          x-order: 4
+          description: "Optional: for authenticated instances"
+          type: string
+      required:
+        - url
+        - topic
+        - username
+        - password
+
+    GotifyConfig:
+      type: object
+      properties:
+        url:
+          x-order: 1
+          description: Your Gotify server URL
+          type: string
+        token:
+          x-order: 2
+          description: Application token from Gotify
+          type: string
+      required:
+        - url
+        - token
+
+    TelegramConfig:
+      type: object
+      properties:
+        token:
+          x-order: 1
+          description: Get from @BotFather on Telegram
+          type: string
+        chatId:
+          x-order: 2
+          description: Your chat ID or group chat ID
+          type: integer
+      required:
+        - token
+        - chatId
+
+    GlobalTicketListingConfig:
+      type: object
+      description: |
+        GlobalTicketListingConfig represents configuration settings that apply to all ticket listings
+        unless explicitly overridden by a specific ticket configuration.
+        Any setting not specified will use the default.
+      properties:
+        eventSimilarity:
+          x-go-type-skip-optional-pointer: true
+          x-order: 1
+          description: |
+            Event name similarity matching (0.0 - 1.0).
+            Default: 0.9 (allows for minor naming differences)
+          type: number
+          format: double
+        regions:
+          x-go-type-skip-optional-pointer: true
+          x-order: 2
+          description: |
+            Geographic regions to search for tickets.
+            Default: All regions if not specified.
+            Full list: https://github.com/ahobsonsayers/twigots/blob/main/location.go#L79-L90
+          type: array
+          items:
+            $ref: "#/components/schemas/Region"
+        numTickets:
+          x-go-type-skip-optional-pointer: true
+          x-order: 3
+          description: |
+            Minimum number of tickets required in listing
+            Default: Any number of tickets.
+          type: integer
+        discount:
+          x-go-name: MinDiscount
+          x-go-type-skip-optional-pointer: true
+          x-order: 4
+          description: |
+            Minimum discount (including fee) on the original price as a percentage
+            Default: Any discount (including no discount).
+          type: number
+          format: double
+        maxTicketPrice:
+          x-go-name: MaxTicketPriceInclFee
+          x-go-type-skip-optional-pointer: true
+          x-order: 5
+          description: |
+            Maximum price per ticket (including fee) in pounds (£)
+            Default: Any price.
+          type: number
+          format: double
+        notification:
+          x-go-type-skip-optional-pointer: true
+          x-order: 6
+          description: |
+            Notification services to use
+            Default: All configured services.
+          type: array
+          items:
+            $ref: "#/components/schemas/NotificationType"
+
+    TicketListingConfig:
+      type: object
+      description: |
+        TicketListingConfig represents configuration for specific ticket listings
+        Configuration overrides global configuration
+        To reset a global configuration to its default, use:
+        - "" (empty string) for string values
+        - [] (empty array) for list values
+        - -1 for numeric values
+      properties:
+        event:
+          x-order: 1
+          description: Event name
+          type: string
+        eventSimilarity:
+          x-order: 2
+          description: |
+            Event name similarity matching (0.0 - 1.0).
+            Overrides global setting.
+          type: number
+          format: double
+        regions:
+          x-order: 3
+          x-go-type-skip-optional-pointer: true
+          description: |
+            Geographic regions to search for tickets
+            Overrides global setting. To reset to default (all regions), use an empty array [].
+          type: array
+          items:
+            $ref: "#/components/schemas/Region"
+        numTickets:
+          x-order: 4
+          description: |
+            Number of tickets required in listing
+            Overrides global setting. To reset to default (any number), use -1.
+          type: integer
+        discount:
+          x-go-name: MinDiscount
+          x-order: 5
+          description: |
+            Minimum discount on the original price as a percentage
+            Overrides global setting. To reset to default (any discount), use -1.
+          type: number
+          format: double
+        maxTicketPrice:
+          x-go-name: MaxTicketPriceInclFee
+          x-order: 6
+          description: |
+            Maximum price per ticket (including fee) in pounds (£)
+            Overrides global setting. To reset to default (any price), use -1.
+          type: number
+          format: double
+        notification:
+          x-order: 7
+          x-go-type-skip-optional-pointer: true
+          description: |
+            Notification services to use
+            Overrides global setting. To reset to default (all configured services), use an empty array [].
+          type: array
+          items:
+            $ref: "#/components/schemas/NotificationType"
+      required:
+        - event
+
+    Country:
+      # Valid countries come from twigots.
+      # See:
+      # https://github.com/ahobsonsayers/twigots/blob/main/location.go#L13
+      x-go-type: twigots.Country
+      x-go-type-import:
+        path: github.com/ahobsonsayers/twigots
+      type: string
+      description: |
+        Country code.
+        Currently only GB is supported.
+      enum:
+        - GB
+
+    Region:
+      # Valid regions come from twigots.
+      # See:
+      # https://github.com/ahobsonsayers/twigots/blob/main/location.go#L79-L90
+      x-go-type: twigots.Region
+      x-go-type-import:
+        path: github.com/ahobsonsayers/twigots
+      type: string
+      description: |
+        Region code. 
+        Possible values are:
+        - GBLO: London
+        - GBSO: South
+        - GBSW: South West
+        - GBSE: South East
+        - GBMI: Midlands
+        - GBEA: East Anglia
+        - GBNO: North
+        - GBNE: North East
+        - GBNW: North West
+        - GBSC: Scotland
+        - GBWA: Wales
+        - GBNI: Northern Ireland
+      enum:
+        - GBLO
+        - GBSO
+        - GBSW
+        - GBSE
+        - GBMI
+        - GBEA
+        - GBNO
+        - GBNE
+        - GBNW
+        - GBSC
+        - GBWA
+        - GBNI
+
+    NotificationType:
+      type: string
+      enum:
+        - ntfy
+        - gotify
+        - telegram

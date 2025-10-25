@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"log/slog"
 	"os"
@@ -11,15 +12,15 @@ import (
 
 	"github.com/ahobsonsayers/twigots"
 	"github.com/ahobsonsayers/twitchets/config"
+	"github.com/ahobsonsayers/twitchets/notification"
+	"github.com/ahobsonsayers/twitchets/scanner"
 	"github.com/joho/godotenv"
 )
 
-const (
-	maxNumTickets = 250
-	refetchTime   = 1 * time.Minute
-)
+//go:generate go tool oapi-codegen -config ./oapi.models.yaml ./schema/models.openapi.yaml
+//go:generate go tool oapi-codegen -config ./oapi.server.yaml ./schema/server.openapi.yaml
 
-var latestTicketTime time.Time
+const refetchTime = 1 * time.Minute
 
 func init() {
 	_ = godotenv.Load()
@@ -38,42 +39,74 @@ func main() {
 		log.Fatalf("failed to get working directory:, %v", err)
 	}
 
-	// Load config
-	configPath := filepath.Join(cwd, "config.yaml")
-	conf, err := config.Load(configPath)
+	// Load user config
+	userConfigPath := filepath.Join(cwd, "config.yaml")
+	userConfig, err := config.Load(userConfigPath)
 	if err != nil {
 		log.Fatalf("config error:, %v", err)
 	}
 
-	// Create twickets client
-	client, err := twigots.NewClient(conf.APIKey)
+	// Get scanner config
+	ticketScannerConfig, err := ticketScannerConfigFromUserConfig(userConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Create notification clients
-	notificationClients, err := conf.Notification.Clients()
+	// Print the tickets being scanned for
+	config.PrintTicketListingConfigs(ticketScannerConfig.ListingConfigs)
+
+	// Create ticket ticketScanner
+	ticketScanner := scanner.NewTicketScanner(ticketScannerConfig)
+
+	// Watch config file for changes (in a goroutine)
+	go config.Watch(
+		userConfigPath,
+		getUserConfigUpdateCallback(ticketScanner),
+	)
+
+	// Start scanning for tickets
+	slog.Info("Scanning for tickets...")
+	err = ticketScanner.Start(context.Background())
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func ticketScannerConfigFromUserConfig(conf config.Config) (scanner.TicketScannerConfig, error) {
+	// Create twickets client
+	client, err := twigots.NewClient(conf.APIKey)
+	if err != nil {
+		return scanner.TicketScannerConfig{}, fmt.Errorf("failed to create twickets client: %w", err)
+	}
+
+	// Create notification clients
+	notificationClients, err := notification.GetNotificationClients(conf.Notification)
+	if err != nil {
+		return scanner.TicketScannerConfig{}, fmt.Errorf("failed to create notification clients: %w", err)
 	}
 
 	// Get combined ticket listing configs
 	listingConfigs := conf.CombinedTicketListingConfigs()
 
-	// Print config
-	config.PrintTicketListingConfigs(listingConfigs)
+	return scanner.TicketScannerConfig{
+		TwicketsClient:      client,
+		NotificationClients: notificationClients,
+		ListingConfigs:      listingConfigs,
+		RefetchTime:         refetchTime,
+	}, nil
+}
 
-	slog.Info("Scanning Tickets...")
+func getUserConfigUpdateCallback(ticketScanner *scanner.TicketScanner) func(config.Config) error {
+	return func(userConfig config.Config) error {
+		// Get scanner config
+		scannerConfig, err := ticketScannerConfigFromUserConfig(userConfig)
+		if err != nil {
+			return err
+		}
 
-	scanner := NewTicketsScanner(TicketsScannerConfig{
-		twicketsClient:      client,
-		notificationClients: notificationClients,
-		listingConfigs:      listingConfigs,
-		refetchTime:         refetchTime,
-	})
+		// Update scanner config
+		ticketScanner.UpdateConfig(scannerConfig)
 
-	err = scanner.Start(context.Background())
-	if err != nil {
-		log.Fatal(err)
+		return nil
 	}
 }

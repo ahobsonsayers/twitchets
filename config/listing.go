@@ -1,31 +1,5 @@
 package config
 
-import (
-	"github.com/ahobsonsayers/twigots"
-)
-
-// GlobalTicketListingConfig represents configuration settings that apply to all ticket listings
-// unless explicitly overridden by a specific ticket configuration.
-type GlobalTicketListingConfig struct {
-	EventSimilarity       float64            `json:"eventSimilarity"`
-	Regions               []twigots.Region   `json:"regions"`
-	NumTickets            int                `json:"numTickets"`
-	Min                   float64            `json:"discount"`
-	MaxTicketPriceInclFee float64            `json:"maxTicketPrice"`
-	Notification          []NotificationType `json:"notification"`
-}
-
-// TicketListingConfig represents configuration for a specific ticket listing
-type TicketListingConfig struct {
-	Event                 string             `json:"event"`
-	EventSimilarity       *float64           `json:"eventSimilarity"`
-	Regions               []twigots.Region   `json:"regions"`
-	NumTickets            *int               `json:"numTickets"`
-	MinDiscount           *float64           `json:"discount"`
-	MaxTicketPriceInclFee *float64           `json:"maxTicketPrice"`
-	Notification          []NotificationType `json:"notification"`
-}
-
 // CombineGlobalAndTicketConfigs merges global and specific ticket listing configurations.
 //
 // It returns a slice of TicketListingConfig where each configuration has global ticket listing configuration
@@ -67,7 +41,7 @@ func CombineGlobalAndTicketListingConfigs( //nolint: revive
 
 		// Set discount, using global if not specified
 		if config.MinDiscount == nil {
-			combinedConfig.MinDiscount = &globalConfig.Min
+			combinedConfig.MinDiscount = &globalConfig.MinDiscount
 		} else {
 			combinedConfig.MinDiscount = config.MinDiscount
 		}
