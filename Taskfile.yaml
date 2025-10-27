@@ -8,7 +8,7 @@ tasks:
 
   lint:
     cmds:
-      - go tool golangci-lint run .
+      - go tool golangci-lint run . --fix
 
   generate:
     aliases:
@@ -19,6 +19,11 @@ tasks:
   test:
     cmds:
       - go test ./...
+
+  test:clean:
+    cmds:
+      - go clean -testcache
+      - task: test
 
   build:
     cmds:
