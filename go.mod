@@ -17,8 +17,8 @@ require (
 	github.com/knadh/koanf v1.5.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/oapi-codegen/runtime v1.1.2
-	github.com/orsinium-labs/enum v1.4.0
-	github.com/samber/lo v1.51.0
+	github.com/orsinium-labs/enum v1.5.0
+	github.com/samber/lo v1.52.0
 	github.com/stretchr/testify v1.11.1
 	gopkg.in/yaml.v3 v3.0.1
 	heckel.io/ntfy v1.31.0
