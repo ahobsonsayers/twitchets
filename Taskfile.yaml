@@ -4,11 +4,17 @@ version: "3"
 tasks:
   format:be:
     cmds:
-      - go fmt ./...
+      - go tool gofumpt -l -w .
 
   lint:be:
     cmds:
-      - golangci-lint run
+      - go tool golangci-lint run . --fix
+
+  generate:be
+    aliases:
+      - gen:be
+    cmds:
+      - go generate ./...
 
   format:fe:
     dir: frontend
@@ -23,6 +29,11 @@ tasks:
   test:
     cmds:
       - go test ./...
+
+  test:clean:
+    cmds:
+      - go clean -testcache
+      - task: test
 
   build:
     cmds:

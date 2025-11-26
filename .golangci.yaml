@@ -1,4 +1,4 @@
-# Docs: https://golangci-lint.run/usage/configuration/#config-file
+# Docs: https://golangci-lint.run/docs/configuration/file
 version: "2"
 
 run:
@@ -6,31 +6,37 @@ run:
   timeout: 30m
 
 formatters:
+  # Formatters: https://golangci-lint.run/docs/formatters
   enable:
-    - gofmt # https://golangci-lint.run/usage/linters/#gofmt
-    - goimports # https://golangci-lint.run/usage/linters/#goimports
+    - gofumpt # https://golangci-lint.run/docs/formatters/configuration/#gofumpt
+
+  settings:
+    gofumpt:
+      extra-rules: true
 
 linters:
+  # Linters: https://golangci-lint.run/docs/linters
   enable:
-    # Default linters: https://golangci-lint.run/usage/linters#enabled-by-default
-    - gocritic # https://golangci-lint.run/usage/linters/#gocritic
-    - makezero # https://golangci-lint.run/usage/linters/#makezero
-    - misspell # https://golangci-lint.run/usage/linters/#misspell
-    - revive # https://golangci-lint.run/usage/linters/#revive
-    - testifylint # https://golangci-lint.run/usage/linters/#testifylint
-    - unparam # https://golangci-lint.run/usage/linters/#unparam
-    - usestdlibvars # https://golangci-lint.run/usage/linters/#usestdlibvars
+    - gocritic # https://golangci-lint.run/docs/linters/configuration/#gocritic
+    - makezero # https://golangci-lint.run/docs/linters/configuration/#makezero
+    - misspell # https://golangci-lint.run/docs/linters/configuration/#misspell
+    - nolintlint # https://golangci-lint.run/docs/linters/configuration/#nolintlint
+    - revive # https://golangci-lint.run/docs/linters/configuration/#revive
+    - testifylint # https://golangci-lint.run/docs/linters/configuration/#testifylint
+    - unparam # https://golangci-lint.run/docs/linters/configuration/#unparam
+    - usestdlibvars # https://golangci-lint.run/docs/linters/configuration/#usestdlibvars
 
   settings:
     gocritic:
+      # Rules: https://go-critic.com/overview.html
       enable-all: true
       disabled-checks:
         - commentedOutCode
-        - hugeParam # TODO Reenable this?
-        - rangeValCopy
+        - hugeParam
         - whyNoLint
 
     revive:
+      # Rules: https://github.com/mgechev/revive/blob/HEAD/RULES_DESCRIPTIONS
       enable-all-rules: true
       rules:
         - name: add-constant
@@ -38,6 +44,9 @@ linters:
 
         - name: cognitive-complexity
           disabled: true
+
+        - name: cyclomatic
+          arguments: [12]
 
         - name: empty-lines
           disabled: true
@@ -50,6 +59,9 @@ linters:
             - disable-checks-on-types
             - disable-checks-on-variables
 
+        - name: function-length
+          arguments: [50, 0] # Only check num statements, not num lines
+
         - name: line-length-limit
           arguments: [120]
 
@@ -59,15 +71,18 @@ linters:
         - name: package-comments
           disabled: true
 
-        - name: unhandled-error
-          arguments:
-            - fmt.Printf
-            - fmt.Println
-
         - name: var-naming
           arguments:
             - ["ID", "IDS", "HTML", "HTTP", "JSON", "URL"] # Allow List
             - [] # Deny List
 
+    testifylint:
+      enable-all: true
+
     unparam:
       check-exported: true
+
+  exclusions:
+    # Exclusions: https://golangci-lint.run/docs/linters/false-positives
+    presets:
+      - std-error-handling

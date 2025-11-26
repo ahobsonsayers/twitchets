@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/ahobsonsayers/twitchets/config"
 	"github.com/ahobsonsayers/twitchets/notification"
 	"github.com/ahobsonsayers/twitchets/test"
 	"github.com/joho/godotenv"
@@ -21,7 +22,7 @@ func TestGotifySendTicketMessage(t *testing.T) {
 	gotifyToken := os.Getenv("GOTIFY_TOKEN")
 	require.NotEmpty(t, gotifyToken, "GOTIFY_TOKEN is not set")
 
-	client, err := notification.NewGotifyClient(notification.GotifyConfig{
+	client, err := notification.NewGotifyClient(config.GotifyConfig{
 		Url:   gotifyUrl,
 		Token: gotifyToken,
 	})

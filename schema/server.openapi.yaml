@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=https://spec.openapis.org/oas/3.0/schema/2024-10-18
+openapi: 3.0.4
+
+info:
+  title: Twitchets Configuration API
+  description: API for managing Twitchets configuration
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /config:
+    get:
+      summary: Get current configuration
+      description: Retrieve the current Twitchets configuration
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "./models.openapi.yaml#/components/schemas/Config"
+        "500":
+          description: Internal server error
+
+    put:
+      summary: Update configuration
+      description: Update the Twitchets configuration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./models.openapi.yaml#/components/schemas/Config"
+      responses:
+        "200":
+          description: Configuration updated successfully
+        "400":
+          description: Invalid configuration
+        "500":
+          description: Internal server error

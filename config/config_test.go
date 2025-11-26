@@ -5,7 +5,6 @@ import (
 
 	"github.com/ahobsonsayers/twigots"
 	"github.com/ahobsonsayers/twitchets/config"
-	"github.com/ahobsonsayers/twitchets/notification"
 	"github.com/ahobsonsayers/twitchets/test"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
@@ -32,20 +31,20 @@ func TestLoadConfig(t *testing.T) { // nolint: revive
 			Regions:               globalRegions,
 			MaxTicketPriceInclFee: globalMaxTicketPrice,
 			NumTickets:            globalNumTickets,
-			Min:                   globalDiscount,
+			MinDiscount:           globalDiscount,
 		},
 		Notification: config.NotificationConfig{
-			Ntfy: &notification.NtfyConfig{
+			Ntfy: &config.NtfyConfig{
 				Url:      "http://example.com",
 				Topic:    "test",
 				Username: "test",
 				Password: "test",
 			},
-			Gotify: &notification.GotifyConfig{
+			Gotify: &config.GotifyConfig{
 				Url:   "http://example.com",
 				Token: "test",
 			},
-			Telegram: &notification.TelegramConfig{
+			Telegram: &config.TelegramConfig{
 				Token:  "test",
 				ChatId: 1234,
 			},

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/oapi-codegen/oapi-codegen/HEAD/configuration-schema.json
+package: server
+output: ./server/server.gen.go
+generate:
+  models: true # No types are in this schema
+  chi-server: true
+  strict-server: true
+import-mapping:
+  ./models.openapi.yaml: github.com/ahobsonsayers/twitchets/config
