@@ -10,7 +10,7 @@ tasks:
     cmds:
       - go tool golangci-lint run . --fix
 
-  generate:be
+  generate:be:
     aliases:
       - gen:be
     cmds:
@@ -25,6 +25,13 @@ tasks:
     dir: frontend
     cmds:
       - pnpm run lint
+
+  generate:fe:
+    dir: frontend
+    aliases:
+      - gen:fe
+    cmds:
+      - pnpm generate
 
   test:
     cmds:

@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "biome lint . --fix --unsafe",
     "format": "prettier . -w",
+    "generate": "openapi-typescript ../schema/server.openapi.yaml ../schema/models.openapi.yaml -o src/types/openapi.d.ts",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -40,6 +41,7 @@
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.6.0",
     "globals": "^16.3.0",
+    "openapi-typescript": "^7.10.1",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "tw-animate-css": "^1.3.6",
