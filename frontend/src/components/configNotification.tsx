@@ -1,12 +1,12 @@
 "use client";
 
-import { CollapsibleCard } from "./components/collapsibleCard";
-import { Button } from "./components/ui/button";
-import { Checkbox } from "./components/ui/checkbox";
-import { Input } from "./components/ui/input";
-import { Label } from "./components/ui/label";
-import { Separator } from "./components/ui/separator";
-import { useConfig } from "./providers/config";
+import { useConfig } from "../providers/config";
+import { CollapsibleCard } from "./cardCollapsible";
+import { Button } from "./ui/button";
+import { Checkbox } from "./ui/checkbox";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Separator } from "./ui/separator";
 import { isEqual, omit } from "lodash";
 import { Eye, EyeOff } from "lucide-react";
 import { useState, useEffect } from "react";

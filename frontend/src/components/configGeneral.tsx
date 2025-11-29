@@ -1,18 +1,18 @@
 "use client";
 
-import { CollapsibleCard } from "./components/collapsibleCard";
-import { Button } from "./components/ui/button";
-import { Input } from "./components/ui/input";
-import { Label } from "./components/ui/label";
+import { useConfig } from "../providers/config";
+import type { Country } from "../types/config";
+import { CollapsibleCard } from "./cardCollapsible";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import {
   Select,
   SelectContent,
   SelectTrigger,
   SelectValue,
   SelectItem,
-} from "./components/ui/select";
-import { useConfig } from "./providers/config";
-import type { Country } from "./types/config";
+} from "./ui/select";
 import { isEqual } from "lodash";
 import { Eye, EyeOff } from "lucide-react";
 import { useState, useEffect } from "react";

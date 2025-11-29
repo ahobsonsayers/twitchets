@@ -1,9 +1,9 @@
 "use client";
 
-import { GeneralSettings } from "./configGeneral";
-import { GlobalSettings } from "./configGlobal";
-import { NotificationSettings } from "./configNotification";
-import { TicketsConfig } from "./configTickets";
+import { GeneralSettings } from "./components/configGeneral";
+import { GlobalSettings } from "./components/configGlobal";
+import { NotificationSettings } from "./components/configNotification";
+import { TicketsConfig } from "./components/configTickets";
 import { ConfigProvider } from "./providers/config";
 import { ThemeProvider } from "./providers/theme";
 

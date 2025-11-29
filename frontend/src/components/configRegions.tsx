@@ -1,8 +1,8 @@
-import { LinkedStatusTooltip } from "./linkedStatus";
+import { LinkedStatusTooltip } from "./statusLinked";
 import { Checkbox } from "./ui/checkbox";
+import { ResetButton } from "@/components/buttonReset";
 import { Label } from "@/components/ui/label";
 import { REGIONS } from "@/constants/regions";
-import { ResetButton } from "@/reset";
 import type { Region } from "@/types/config";
 
 interface RegionsProps {

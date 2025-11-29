@@ -1,6 +1,6 @@
 "use client";
 
-import { CollapsibleCard } from "./collapsibleCard";
+import { CollapsibleCard } from "./cardCollapsible";
 import { CommonFields } from "./configCommon";
 import { ConfigField } from "./configField";
 import {

@@ -1,10 +1,10 @@
-import { Button } from "./components/ui/button";
+import { Button } from "./ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "./components/ui/tooltip";
+} from "./ui/tooltip";
 import { Globe, RotateCcw } from "lucide-react";
 
 interface ResetButtonProps {

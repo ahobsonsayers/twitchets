@@ -1,7 +1,7 @@
-import { CollapsibleCard } from "./components/collapsibleCard";
-import { CommonFields } from "./components/configCommon";
-import { Button } from "./components/ui/button";
-import { useConfig } from "./providers/config";
+import { useConfig } from "../providers/config";
+import { CollapsibleCard } from "./cardCollapsible";
+import { CommonFields } from "./configCommon";
+import { Button } from "./ui/button";
 import { isEqual } from "lodash";
 import { useState, useEffect } from "react";
 

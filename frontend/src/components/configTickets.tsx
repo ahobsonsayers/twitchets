@@ -1,8 +1,8 @@
 "use client";
 
-import { CollapsibleCard } from "./components/collapsibleCard";
-import { Ticket } from "./components/configTicket";
-import { useConfig } from "./providers/config";
+import { useConfig } from "../providers/config";
+import { CollapsibleCard } from "./cardCollapsible";
+import { Ticket } from "./configTicket";
 import { Button } from "@/components/ui/button";
 import type { TicketConfig } from "@/types/config";
 import { Plus } from "lucide-react";

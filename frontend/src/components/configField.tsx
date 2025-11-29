@@ -1,7 +1,7 @@
-import { LinkedStatusTooltip } from "./linkedStatus";
+import { LinkedStatusTooltip } from "./statusLinked";
+import { ResetButton } from "@/components/buttonReset";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ResetButton } from "@/reset";
 import { NumericFormat } from "react-number-format";
 
 interface ConfigFieldProps<T extends string | number> {
