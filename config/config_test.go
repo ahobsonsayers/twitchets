@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestLoadConfig(t *testing.T) { // nolint: revive
+func TestLoadConfig(t *testing.T) {
 	configPath := test.ProjectDirectoryJoin(t, "test", "data", "config", "config.yaml")
 	actualConfig, err := config.Load(configPath)
 	require.NoError(t, err)
@@ -100,7 +100,7 @@ func TestLoadConfig(t *testing.T) { // nolint: revive
 	require.Equal(t, expectedConfig, actualConfig)
 }
 
-func TestCombineConfigs(t *testing.T) { // nolint: revive
+func TestCombineConfigs(t *testing.T) {
 	configPath := test.ProjectDirectoryJoin(t, "test", "data", "config", "config.yaml")
 	conf, err := config.Load(configPath)
 	require.NoError(t, err)
