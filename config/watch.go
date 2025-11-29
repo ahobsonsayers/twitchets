@@ -8,9 +8,9 @@ import (
 
 // Watch watches a config file and calling a callback when it changes.
 // This function is blocking.
-func Watch(filePath string, callback func(Config) error) {
+func Watch(filePath string, callback func(Config) error) error {
 	provider := file.Provider(filePath)
-	provider.Watch(func(event interface{}, err error) {
+	return provider.Watch(func(event interface{}, err error) {
 		if err != nil {
 			slog.Error(
 				"error watching config file",
