@@ -7,40 +7,76 @@ import { Input } from "./components/ui/input";
 import { Label } from "./components/ui/label";
 import { Separator } from "./components/ui/separator";
 import { useConfig } from "./providers/config";
+import { isEqual, omit } from "lodash";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const defaultNtfyUrl = "https://ntfy.sh";
 
 export function NotificationSettings() {
   const { config, updateConfig } = useConfig();
 
+  const [draft, setDraft] = useState(config.notification);
   const [showNtfyPassword, setShowNtfyPassword] = useState(false);
+
+  useEffect(() => {
+    setDraft(config.notification);
+  }, [config.notification]);
+
+  const hasChanges = !isEqual(draft, config.notification);
 
   const toggleShowNtfyPassword = () => {
     setShowNtfyPassword(!showNtfyPassword);
   };
 
   return (
-    <CollapsibleCard title="Notification Settings">
+    <CollapsibleCard
+      title="Notification Settings"
+      action={
+        hasChanges && (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setDraft(config.notification)}
+            >
+              Discard
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                updateConfig((config) => {
+                  config.notification = draft;
+                });
+              }}
+            >
+              Save
+            </Button>
+          </div>
+        )
+      }
+    >
       <div className="space-y-4">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <h3>Ntfy</h3>
             <Checkbox
               className="ml-4"
-              checked={!!config.notification.ntfy}
+              checked={!!draft.ntfy}
               onCheckedChange={(checked) => {
-                updateConfig((config) => {
+                setDraft((prev) => {
                   if (checked) {
-                    config.notification.ntfy = {
-                      url: defaultNtfyUrl,
-                      topic: "",
-                      username: "",
-                      password: "",
+                    return {
+                      ...prev,
+                      ntfy: {
+                        url: defaultNtfyUrl,
+                        topic: "",
+                        username: "",
+                        password: "",
+                      },
                     };
                   } else {
-                    delete config.notification.ntfy;
+                    return omit(prev, "ntfy");
                   }
                 });
               }}
@@ -48,7 +84,7 @@ export function NotificationSettings() {
             <Label>Enabled</Label>
           </div>
 
-          {config.notification.ntfy && (
+          {draft.ntfy && (
             <>
               <div className="flex gap-2">
                 <div className="flex-auto flex-col space-y-2">
@@ -57,19 +93,19 @@ export function NotificationSettings() {
                     type="text"
                     placeholder={defaultNtfyUrl}
                     value={
-                      config.notification.ntfy.url === defaultNtfyUrl
-                        ? ""
-                        : config.notification.ntfy.url
+                      draft.ntfy?.url === defaultNtfyUrl ? "" : draft.ntfy?.url
                     }
                     onChange={(event) => {
-                      updateConfig((config) => {
-                        if (config.notification.ntfy) {
-                          config.notification.ntfy.url =
+                      setDraft((prev) => ({
+                        ...prev,
+                        ntfy: {
+                          ...prev.ntfy!,
+                          url:
                             event.target.value === ""
                               ? defaultNtfyUrl
-                              : event.target.value;
-                        }
-                      });
+                              : event.target.value,
+                        },
+                      }));
                     }}
                   />
                 </div>
@@ -78,13 +114,15 @@ export function NotificationSettings() {
                   <Label>Topic</Label>
                   <Input
                     type="text"
-                    value={config.notification.ntfy.topic}
+                    value={draft.ntfy?.topic}
                     onChange={(event) => {
-                      updateConfig((config) => {
-                        if (config.notification.ntfy) {
-                          config.notification.ntfy.topic = event.target.value;
-                        }
-                      });
+                      setDraft((prev) => ({
+                        ...prev,
+                        ntfy: {
+                          ...prev.ntfy!,
+                          topic: event.target.value,
+                        },
+                      }));
                     }}
                   />
                 </div>
@@ -96,14 +134,15 @@ export function NotificationSettings() {
                   <Input
                     type="text"
                     placeholder="Optional"
-                    value={config.notification.ntfy.username}
+                    value={draft.ntfy?.username}
                     onChange={(event) => {
-                      updateConfig((config) => {
-                        if (config.notification.ntfy) {
-                          config.notification.ntfy.username =
-                            event.target.value;
-                        }
-                      });
+                      setDraft((prev) => ({
+                        ...prev,
+                        ntfy: {
+                          ...prev.ntfy!,
+                          username: event.target.value,
+                        },
+                      }));
                     }}
                   />
                 </div>
@@ -114,14 +153,15 @@ export function NotificationSettings() {
                     <Input
                       type={showNtfyPassword ? "text" : "password"}
                       placeholder="Optional"
-                      value={config.notification.ntfy.password}
+                      value={draft.ntfy?.password}
                       onChange={(event) => {
-                        updateConfig((config) => {
-                          if (config.notification.ntfy) {
-                            config.notification.ntfy.password =
-                              event.target.value;
-                          }
-                        });
+                        setDraft((prev) => ({
+                          ...prev,
+                          ntfy: {
+                            ...prev.ntfy!,
+                            password: event.target.value,
+                          },
+                        }));
                       }}
                     />
                     <Button

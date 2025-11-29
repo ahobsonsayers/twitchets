@@ -1,6 +1,6 @@
 import type { Config } from "../types/config";
-import { createContext, type ReactNode, useContext, useState } from "react";
 import { produce } from "immer";
+import { createContext, type ReactNode, useContext, useState } from "react";
 
 function newConfig(): Config {
   return {

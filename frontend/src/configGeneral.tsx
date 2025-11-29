@@ -13,13 +13,28 @@ import {
 } from "./components/ui/select";
 import { useConfig } from "./providers/config";
 import type { Country } from "./types/config";
+import { isEqual } from "lodash";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function GeneralSettings() {
   const { config, updateConfig } = useConfig();
 
+  const [draft, setDraft] = useState({
+    apiKey: config.apiKey,
+    country: config.country,
+  });
   const [showApiKey, setShowApiKey] = useState(false);
+
+  // If the canonical config changes, reset the draft
+  useEffect(() => {
+    setDraft({ apiKey: config.apiKey, country: config.country });
+  }, [config.apiKey, config.country]);
+
+  const hasChanges = !isEqual(draft, {
+    apiKey: config.apiKey,
+    country: config.country,
+  });
 
   const toggleShowApiKey = () => {
     setShowApiKey(!showApiKey);
@@ -29,6 +44,32 @@ export function GeneralSettings() {
     <CollapsibleCard
       title="General Settings"
       description="General application configuration"
+      action={
+        hasChanges && (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setDraft({ apiKey: config.apiKey, country: config.country })
+              }
+            >
+              Discard
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                updateConfig((config) => {
+                  config.apiKey = draft.apiKey;
+                  config.country = draft.country;
+                });
+              }}
+            >
+              Save
+            </Button>
+          </div>
+        )
+      }
     >
       <div className="space-y-4">
         <div className="space-y-2">
@@ -40,11 +81,9 @@ export function GeneralSettings() {
             <Input
               type={showApiKey ? "text" : "password"}
               placeholder="Enter your API key"
-              value={config.apiKey}
+              value={draft.apiKey}
               onChange={(event) => {
-                updateConfig((config) => {
-                  config.apiKey = event.target.value;
-                });
+                setDraft((prev) => ({ ...prev, apiKey: event.target.value }));
               }}
             />
             <Button
@@ -68,11 +107,9 @@ export function GeneralSettings() {
             Currently only GB is supported
           </p>
           <Select
-            value={config.country}
+            value={draft.country}
             onValueChange={(value) => {
-              updateConfig((config) => {
-                config.country = value as Country;
-              });
+              setDraft((prev) => ({ ...prev, country: value as Country }));
             }}
           >
             <SelectTrigger>

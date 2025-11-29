@@ -4,249 +4,261 @@
  */
 
 export interface paths {
-    "/config": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get current configuration
-         * @description Retrieve the current Twitchets configuration
-         */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description Successful response */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Config"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        /**
-         * Update configuration
-         * @description Update the Twitchets configuration
-         */
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["Config"];
-                };
-            };
-            responses: {
-                /** @description Configuration updated successfully */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Invalid configuration */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content?: never;
-                };
-            };
-        };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  "/config": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    /**
+     * Get current configuration
+     * @description Retrieve the current Twitchets configuration
+     */
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Successful response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": components["schemas"]["Config"];
+          };
+        };
+        /** @description Internal server error */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    /**
+     * Update configuration
+     * @description Update the Twitchets configuration
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["Config"];
+        };
+      };
+      responses: {
+        /** @description Configuration updated successfully */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Invalid configuration */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+        /** @description Internal server error */
+        500: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        Config: {
-            /** @description REQUIRED: See README.md for details on how to obtain */
-            apiKey: string;
-            country: components["schemas"]["Country"];
-            notification: components["schemas"]["NotificationConfig"];
-            global: components["schemas"]["GlobalTicketListingConfig"];
-            tickets: components["schemas"]["TicketListingConfig"][];
-        };
-        /** @description Notification service configuration */
-        NotificationConfig: {
-            ntfy?: components["schemas"]["NtfyConfig"];
-            gotify?: components["schemas"]["GotifyConfig"];
-            telegram?: components["schemas"]["TelegramConfig"];
-        };
-        NtfyConfig: {
-            /** @description You can use the public instance at https://ntfy.sh */
-            url: string;
-            /** @description If using https://ntfy.sh, make sure this is unique to you! */
-            topic: string;
-            /** @description Optional: for authenticated instances */
-            username: string;
-            /** @description Optional: for authenticated instances */
-            password: string;
-        };
-        GotifyConfig: {
-            /** @description Your Gotify server URL */
-            url: string;
-            /** @description Application token from Gotify */
-            token: string;
-        };
-        TelegramConfig: {
-            /** @description Get from @BotFather on Telegram */
-            token: string;
-            /** @description Your chat ID or group chat ID */
-            chatId: number;
-        };
-        /**
-         * @description GlobalTicketListingConfig represents configuration settings that apply to all ticket listings
-         *     unless explicitly overridden by a specific ticket configuration.
-         *     Any setting not specified will use the default.
-         */
-        GlobalTicketListingConfig: {
-            /**
-             * Format: double
-             * @description Event name similarity matching (0.0 - 1.0).
-             *     Default: 0.9 (allows for minor naming differences)
-             */
-            eventSimilarity?: number;
-            /**
-             * @description Geographic regions to search for tickets.
-             *     Default: All regions if not specified.
-             *     Full list: https://github.com/ahobsonsayers/twigots/blob/main/location.go#L79-L90
-             */
-            regions?: components["schemas"]["Region"][];
-            /**
-             * @description Minimum number of tickets required in listing
-             *     Default: Any number of tickets.
-             */
-            numTickets?: number;
-            /**
-             * Format: double
-             * @description Minimum discount (including fee) on the original price as a percentage
-             *     Default: Any discount (including no discount).
-             */
-            discount?: number;
-            /**
-             * Format: double
-             * @description Maximum price per ticket (including fee) in pounds (£)
-             *     Default: Any price.
-             */
-            maxTicketPrice?: number;
-            /**
-             * @description Notification services to use
-             *     Default: All configured services.
-             */
-            notification?: components["schemas"]["NotificationType"][];
-        };
-        /**
-         * @description TicketListingConfig represents configuration for specific ticket listings
-         *     Configuration overrides global configuration
-         *     To reset a global configuration to its default, use:
-         *     - "" (empty string) for string values
-         *     - [] (empty array) for list values
-         *     - -1 for numeric values
-         */
-        TicketListingConfig: {
-            /** @description Event name */
-            event: string;
-            /**
-             * Format: double
-             * @description Event name similarity matching (0.0 - 1.0).
-             *     Overrides global setting.
-             */
-            eventSimilarity?: number;
-            /**
-             * @description Geographic regions to search for tickets
-             *     Overrides global setting. To reset to default (all regions), use an empty array [].
-             */
-            regions?: components["schemas"]["Region"][];
-            /**
-             * @description Number of tickets required in listing
-             *     Overrides global setting. To reset to default (any number), use -1.
-             */
-            numTickets?: number;
-            /**
-             * Format: double
-             * @description Minimum discount on the original price as a percentage
-             *     Overrides global setting. To reset to default (any discount), use -1.
-             */
-            discount?: number;
-            /**
-             * Format: double
-             * @description Maximum price per ticket (including fee) in pounds (£)
-             *     Overrides global setting. To reset to default (any price), use -1.
-             */
-            maxTicketPrice?: number;
-            /**
-             * @description Notification services to use
-             *     Overrides global setting. To reset to default (all configured services), use an empty array [].
-             */
-            notification?: components["schemas"]["NotificationType"][];
-        };
-        /**
-         * @description Country code.
-         *     Currently only GB is supported.
-         * @enum {string}
-         */
-        Country: "GB";
-        /**
-         * @description Region code.
-         *     Possible values are:
-         *     - GBLO: London
-         *     - GBSO: South
-         *     - GBSW: South West
-         *     - GBSE: South East
-         *     - GBMI: Midlands
-         *     - GBEA: East Anglia
-         *     - GBNO: North
-         *     - GBNE: North East
-         *     - GBNW: North West
-         *     - GBSC: Scotland
-         *     - GBWA: Wales
-         *     - GBNI: Northern Ireland
-         * @enum {string}
-         */
-        Region: "GBLO" | "GBSO" | "GBSW" | "GBSE" | "GBMI" | "GBEA" | "GBNO" | "GBNE" | "GBNW" | "GBSC" | "GBWA" | "GBNI";
-        /** @enum {string} */
-        NotificationType: "ntfy" | "gotify" | "telegram";
+  schemas: {
+    Config: {
+      /** @description REQUIRED: See README.md for details on how to obtain */
+      apiKey: string;
+      country: components["schemas"]["Country"];
+      notification: components["schemas"]["NotificationConfig"];
+      global: components["schemas"]["GlobalTicketListingConfig"];
+      tickets: components["schemas"]["TicketListingConfig"][];
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    /** @description Notification service configuration */
+    NotificationConfig: {
+      ntfy?: components["schemas"]["NtfyConfig"];
+      gotify?: components["schemas"]["GotifyConfig"];
+      telegram?: components["schemas"]["TelegramConfig"];
+    };
+    NtfyConfig: {
+      /** @description You can use the public instance at https://ntfy.sh */
+      url: string;
+      /** @description If using https://ntfy.sh, make sure this is unique to you! */
+      topic: string;
+      /** @description Optional: for authenticated instances */
+      username: string;
+      /** @description Optional: for authenticated instances */
+      password: string;
+    };
+    GotifyConfig: {
+      /** @description Your Gotify server URL */
+      url: string;
+      /** @description Application token from Gotify */
+      token: string;
+    };
+    TelegramConfig: {
+      /** @description Get from @BotFather on Telegram */
+      token: string;
+      /** @description Your chat ID or group chat ID */
+      chatId: number;
+    };
+    /**
+     * @description GlobalTicketListingConfig represents configuration settings that apply to all ticket listings
+     *     unless explicitly overridden by a specific ticket configuration.
+     *     Any setting not specified will use the default.
+     */
+    GlobalTicketListingConfig: {
+      /**
+       * Format: double
+       * @description Event name similarity matching (0.0 - 1.0).
+       *     Default: 0.9 (allows for minor naming differences)
+       */
+      eventSimilarity?: number;
+      /**
+       * @description Geographic regions to search for tickets.
+       *     Default: All regions if not specified.
+       *     Full list: https://github.com/ahobsonsayers/twigots/blob/main/location.go#L79-L90
+       */
+      regions?: components["schemas"]["Region"][];
+      /**
+       * @description Minimum number of tickets required in listing
+       *     Default: Any number of tickets.
+       */
+      numTickets?: number;
+      /**
+       * Format: double
+       * @description Minimum discount (including fee) on the original price as a percentage
+       *     Default: Any discount (including no discount).
+       */
+      discount?: number;
+      /**
+       * Format: double
+       * @description Maximum price per ticket (including fee) in pounds (£)
+       *     Default: Any price.
+       */
+      maxTicketPrice?: number;
+      /**
+       * @description Notification services to use
+       *     Default: All configured services.
+       */
+      notification?: components["schemas"]["NotificationType"][];
+    };
+    /**
+     * @description TicketListingConfig represents configuration for specific ticket listings
+     *     Configuration overrides global configuration
+     *     To reset a global configuration to its default, use:
+     *     - "" (empty string) for string values
+     *     - [] (empty array) for list values
+     *     - -1 for numeric values
+     */
+    TicketListingConfig: {
+      /** @description Event name */
+      event: string;
+      /**
+       * Format: double
+       * @description Event name similarity matching (0.0 - 1.0).
+       *     Overrides global setting.
+       */
+      eventSimilarity?: number;
+      /**
+       * @description Geographic regions to search for tickets
+       *     Overrides global setting. To reset to default (all regions), use an empty array [].
+       */
+      regions?: components["schemas"]["Region"][];
+      /**
+       * @description Number of tickets required in listing
+       *     Overrides global setting. To reset to default (any number), use -1.
+       */
+      numTickets?: number;
+      /**
+       * Format: double
+       * @description Minimum discount on the original price as a percentage
+       *     Overrides global setting. To reset to default (any discount), use -1.
+       */
+      discount?: number;
+      /**
+       * Format: double
+       * @description Maximum price per ticket (including fee) in pounds (£)
+       *     Overrides global setting. To reset to default (any price), use -1.
+       */
+      maxTicketPrice?: number;
+      /**
+       * @description Notification services to use
+       *     Overrides global setting. To reset to default (all configured services), use an empty array [].
+       */
+      notification?: components["schemas"]["NotificationType"][];
+    };
+    /**
+     * @description Country code.
+     *     Currently only GB is supported.
+     * @enum {string}
+     */
+    Country: "GB";
+    /**
+     * @description Region code.
+     *     Possible values are:
+     *     - GBLO: London
+     *     - GBSO: South
+     *     - GBSW: South West
+     *     - GBSE: South East
+     *     - GBMI: Midlands
+     *     - GBEA: East Anglia
+     *     - GBNO: North
+     *     - GBNE: North East
+     *     - GBNW: North West
+     *     - GBSC: Scotland
+     *     - GBWA: Wales
+     *     - GBNI: Northern Ireland
+     * @enum {string}
+     */
+    Region:
+      | "GBLO"
+      | "GBSO"
+      | "GBSW"
+      | "GBSE"
+      | "GBMI"
+      | "GBEA"
+      | "GBNO"
+      | "GBNE"
+      | "GBNW"
+      | "GBSC"
+      | "GBWA"
+      | "GBNI";
+    /** @enum {string} */
+    NotificationType: "ntfy" | "gotify" | "telegram";
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export type operations = Record<string, never>;

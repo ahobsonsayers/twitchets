@@ -34,18 +34,17 @@ export function Ticket({
   onUpdate,
   onRemove,
 }: TicketProps) {
-  const [localTicket, setLocalTicket] = useState<TicketConfig>(ticketConfig);
+  const [draft, setDraft] = useState<TicketConfig>(ticketConfig);
 
-  // If the canonical ticket changes, reset the local state
   useEffect(() => {
-    setLocalTicket(ticketConfig);
+    setDraft(ticketConfig);
   }, [ticketConfig]);
 
-  const hasChanges = !isEqual(ticketConfig, localTicket);
+  const hasChanges = !isEqual(ticketConfig, draft);
 
   return (
     <CollapsibleCard
-      title={localTicket.event}
+      title={draft.event}
       action={
         <div className="flex items-center gap-2">
           {hasChanges && (
@@ -55,7 +54,7 @@ export function Ticket({
                 size="sm"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setLocalTicket(ticketConfig);
+                  setDraft(ticketConfig);
                 }}
               >
                 <X className="size-4" />
@@ -66,7 +65,7 @@ export function Ticket({
                 size="sm"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onUpdate(localTicket);
+                  onUpdate(draft);
                 }}
               >
                 <Save className="size-4" />
@@ -113,20 +112,20 @@ export function Ticket({
           description="Name of the event to search for"
           placeholder="Enter event name..."
           type="text"
-          value={localTicket.event}
+          value={draft.event}
           showReset={false}
           updateValue={(value) => {
             if (typeof value === "string") {
-              setLocalTicket((current) => ({ ...current, event: value }));
+              setDraft((prev) => ({ ...prev, event: value }));
             }
           }}
         />
 
         <CommonFields
-          commonConfig={localTicket}
+          commonConfig={draft}
           globalCommonConfig={globalConfig}
           updateCommonConfig={(commonConfig) => {
-            setLocalTicket((current) => ({ ...current, ...commonConfig }));
+            setDraft((prev) => ({ ...prev, ...commonConfig }));
           }}
         />
       </div>
