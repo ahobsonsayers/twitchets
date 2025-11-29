@@ -1,6 +1,9 @@
+import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
+import { Button } from "../components/ui/button";
 import { getConfig, putConfig } from "../lib/api";
 import type { Config } from "../types/config";
 import { produce } from "immer";
+import { ArrowRightIcon, TriangleAlertIcon } from "lucide-react";
 import {
   createContext,
   type ReactNode,
@@ -54,6 +57,15 @@ export function ConfigProvider({ children, ...props }: ConfigProviderProps) {
     loadConfig();
   }, []);
 
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
   const updateConfig = async (updater: ConfigUpdater) => {
     const newConfig = produce(config, updater);
     setConfig(newConfig);
@@ -77,6 +89,15 @@ export function ConfigProvider({ children, ...props }: ConfigProviderProps) {
   return (
     <ConfigProviderContext.Provider {...props} value={value}>
       {children}
+      {error && (
+        <div className="fixed bottom-4 right-4 z-50 max-w-sm">
+          <Alert className="bg-destructive dark:bg-destructive/60 border-none text-white">
+            <TriangleAlertIcon />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        </div>
+      )}
     </ConfigProviderContext.Provider>
   );
 }
