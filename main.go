@@ -40,7 +40,7 @@ func main() {
 		log.Fatalf("failed to get working directory:, %v", err)
 	}
 
-	// Load user config
+	// Load config
 	userConfigPath := filepath.Join(cwd, "config.yaml")
 	userConfig, err := config.Load(userConfigPath)
 	if err != nil {
@@ -56,14 +56,14 @@ func main() {
 	// Print the tickets being scanned for
 	config.PrintTicketListingConfigs(ticketScannerConfig.ListingConfigs)
 
-	// Create ticket ticketScanner
+	// Create ticket scanner
 	ticketScanner := scanner.NewTicketScanner(ticketScannerConfig)
 
 	// Watch config file for changes (in a goroutine)
 	go func() {
 		err := config.Watch(
 			userConfigPath,
-			getUserConfigUpdateCallback(ticketScanner),
+			getUserConfigUpdatedCallback(ticketScanner),
 		)
 		if err != nil {
 			log.Fatalf("failed to set up config watching: %v", err)
@@ -110,7 +110,7 @@ func ticketScannerConfigFromUserConfig(conf config.Config) (scanner.TicketScanne
 	}, nil
 }
 
-func getUserConfigUpdateCallback(ticketScanner *scanner.TicketScanner) func(config.Config) error {
+func getUserConfigUpdatedCallback(ticketScanner *scanner.TicketScanner) func(config.Config) error {
 	return func(userConfig config.Config) error {
 		// Get scanner config
 		scannerConfig, err := ticketScannerConfigFromUserConfig(userConfig)

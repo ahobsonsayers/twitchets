@@ -3,7 +3,6 @@ openapi: 3.0.4
 
 info:
   title: Twitchets Configuration API
-  description: API for managing Twitchets configuration
   version: 1.0.0
 
 servers:

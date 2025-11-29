@@ -7,8 +7,6 @@ import (
 	"strings"
 )
 
-func (n Notifications) IsZero() bool { return n == nil }
-
 func (c *NotificationType) UnmarshalJSON(data []byte) error {
 	var notificationTypeString string
 	err := json.Unmarshal(data, &notificationTypeString)
