@@ -30,8 +30,6 @@ jobs:
 
       - name: Run lint
         uses: golangci/golangci-lint-action@v8
-        with:
-          skip-cache: true
 
   test:
     name: Test
