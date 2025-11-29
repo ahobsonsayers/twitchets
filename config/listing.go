@@ -6,7 +6,7 @@ package config
 // merged with specific ticket listing configuration.
 //
 // If specific ticket listing configuration is provided, it takes precedence over the global configuration.
-func CombineGlobalAndTicketListingConfigs( //nolint: revive
+func CombineGlobalAndTicketListingConfigs(
 	globalConfig GlobalTicketListingConfig,
 	configs ...TicketListingConfig,
 ) []TicketListingConfig {

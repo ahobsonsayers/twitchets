@@ -103,10 +103,10 @@ func (s *TicketScanner) Stop() {
 // This can be called while the scanner is running.
 // Note: RefetchTime cannot be changed while the scanner is running,
 // so, UpdateConfig will ignore any changes to it
-func (s *TicketScanner) UpdateConfig(config TicketScannerConfig) {
+func (s *TicketScanner) UpdateConfig(conf TicketScannerConfig) {
 	s.configMutex.Lock()
 	defer s.configMutex.Unlock()
-	s.config = config
+	s.config = conf
 }
 
 func (s *TicketScanner) fetchAndProcessTickets() {
@@ -152,7 +152,8 @@ func (s *TicketScanner) fetchAndProcessTickets() {
 
 	// Filter fetched ticket listings to those wanted
 	filteredListings := filterTicketListings(fetchedListings, s.config.ListingConfigs)
-	for _, matchedListing := range filteredListings {
+	for idx := 0; idx < len(filteredListings); idx++ {
+		matchedListing := filteredListings[idx]
 
 		listing := matchedListing.listing
 		listingConfig := matchedListing.config
@@ -198,7 +199,8 @@ func filterTicketListings(
 	listingConfigs []config.TicketListingConfig,
 ) []matchedListingAndConfig {
 	matchedListings := make([]matchedListingAndConfig, 0, len(listings))
-	for _, listing := range listings {
+	for idx := 0; idx < len(listings); idx++ {
+		listing := listings[idx]
 		for _, listingConfig := range listingConfigs {
 			if ticketListingMatchesConfig(listing, listingConfig) {
 				matchedListing := matchedListingAndConfig{
