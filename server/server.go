@@ -13,7 +13,7 @@ type Server struct {
 
 var _ StrictServerInterface = Server{}
 
-func (s Server) GetConfig(_ context.Context, request GetConfigRequestObject) (GetConfigResponseObject, error) {
+func (s Server) GetConfig(_ context.Context, _ GetConfigRequestObject) (GetConfigResponseObject, error) {
 	conf, err := config.Load(s.configPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load: %w", err)
