@@ -5,5 +5,6 @@ generate:
   models: true # No types are in this schema
   chi-server: true
   strict-server: true
+  embedded-spec: true
 import-mapping:
   ./models.openapi.yaml: github.com/ahobsonsayers/twitchets/config

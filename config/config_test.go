@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestLoadConfig(t *testing.T) { // nolint: revive
+func TestLoadConfig(t *testing.T) {
 	configPath := test.ProjectDirectoryJoin(t, "test", "data", "config", "config.yaml")
 	actualConfig, err := config.Load(configPath)
 	require.NoError(t, err)
@@ -100,7 +100,7 @@ func TestLoadConfig(t *testing.T) { // nolint: revive
 	require.Equal(t, expectedConfig, actualConfig)
 }
 
-func TestCombineConfigs(t *testing.T) { // nolint: revive
+func TestCombineConfigs(t *testing.T) {
 	configPath := test.ProjectDirectoryJoin(t, "test", "data", "config", "config.yaml")
 	conf, err := config.Load(configPath)
 	require.NoError(t, err)
@@ -197,4 +197,23 @@ func TestCombineConfigs(t *testing.T) { // nolint: revive
 	}
 
 	require.Equal(t, expectedCombinedConfigs, actualCombinedConfigs)
+}
+
+func TestSaveConfig(t *testing.T) {
+	originalConfigPath := test.ProjectDirectoryJoin(t, "test", "data", "config", "config.yaml")
+	writtenConfigPath := test.ProjectDirectoryJoin(t, "test", "data", "config", "temp_config.yaml")
+
+	// Load original config
+	originalConfig, err := config.Load(originalConfigPath)
+	require.NoError(t, err)
+
+	// Save config again to new file
+	err = config.Save(originalConfig, writtenConfigPath)
+	require.NoError(t, err)
+
+	// Load config back and verify it's the same
+	loadedConfig, err := config.Load(writtenConfigPath)
+	require.NoError(t, err)
+
+	require.Equal(t, originalConfig, loadedConfig)
 }

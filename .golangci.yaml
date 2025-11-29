@@ -17,6 +17,7 @@ formatters:
 linters:
   # Linters: https://golangci-lint.run/docs/linters
   enable:
+    - errcheck # https://golangci-lint.run/docs/linters/configuration/#errcheck
     - gocritic # https://golangci-lint.run/docs/linters/configuration/#gocritic
     - makezero # https://golangci-lint.run/docs/linters/configuration/#makezero
     - misspell # https://golangci-lint.run/docs/linters/configuration/#misspell
@@ -75,6 +76,9 @@ linters:
           arguments:
             - ["ID", "IDS", "HTML", "HTTP", "JSON", "URL"] # Allow List
             - [] # Deny List
+
+        - name: unhandled-error
+          disabled: true # Handled by errcheck linter
 
     testifylint:
       enable-all: true

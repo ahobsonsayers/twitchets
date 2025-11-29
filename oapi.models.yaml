@@ -3,8 +3,10 @@ package: config
 output: ./config/config.gen.go
 generate:
   models: true
+  embedded-spec: true
 output-options:
   skip-prune: true
+  disable-type-aliases-for-type: [array]
   user-templates:
     constants.tmpl: ./schema/templates/constants.tmpl
     typedef.tmpl: ./schema/templates/typedef.tmpl

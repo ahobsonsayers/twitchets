@@ -14,7 +14,7 @@ func PrintTicketListingConfigs(configs []TicketListingConfig) {
 	}
 }
 
-func PrintTicketListingConfig(config TicketListingConfig) { //nolint
+func PrintTicketListingConfig(config TicketListingConfig) {
 	fmt.Printf("Event: %s\n", config.Event)
 
 	if config.EventSimilarity == nil || *config.EventSimilarity <= 0.0 {
