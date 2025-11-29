@@ -184,3 +184,4 @@ scratch*
 *debug_bin*
 *.DS_Store
 .~lock*
+temp_*

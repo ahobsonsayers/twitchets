@@ -4,7 +4,16 @@
 package config
 
 import (
+	"bytes"
+	"compress/gzip"
+	"encoding/base64"
+	"fmt"
+	"net/url"
+	"path"
+	"strings"
+
 	"github.com/ahobsonsayers/twigots"
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/orsinium-labs/enum"
 )
 
@@ -87,6 +96,9 @@ type NotificationConfig struct {
 // NotificationType defines model for NotificationType.
 type NotificationType enum.Member[string]
 
+// Notifications defines model for Notifications.
+type Notifications []NotificationType
+
 // NtfyConfig defines model for NtfyConfig.
 type NtfyConfig struct {
 	// Url You can use the public instance at https://ntfy.sh
@@ -118,6 +130,9 @@ type NtfyConfig struct {
 // - GBNI: Northern Ireland
 type Region = twigots.Region
 
+// Regions defines model for Regions.
+type Regions []Region
+
 // TelegramConfig defines model for TelegramConfig.
 type TelegramConfig struct {
 	// Token Get from @BotFather on Telegram
@@ -143,7 +158,7 @@ type TicketListingConfig struct {
 
 	// Regions Geographic regions to search for tickets
 	// Overrides global setting. To reset to default (all regions), use an empty array [].
-	Regions []Region `json:"regions,omitempty"`
+	Regions Regions `json:"regions,omitzero"`
 
 	// NumTickets Number of tickets required in listing
 	// Overrides global setting. To reset to default (any number), use -1.
@@ -159,5 +174,111 @@ type TicketListingConfig struct {
 
 	// Notification Notification services to use
 	// Overrides global setting. To reset to default (all configured services), use an empty array [].
-	Notification []NotificationType `json:"notification,omitempty"`
+	Notification Notifications `json:"notification,omitzero"`
+}
+
+// Base64 encoded, gzipped, json marshaled Swagger object
+var swaggerSpec = []string{
+
+	"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",
+}
+
+// GetSwagger returns the content of the embedded swagger specification file
+// or error if failed to decode
+func decodeSpec() ([]byte, error) {
+	zipped, err := base64.StdEncoding.DecodeString(strings.Join(swaggerSpec, ""))
+	if err != nil {
+		return nil, fmt.Errorf("error base64 decoding spec: %w", err)
+	}
+	zr, err := gzip.NewReader(bytes.NewReader(zipped))
+	if err != nil {
+		return nil, fmt.Errorf("error decompressing spec: %w", err)
+	}
+	var buf bytes.Buffer
+	_, err = buf.ReadFrom(zr)
+	if err != nil {
+		return nil, fmt.Errorf("error decompressing spec: %w", err)
+	}
+
+	return buf.Bytes(), nil
+}
+
+var rawSpec = decodeSpecCached()
+
+// a naive cached of a decoded swagger spec
+func decodeSpecCached() func() ([]byte, error) {
+	data, err := decodeSpec()
+	return func() ([]byte, error) {
+		return data, err
+	}
+}
+
+// Constructs a synthetic filesystem for resolving external references when loading openapi specifications.
+func PathToRawSpec(pathToFile string) map[string]func() ([]byte, error) {
+	res := make(map[string]func() ([]byte, error))
+	if len(pathToFile) > 0 {
+		res[pathToFile] = rawSpec
+	}
+
+	return res
+}
+
+// GetSwagger returns the Swagger specification corresponding to the generated code
+// in this file. The external references of Swagger specification are resolved.
+// The logic of resolving external references is tightly connected to "import-mapping" feature.
+// Externally referenced files must be embedded in the corresponding golang packages.
+// Urls can be supported but this task was out of the scope.
+func GetSwagger() (swagger *openapi3.T, err error) {
+	resolvePath := PathToRawSpec("")
+
+	loader := openapi3.NewLoader()
+	loader.IsExternalRefsAllowed = true
+	loader.ReadFromURIFunc = func(loader *openapi3.Loader, url *url.URL) ([]byte, error) {
+		pathToFile := url.String()
+		pathToFile = path.Clean(pathToFile)
+		getSpec, ok := resolvePath[pathToFile]
+		if !ok {
+			err1 := fmt.Errorf("path not found: %s", pathToFile)
+			return nil, err1
+		}
+		return getSpec()
+	}
+	var specData []byte
+	specData, err = rawSpec()
+	if err != nil {
+		return
+	}
+	swagger, err = loader.LoadFromData(specData)
+	if err != nil {
+		return
+	}
+	return
 }
