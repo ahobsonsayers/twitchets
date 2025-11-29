@@ -12,6 +12,7 @@ import {
   SelectItem,
 } from "./components/ui/select";
 import { useConfig } from "./providers/config";
+import type { Country } from "./types/config";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
@@ -69,8 +70,8 @@ export function GeneralSettings() {
           <Select
             value={config.country}
             onValueChange={(value) => {
-              updateConfig((c) => {
-                c.country = value;
+              updateConfig((config) => {
+                config.country = value as Country;
               });
             }}
           >

@@ -9,7 +9,7 @@ import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export function TicketsConfig() {
-  const { config, setConfig } = useConfig();
+  const { config, updateConfig } = useConfig();
   const [isTicketsConfigOpen, setIsTicketsConfigOpen] = useState(false);
 
   const newEventName = "New Event";
@@ -21,10 +21,9 @@ export function TicketsConfig() {
 
   const handleAddTicket = () => {
     const newTickets = [...tickets, { event: newEventName }];
-    setConfig((config) => ({
-      ...config,
-      tickets: sortTickets(newTickets),
-    }));
+    updateConfig((config) => {
+      config.tickets = sortTickets(newTickets);
+    });
     setIsTicketsConfigOpen(true);
   };
 
@@ -32,17 +31,16 @@ export function TicketsConfig() {
     const newTickets = [...tickets];
     newTickets[index] = updatedTicket;
 
-    setConfig((config) => ({
-      ...config,
-      tickets: sortTickets(newTickets),
-    }));
+    updateConfig((config) => {
+      config.tickets = sortTickets(newTickets);
+    });
   };
 
   const handleRemoveTicket = (index: number) => {
-    setConfig((config) => {
-      const newTickets = [...tickets];
+    updateConfig((config) => {
+      const newTickets = [...config.tickets];
       newTickets.splice(index, 1);
-      return { ...config, tickets: newTickets };
+      config.tickets = newTickets;
     });
   };
 

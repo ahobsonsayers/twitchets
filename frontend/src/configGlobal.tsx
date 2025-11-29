@@ -3,7 +3,7 @@ import { CommonFields } from "./components/configCommon";
 import { useConfig } from "./providers/config";
 
 export function GlobalSettings() {
-  const { config, setConfig } = useConfig();
+  const { config, updateConfig } = useConfig();
 
   return (
     <CollapsibleCard
@@ -13,10 +13,9 @@ export function GlobalSettings() {
       <CommonFields
         commonConfig={config.global}
         updateCommonConfig={(commonConfig) => {
-          setConfig((config) => ({
-            ...config,
-            global: { ...config.global, ...commonConfig },
-          }));
+          updateConfig((config) => {
+            config.global = commonConfig;
+          });
         }}
       />
     </CollapsibleCard>

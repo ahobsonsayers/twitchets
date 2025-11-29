@@ -1,5 +1,6 @@
 import type { Config } from "../types/config";
 import { createContext, type ReactNode, useContext, useState } from "react";
+import { produce } from "immer";
 
 function newConfig(): Config {
   return {
@@ -11,7 +12,7 @@ function newConfig(): Config {
   };
 }
 
-type ConfigUpdater = (config: Config) => Config;
+type ConfigUpdater = (config: Config) => void;
 
 type ConfigProviderState = {
   config: Config;
@@ -31,9 +32,7 @@ export function ConfigProvider({ children, ...props }: ConfigProviderProps) {
   const [config, setConfig] = useState<Config>(newConfig());
 
   const updateConfig = (updater: ConfigUpdater) => {
-    setConfig((prevConfig) => {
-      return updater(prevConfig);
-    });
+    setConfig(produce(updater));
   };
 
   const value = {
