@@ -10,7 +10,7 @@ import (
 // This function is blocking.
 func Watch(filePath string, callback func(Config) error) error {
 	provider := file.Provider(filePath)
-	return provider.Watch(func(event interface{}, err error) {
+	return provider.Watch(func(_ any, err error) {
 		if err != nil {
 			slog.Error(
 				"error watching config file",

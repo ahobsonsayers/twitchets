@@ -152,8 +152,8 @@ func (s *TicketScanner) fetchAndProcessTickets() {
 
 	// Filter fetched ticket listings to those wanted
 	filteredListings := filterTicketListings(fetchedListings, s.config.ListingConfigs)
-	for i := 0; i < len(filteredListings); i++ {
-		matchedListing := filteredListings[i]
+	for idx := 0; idx < len(filteredListings); idx++ {
+		matchedListing := filteredListings[idx]
 
 		listing := matchedListing.listing
 		listingConfig := matchedListing.config
@@ -199,7 +199,8 @@ func filterTicketListings(
 	listingConfigs []config.TicketListingConfig,
 ) []matchedListingAndConfig {
 	matchedListings := make([]matchedListingAndConfig, 0, len(listings))
-	for _, listing := range listings {
+	for idx := 0; idx < len(listings); idx++ {
+		listing := listings[idx]
 		for _, listingConfig := range listingConfigs {
 			if ticketListingMatchesConfig(listing, listingConfig) {
 				matchedListing := matchedListingAndConfig{

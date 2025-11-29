@@ -59,13 +59,18 @@ func main() {
 	ticketScanner := scanner.NewTicketScanner(ticketScannerConfig)
 
 	// Watch config file for changes (in a goroutine)
-	go config.Watch(
-		userConfigPath,
-		getUserConfigUpdateCallback(ticketScanner),
-	)
+	go func() {
+		err := config.Watch(
+			userConfigPath,
+			getUserConfigUpdateCallback(ticketScanner),
+		)
+		if err != nil {
+			log.Fatalf("failed to set up config watching: %v", err)
+		}
+	}()
 
 	// Start scanning for tickets
-	slog.Info("Scanning for tickets...")
+	log.Println("Scanning for tickets...")
 	err = ticketScanner.Start(context.Background())
 	if err != nil {
 		log.Fatal(err)
