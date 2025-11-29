@@ -8,7 +8,7 @@ tasks:
 
   lint:
     cmds:
-      - go tool golangci-lint run . --fix
+      - go tool golangci-lint run --fix ./...
 
   generate:
     aliases:
