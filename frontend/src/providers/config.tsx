@@ -15,12 +15,12 @@ type ConfigUpdater = (config: Config) => Config;
 
 type ConfigProviderState = {
   config: Config;
-  setConfig: (updater: ConfigUpdater) => void;
+  updateConfig: (updater: ConfigUpdater) => void;
 };
 
 const ConfigProviderContext = createContext<ConfigProviderState>({
   config: newConfig(),
-  setConfig: () => null,
+  updateConfig: () => null,
 });
 
 type ConfigProviderProps = {
@@ -30,17 +30,15 @@ type ConfigProviderProps = {
 export function ConfigProvider({ children, ...props }: ConfigProviderProps) {
   const [config, setConfig] = useState<Config>(newConfig());
 
-  const setConfigWithLogging = (updater: ConfigUpdater) => {
+  const updateConfig = (updater: ConfigUpdater) => {
     setConfig((prevConfig) => {
-      const newConfig = updater(prevConfig);
-      console.log(newConfig);
-      return newConfig;
+      return updater(prevConfig);
     });
   };
 
   const value = {
     config,
-    setConfig: setConfigWithLogging,
+    updateConfig,
   };
 
   return (

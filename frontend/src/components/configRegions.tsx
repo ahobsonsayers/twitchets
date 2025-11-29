@@ -1,16 +1,17 @@
 import { LinkedStatusTooltip } from "./linkedStatus";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { type Region, REGIONS } from "@/constants/regions";
+import { REGIONS } from "@/constants/regions";
 import { ResetButton } from "@/reset";
+import type { Region } from "@/types/config";
 
 interface RegionsProps {
   label?: string;
   description?: string;
-  value?: string[];
+  value?: Region[];
   withGlobalFallback?: boolean;
-  globalFallbackValue?: string[];
-  updateValue: (newValue?: string[]) => void;
+  globalFallbackValue?: Region[];
+  updateValue: (newValue?: Region[]) => void;
 }
 
 export function Regions({
@@ -31,9 +32,9 @@ export function Regions({
   }
 
   const currentRegions = fieldValue || [];
-  const resetValue: string[] = [];
+  const resetValue: Region[] = [];
 
-  const handleOnCheckedChange = (regionCode: string, checked: boolean) => {
+  const handleOnCheckedChange = (regionCode: Region, checked: boolean) => {
     const regionSet = new Set(currentRegions);
 
     if (checked) {
@@ -83,9 +84,9 @@ export function Regions({
         {REGIONS.map((region) => (
           <div className="flex items-center gap-2" key={region.code}>
             <Checkbox
-              checked={currentRegions.includes(region.code)}
+              checked={currentRegions.includes(region.code as Region)}
               onCheckedChange={(checked: boolean) => {
-                handleOnCheckedChange(region.code, checked);
+                handleOnCheckedChange(region.code as Region, checked);
               }}
             />
             <Label className="text-sm">{region.name}</Label>
