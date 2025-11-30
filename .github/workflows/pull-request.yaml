@@ -6,7 +6,12 @@ on:
       - main
 
 jobs:
-  lint-test:
-    name: Lint and Test
+  lint:
+    name: Lint
+    uses: ./.github/workflows/lint-test.yaml
+    secrets: inherit
+
+  test:
+    name: Test
     uses: ./.github/workflows/lint-test.yaml
     secrets: inherit
