@@ -22,6 +22,10 @@ Powered by [twigots](https://github.com/ahobsonsayers/twigots), a Go package to 
 - No need to have the Twickets app or an account
 - Choose from various notification services (Telegram, Ntfy, Gotify currently supported)
 
+### And a fancy configuration UI!
+
+![frontend](assets/frontend.mp4)
+
 ## Getting an API Key
 
 To use this tool, you will need a Twickets API key. Although Twickets doesn't provide a free API, you can easily obtain a key by following these steps:
