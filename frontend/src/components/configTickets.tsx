@@ -1,7 +1,6 @@
 "use client";
 
 import { useConfig } from "../providers/config";
-import { CollapsibleCard } from "./cardCollapsible";
 import { Ticket } from "./configTicket";
 import {
   Card,
@@ -10,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import { Input } from "./ui/input";
 import { Button } from "@/components/ui/button";
 import type { TicketConfig } from "@/types/config";
 import { Plus } from "lucide-react";
@@ -17,7 +17,9 @@ import { useMemo, useState } from "react";
 
 export function TicketsConfig() {
   const { config, updateConfig } = useConfig();
-  const [isTicketsConfigOpen, setIsTicketsConfigOpen] = useState(false);
+
+  const [_, setIsTicketsConfigOpen] = useState(false);
+  const [filterText, setFilterText] = useState("");
 
   const newEventName = "New Event";
 
@@ -73,24 +75,34 @@ export function TicketsConfig() {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-y-4">
+          <Input
+            type="text"
+            value={filterText}
+            placeholder={"Filter Tickets"}
+            onChange={(event) => setFilterText(event.target.value)}
+          />
           {config.tickets.length === 0 ? (
             <p className="text-muted-foreground text-center">
               No tickets configured. Click "Add Ticket" to get started.
             </p>
           ) : (
-            tickets.map((ticket, ticketIndex) => {
-              return (
-                <Ticket
-                  key={ticket.event}
-                  ticketConfig={ticket}
-                  globalConfig={config.global}
-                  onUpdate={(updatedTicket) =>
-                    handleUpdateTicket(updatedTicket, ticketIndex)
-                  }
-                  onRemove={() => handleRemoveTicket(ticketIndex)}
-                />
-              );
-            })
+            tickets
+              .filter((ticket) =>
+                ticket.event.toLowerCase().includes(filterText.toLowerCase()),
+              )
+              .map((ticket, ticketIndex) => {
+                return (
+                  <Ticket
+                    key={ticket.event}
+                    ticketConfig={ticket}
+                    globalConfig={config.global}
+                    onUpdate={(updatedTicket) =>
+                      handleUpdateTicket(updatedTicket, ticketIndex)
+                    }
+                    onRemove={() => handleRemoveTicket(ticketIndex)}
+                  />
+                );
+              })
           )}
         </div>
       </CardContent>
