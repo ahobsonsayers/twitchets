@@ -5,7 +5,7 @@ import (
 	"io/fs"
 )
 
-//go:embed all:dist
+//go:embed dist/*
 var distFS embed.FS
 
 // DistDirFS contains the embedded dist directory files (without the "dist" prefix)
