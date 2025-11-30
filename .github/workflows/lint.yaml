@@ -1,4 +1,4 @@
-name: Lint and Test
+name: Lint
 
 on:
   # Manual Invocation
@@ -6,9 +6,6 @@ on:
 
   # Invocation from workflow
   workflow_call:
-
-env:
-  CI: true
 
 jobs:
   lint-be:
@@ -53,6 +50,7 @@ jobs:
         with:
           node-version-file: frontend/package.json
           cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Install dependencies
         working-directory: frontend
