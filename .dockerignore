@@ -1,0 +1,9 @@
+# Ignore certain directories
+.git/
+node_modules/
+
+# Ignore certain files
+Dockerfile*
+docker-compose*
+compose*
+README*
