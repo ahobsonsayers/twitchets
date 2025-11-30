@@ -38,13 +38,17 @@ export function NotificationSettings() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setDraft(config.notification)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setDraft(config.notification);
+              }}
             >
               Discard
             </Button>
             <Button
               size="sm"
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 updateConfig((config) => {
                   config.notification = draft;
                 });

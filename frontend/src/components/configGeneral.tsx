@@ -50,15 +50,17 @@ export function GeneralSettings() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() =>
-                setDraft({ apiKey: config.apiKey, country: config.country })
-              }
+              onClick={(e) => {
+                e.stopPropagation();
+                setDraft({ apiKey: config.apiKey, country: config.country });
+              }}
             >
               Discard
             </Button>
             <Button
               size="sm"
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 updateConfig((config) => {
                   config.apiKey = draft.apiKey;
                   config.country = draft.country;

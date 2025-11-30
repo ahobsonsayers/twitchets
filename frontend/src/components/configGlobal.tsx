@@ -26,13 +26,17 @@ export function GlobalSettings() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setDraft(config.global)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setDraft(config.global);
+              }}
             >
               Discard
             </Button>
             <Button
               size="sm"
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 updateConfig((config) => {
                   config.global = draft;
                 });
