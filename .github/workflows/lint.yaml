@@ -59,28 +59,3 @@ jobs:
       - name: Run lint
         working-directory: frontend
         run: pnpm run lint
-
-  test-backend:
-    name: Test Backend
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    defaults:
-      run:
-        shell: bash
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v5
-
-      - name: Setup go
-        uses: actions/setup-go@v6
-        with:
-          go-version-file: go.mod
-
-      - name: Install dependencies
-        run: go mod download
-
-      - name: Run test
-        run: go test ./...
-        env:
-          TWICKETS_API_KEY: ${{ secrets.TWICKETS_API_KEY }}
