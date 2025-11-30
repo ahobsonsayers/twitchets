@@ -8,10 +8,10 @@ on:
 jobs:
   lint:
     name: Lint
-    uses: ./.github/workflows/lint-test.yaml
+    uses: ./.github/workflows/lint.yaml
     secrets: inherit
 
   test:
     name: Test
-    uses: ./.github/workflows/lint-test.yaml
+    uses: ./.github/workflows/test.yaml
     secrets: inherit
