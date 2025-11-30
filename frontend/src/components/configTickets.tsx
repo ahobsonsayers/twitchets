@@ -59,7 +59,7 @@ export function TicketsConfig() {
         <div className="flex flex-col">
           <CardTitle>Ticket Configuration</CardTitle>
           <CardDescription>
-            Individual ticket configurations (overrides global settings)
+            Individual ticket configuration (overrides global configuration)
           </CardDescription>
         </div>
         <Button

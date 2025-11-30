@@ -19,7 +19,7 @@ export function GlobalSettings() {
   return (
     <CollapsibleCard
       title="Global Configuration"
-      description="Configuration that apply to all tickets"
+      description="Configuration that applies to all tickets"
       action={
         hasChanges && (
           <SaveDiscardButtons

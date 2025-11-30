@@ -43,7 +43,7 @@ export function GeneralSettings() {
 
   return (
     <CollapsibleCard
-      title="General Settings"
+      title="General Configuration"
       description="General application configuration"
       action={
         hasChanges && (

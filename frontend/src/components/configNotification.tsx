@@ -42,7 +42,8 @@ export function NotificationSettings() {
 
   return (
     <CollapsibleCard
-      title="Notification Settings"
+      title="Notification Configuration"
+      description="Notification services configuration"
       action={
         hasChanges && (
           <SaveDiscardButtons
