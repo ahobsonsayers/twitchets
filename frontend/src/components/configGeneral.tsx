@@ -2,6 +2,7 @@
 
 import { useConfig } from "../providers/config";
 import type { Country } from "../types/config";
+import { SaveDiscardButtons } from "./buttonSaveDiscard";
 import { CollapsibleCard } from "./cardCollapsible";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -46,30 +47,20 @@ export function GeneralSettings() {
       description="General application configuration"
       action={
         hasChanges && (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                setDraft({ apiKey: config.apiKey, country: config.country });
-              }}
-            >
-              Discard
-            </Button>
-            <Button
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                updateConfig((config) => {
-                  config.apiKey = draft.apiKey;
-                  config.country = draft.country;
-                });
-              }}
-            >
-              Save
-            </Button>
-          </div>
+          <SaveDiscardButtons
+            onSave={() => {
+              updateConfig((config) => {
+                config.apiKey = draft.apiKey;
+                config.country = draft.country;
+              });
+            }}
+            onDiscard={() => {
+              setDraft({
+                apiKey: config.apiKey,
+                country: config.country,
+              });
+            }}
+          />
         )
       }
     >

@@ -1,5 +1,6 @@
 "use client";
 
+import { SaveDiscardButtons } from "./buttonSaveDiscard";
 import { CollapsibleCard } from "./cardCollapsible";
 import { CommonFields } from "./configCommon";
 import { ConfigField } from "./configField";
@@ -48,30 +49,14 @@ export function Ticket({
       action={
         <div className="flex items-center gap-2">
           {hasChanges && (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setDraft(ticketConfig);
-                }}
-              >
-                <X className="size-4" />
-                Discard
-              </Button>
-
-              <Button
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onUpdate(draft);
-                }}
-              >
-                <Save className="size-4" />
-                Save
-              </Button>
-            </>
+            <SaveDiscardButtons
+              onSave={() => {
+                setDraft(ticketConfig);
+              }}
+              onDiscard={() => {
+                onUpdate(draft);
+              }}
+            />
           )}
 
           <AlertDialog>

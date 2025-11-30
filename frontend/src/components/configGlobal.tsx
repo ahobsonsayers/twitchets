@@ -1,4 +1,5 @@
 import { useConfig } from "../providers/config";
+import { SaveDiscardButtons } from "./buttonSaveDiscard";
 import { CollapsibleCard } from "./cardCollapsible";
 import { CommonFields } from "./configCommon";
 import { Button } from "./ui/button";
@@ -22,29 +23,16 @@ export function GlobalSettings() {
       description="Configuration that apply to all tickets"
       action={
         hasChanges && (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                setDraft(config.global);
-              }}
-            >
-              Discard
-            </Button>
-            <Button
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                updateConfig((config) => {
-                  config.global = draft;
-                });
-              }}
-            >
-              Save
-            </Button>
-          </div>
+          <SaveDiscardButtons
+            onSave={() => {
+              updateConfig((config) => {
+                config.global = draft;
+              });
+            }}
+            onDiscard={() => {
+              setDraft(config.global);
+            }}
+          />
         )
       }
     >

@@ -1,6 +1,7 @@
 "use client";
 
 import { useConfig } from "../providers/config";
+import { SaveDiscardButtons } from "./buttonSaveDiscard";
 import { CollapsibleCard } from "./cardCollapsible";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
@@ -34,29 +35,16 @@ export function NotificationSettings() {
       title="Notification Settings"
       action={
         hasChanges && (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                setDraft(config.notification);
-              }}
-            >
-              Discard
-            </Button>
-            <Button
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                updateConfig((config) => {
-                  config.notification = draft;
-                });
-              }}
-            >
-              Save
-            </Button>
-          </div>
+          <SaveDiscardButtons
+            onSave={() => {
+              updateConfig((config) => {
+                config.notification = draft;
+              });
+            }}
+            onDiscard={() => {
+              setDraft(config.notification);
+            }}
+          />
         )
       }
     >
