@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+func (c *NotificationType) MarshalJSON() ([]byte, error) {
+	return json.Marshal(c.Value)
+}
+
 func (c *NotificationType) UnmarshalJSON(data []byte) error {
 	var notificationTypeString string
 	err := json.Unmarshal(data, &notificationTypeString)
