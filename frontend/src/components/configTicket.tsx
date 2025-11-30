@@ -51,10 +51,10 @@ export function Ticket({
           {hasChanges && (
             <SaveDiscardButtons
               onSave={() => {
-                setDraft(ticketConfig);
+                onUpdate(draft);
               }}
               onDiscard={() => {
-                onUpdate(draft);
+                setDraft(ticketConfig);
               }}
             />
           )}
