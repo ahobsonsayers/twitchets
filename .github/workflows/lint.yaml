@@ -1,0 +1,61 @@
+name: Lint
+
+on:
+  # Manual Invocation
+  workflow_dispatch:
+
+  # Invocation from workflow
+  workflow_call:
+
+jobs:
+  lint-be:
+    name: Lint Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      - name: Setup go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+
+      - name: Run lint
+        uses: golangci/golangci-lint-action@v8
+
+  lint-fe:
+    name: Lint Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: frontend/package.json
+
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: frontend/package.json
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: pnpm install
+      
+      - name: Run lint
+        working-directory: frontend
+        run: pnpm run lint

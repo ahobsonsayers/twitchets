@@ -3,18 +3,47 @@ version: "3"
 
 tasks:
   format:
+    - task: format:be
+    - task: format:fe
+
+  format:be:
     cmds:
       - go tool gofumpt -l -w .
 
-  lint:
+  format:fe:
+    dir: frontend
+    cmds:
+      - pnpm run format
+
+  lint:be:
     cmds:
       - go tool golangci-lint run --fix ./...
 
+  lint:
+    - task: lint:be
+    - task: lint:fe
+
+  lint:fe:
+    dir: frontend
+    cmds:
+      - pnpm run lint
+
   generate:
+    - task: build:be
+    - task: build:fe
+
+  generate:be:
     aliases:
-      - gen
+      - gen:be
     cmds:
       - go generate ./...
+
+  generate:fe:
+    dir: frontend
+    aliases:
+      - gen:fe
+    cmds:
+      - pnpm run generate
 
   test:
     cmds:
@@ -26,16 +55,30 @@ tasks:
       - task: test
 
   build:
+    - task: build:fe
+    - task: build:be
+
+  build:be:
     cmds:
       - go build -v -o ./bin/ .
+
+  build:fe:
+    dir: frontend
+    cmds:
+      - run build
 
   build:docker:
     cmds:
       - docker build . -t arranhs/twitchets
 
-  run:
+  run:be:
     cmds:
       - go run .
+
+  run:fe:
+    dir: frontend
+    cmds:
+      - pnpm run dev
 
   run:docker:
     deps: [build:docker]

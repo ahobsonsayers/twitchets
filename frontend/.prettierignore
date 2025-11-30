@@ -1,0 +1,5 @@
+# Ignore certain directories
+src/components/ui/
+
+# Ignore certain files
+src/types/openapi.d.ts

@@ -1,0 +1,22 @@
+{
+  "include": ["**/*.ts", "**/*.tsx"],
+
+  "compilerOptions": {
+    "module": "ESNext",
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "jsx": "preserve",
+    "allowImportingTsExtensions": true,
+
+    /* Linting */
+    "strict": true,
+    "erasableSyntaxOnly": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

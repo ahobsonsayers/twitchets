@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"io/fs"
 	"log"
 	"log/slog"
 	"net/http"
@@ -16,7 +17,7 @@ import (
 	oapimiddleware "github.com/oapi-codegen/nethttp-middleware"
 )
 
-func Start(port int, configPath string) error {
+func Start(port int, frontendFS fs.FS, configPath string) error {
 	address := fmt.Sprintf("0.0.0.0:%d", port)
 
 	// Create middlewares
@@ -33,6 +34,10 @@ func Start(port int, configPath string) error {
 	// Create base router
 	router := chi.NewRouter()
 	router.Use(loggerMiddleware, corsMiddleware)
+
+	// Register routes for frontend
+	fileServer := http.FileServer(http.FS(frontendFS))
+	router.Handle("/*", http.StripPrefix("/", fileServer))
 
 	// Create api router and mount
 	apiRouter := chi.NewRouter()

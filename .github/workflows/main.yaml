@@ -6,15 +6,20 @@ on:
       - main
 
 jobs:
-  lint-test:
-    name: Lint and Test
-    uses: ./.github/workflows/lint-test.yaml
+  lint:
+    name: Lint
+    uses: ./.github/workflows/lint.yaml
+    secrets: inherit
+
+  test:
+    name: Test
+    uses: ./.github/workflows/test.yaml
     secrets: inherit
 
   build-push:
     name: Build and Push
     uses: ./.github/workflows/build-push.yaml
-    needs: [lint-test]
+    needs: [lint, test]
     secrets: inherit
     with:
       ref: ${{ github.sha }}

@@ -16,6 +16,9 @@
   "go.toolsManagement.autoUpdate": true,
   "go.buildTags": "",
 
+  // ---- Javascript Settings ----
+  "biome.configurationPath": "frontend/biome.json",
+
   // Code Spell Checker
   "cSpell.words": ["twickets", "unmarshaller"]
 }
