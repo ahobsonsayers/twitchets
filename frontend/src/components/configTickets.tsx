@@ -81,7 +81,7 @@ export function TicketsConfig() {
             tickets.map((ticket, ticketIndex) => {
               return (
                 <Ticket
-                  key={ticketIndex}
+                  key={ticket.event}
                   ticketConfig={ticket}
                   globalConfig={config.global}
                   onUpdate={(updatedTicket) =>
