@@ -11,8 +11,8 @@ env:
   CI: true
 
 jobs:
-  lint:
-    name: Lint
+  lint-be:
+    name: Lint Backend
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
@@ -31,8 +31,39 @@ jobs:
       - name: Run lint
         uses: golangci/golangci-lint-action@v8
 
-  test:
-    name: Test
+  lint-fe:
+    name: Lint Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: frontend/package.json
+
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: frontend/package.json
+          cache: pnpm
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: pnpm install
+      
+      - name: Run lint
+        working-directory: frontend
+        run: pnpm run lint
+
+  test-backend:
+    name: Test Backend
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
@@ -48,15 +79,10 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Setup task
-        uses: arduino/setup-task@v2
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Download dependencies
+      - name: Install dependencies
         run: go mod download
 
       - name: Run test
-        run: task test
+        run: go test ./...
         env:
           TWICKETS_API_KEY: ${{ secrets.TWICKETS_API_KEY }}

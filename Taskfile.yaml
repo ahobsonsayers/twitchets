@@ -43,7 +43,7 @@ tasks:
     aliases:
       - gen:fe
     cmds:
-      - pnpm generate
+      - pnpm run generate
 
   test:
     cmds:
@@ -65,7 +65,7 @@ tasks:
   build:fe:
     dir: frontend
     cmds:
-      - pnpm build
+      - run build
 
   build:docker:
     cmds:
@@ -78,7 +78,7 @@ tasks:
   run:fe:
     dir: frontend
     cmds:
-      - pnpm dev
+      - pnpm run dev
 
   run:docker:
     deps: [build:docker]
