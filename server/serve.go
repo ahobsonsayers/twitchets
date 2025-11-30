@@ -11,6 +11,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 	"github.com/go-chi/httplog/v2"
 
 	oapimiddleware "github.com/oapi-codegen/nethttp-middleware"
@@ -19,7 +20,12 @@ import (
 func Start(port int, frontendFS fs.FS, configPath string) error {
 	address := fmt.Sprintf("0.0.0.0:%d", port)
 
+	// Create middlewares
 	loggerMiddleware := createLoggerMiddleware()
+	corsMiddleware := cors.Handler(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+	})
 	openapiValidationMiddleware, err := createOapiValidationMiddleware()
 	if err != nil {
 		return fmt.Errorf("failed to create openapi validation middleware %w", err)
@@ -27,7 +33,7 @@ func Start(port int, frontendFS fs.FS, configPath string) error {
 
 	// Create base router
 	router := chi.NewRouter()
-	router.Use(loggerMiddleware)
+	router.Use(loggerMiddleware, corsMiddleware)
 
 	// Register routes for frontend
 	fileServer := http.FileServer(http.FS(frontendFS))
