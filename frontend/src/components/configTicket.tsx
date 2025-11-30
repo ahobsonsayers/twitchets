@@ -1,6 +1,6 @@
 "use client";
 
-import { SaveDiscardButtons } from "./buttonSaveDiscard";
+import { SaveDiscardButtons } from "./buttonsSaveDiscard";
 import { CollapsibleCard } from "./cardCollapsible";
 import { CommonFields } from "./configCommon";
 import { ConfigField } from "./configField";

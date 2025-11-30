@@ -2,7 +2,7 @@
 
 import { useConfig } from "../providers/config";
 import type { Country } from "../types/config";
-import { SaveDiscardButtons } from "./buttonSaveDiscard";
+import { SaveDiscardButtons } from "./buttonsSaveDiscard";
 import { CollapsibleCard } from "./cardCollapsible";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";

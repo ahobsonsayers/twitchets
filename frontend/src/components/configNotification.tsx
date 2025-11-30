@@ -1,7 +1,7 @@
 "use client";
 
 import { useConfig } from "../providers/config";
-import { SaveDiscardButtons } from "./buttonSaveDiscard";
+import { SaveDiscardButtons } from "./buttonsSaveDiscard";
 import { CollapsibleCard } from "./cardCollapsible";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
@@ -53,7 +53,7 @@ export function NotificationSettings() {
           <div className="flex items-center gap-2">
             <h3>Ntfy</h3>
             <Checkbox
-              className="ml-4"
+              className="ml-2"
               checked={!!draft.ntfy}
               onCheckedChange={(checked) => {
                 setDraft((prev) => {

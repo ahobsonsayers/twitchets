@@ -1,5 +1,5 @@
 import { useConfig } from "../providers/config";
-import { SaveDiscardButtons } from "./buttonSaveDiscard";
+import { SaveDiscardButtons } from "./buttonsSaveDiscard";
 import { CollapsibleCard } from "./cardCollapsible";
 import { CommonFields } from "./configCommon";
 import { Button } from "./ui/button";
