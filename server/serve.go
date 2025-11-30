@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"fmt"
-	"io/fs"
 	"log"
 	"log/slog"
 	"net/http"
@@ -17,7 +16,7 @@ import (
 	oapimiddleware "github.com/oapi-codegen/nethttp-middleware"
 )
 
-func Start(port int, frontendFS fs.FS, configPath string) error {
+func Start(port int, configPath string) error {
 	address := fmt.Sprintf("0.0.0.0:%d", port)
 
 	// Create middlewares
