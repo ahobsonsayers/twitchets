@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"io/fs"
 	"log"
 	"log/slog"
 	"net/http"
@@ -15,7 +16,7 @@ import (
 	oapimiddleware "github.com/oapi-codegen/nethttp-middleware"
 )
 
-func Start(port int, configPath string) error {
+func Start(port int, frontendFS fs.FS, configPath string) error {
 	address := fmt.Sprintf("0.0.0.0:%d", port)
 
 	loggerMiddleware := createLoggerMiddleware()
@@ -24,20 +25,23 @@ func Start(port int, configPath string) error {
 		return fmt.Errorf("failed to create openapi validation middleware %w", err)
 	}
 
-	// Create router (with middleware)
+	// Create base router
 	router := chi.NewRouter()
-	router.Use(
-		loggerMiddleware,
-		openapiValidationMiddleware,
-	)
+	router.Use(loggerMiddleware)
 
-	// Register server routes on chi router
-	server := NewServer(configPath)
-	handler := HandlerFromMux(server, router)
+	// Register routes for frontend
+	fileServer := http.FileServer(http.FS(frontendFS))
+	router.Handle("/*", http.StripPrefix("/", fileServer))
+
+	// Create api router and mount
+	apiRouter := chi.NewRouter()
+	apiRouter.Use(openapiValidationMiddleware)
+	apiHandler := HandlerFromMux(NewServer(configPath), apiRouter)
+	router.Mount("/api", apiHandler)
 
 	// Start listening
 	log.Printf("Server listening on %s\n", address)
-	err = http.ListenAndServe(address, handler)
+	err = http.ListenAndServe(address, router)
 	if err != nil {
 		return err
 	}
@@ -49,7 +53,7 @@ func createLoggerMiddleware() func(http.Handler) http.Handler {
 	// This middleware includes the recover middleware
 	return httplog.RequestLogger(
 		httplog.NewLogger(
-			"abs-tract",
+			"twitchets",
 			httplog.Options{
 				LogLevel:       slog.LevelDebug,
 				RequestHeaders: true,
@@ -69,7 +73,7 @@ func createOapiValidationMiddleware() (func(http.Handler) http.Handler, error) {
 	// Set server endpoint to the route. This ensures request validation
 	// doesn't fail in the validation middleware.
 	// See: https://github.com/oapi-codegen/oapi-codegen/issues/1123
-	spec.Servers = openapi3.Servers{&openapi3.Server{URL: "/"}}
+	spec.Servers = openapi3.Servers{&openapi3.Server{URL: "/api"}}
 
 	return oapimiddleware.OapiRequestValidatorWithOptions(
 		spec,

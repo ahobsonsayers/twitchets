@@ -12,6 +12,7 @@ import (
 
 	"github.com/ahobsonsayers/twigots"
 	"github.com/ahobsonsayers/twitchets/config"
+	"github.com/ahobsonsayers/twitchets/frontend"
 	"github.com/ahobsonsayers/twitchets/notification"
 	"github.com/ahobsonsayers/twitchets/scanner"
 	"github.com/ahobsonsayers/twitchets/server"
@@ -80,7 +81,7 @@ func main() {
 	}()
 
 	// Run server
-	err = server.Start(9000, userConfigPath)
+	err = server.Start(9000, frontend.DistFS, userConfigPath)
 	if err != nil {
 		log.Fatalf("error running server: %v", err)
 	}

@@ -42,7 +42,12 @@ tasks:
       - go clean -testcache
       - task: test
 
-  build:
+  build:fe:
+    dir: frontend
+    cmds:
+      - pnpm build
+
+  build:be:
     cmds:
       - go build -v -o ./bin/ .
 
