@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import type { CommonConfig, TicketConfig } from "@/types/config";
 import { isEqual } from "lodash";
-import { Save, Trash, X } from "lucide-react";
+import { Trash, } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface TicketProps {

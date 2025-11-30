@@ -8,11 +8,21 @@ import { Checkbox } from "./ui/checkbox";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Separator } from "./ui/separator";
+import type { NtfyConfig } from "@/types/config";
 import { isEqual, omit } from "lodash";
 import { Eye, EyeOff } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const defaultNtfyUrl = "https://ntfy.sh";
+
+function newNtfyConfig(): NtfyConfig {
+  return {
+    url: defaultNtfyUrl,
+    topic: "",
+    username: "",
+    password: "",
+  };
+}
 
 export function NotificationSettings() {
   const { config, updateConfig } = useConfig();
@@ -60,12 +70,7 @@ export function NotificationSettings() {
                   if (checked) {
                     return {
                       ...prev,
-                      ntfy: {
-                        url: defaultNtfyUrl,
-                        topic: "",
-                        username: "",
-                        password: "",
-                      },
+                      ntfy: newNtfyConfig(),
                     };
                   } else {
                     return omit(prev, "ntfy");
@@ -91,7 +96,7 @@ export function NotificationSettings() {
                       setDraft((prev) => ({
                         ...prev,
                         ntfy: {
-                          ...prev.ntfy!,
+                          ...(prev.ntfy || newNtfyConfig()),
                           url:
                             event.target.value === ""
                               ? defaultNtfyUrl
@@ -111,7 +116,7 @@ export function NotificationSettings() {
                       setDraft((prev) => ({
                         ...prev,
                         ntfy: {
-                          ...prev.ntfy!,
+                          ...(prev.ntfy || newNtfyConfig()),
                           topic: event.target.value,
                         },
                       }));
@@ -131,7 +136,7 @@ export function NotificationSettings() {
                       setDraft((prev) => ({
                         ...prev,
                         ntfy: {
-                          ...prev.ntfy!,
+                          ...(prev.ntfy || newNtfyConfig()),
                           username: event.target.value,
                         },
                       }));
@@ -150,7 +155,7 @@ export function NotificationSettings() {
                         setDraft((prev) => ({
                           ...prev,
                           ntfy: {
-                            ...prev.ntfy!,
+                            ...(prev.ntfy || newNtfyConfig()),
                             password: event.target.value,
                           },
                         }));

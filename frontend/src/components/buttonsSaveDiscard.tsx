@@ -1,5 +1,4 @@
 import { Button } from "./ui/button";
-import { useState } from "react";
 
 interface SaveDiscardButtonsProps {
   onSave: () => void;
