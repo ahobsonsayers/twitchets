@@ -1,9 +1,8 @@
 import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
-import { Button } from "../components/ui/button";
 import { getConfig, putConfig } from "../lib/api";
 import type { Config } from "../types/config";
 import { produce } from "immer";
-import { ArrowRightIcon, TriangleAlertIcon } from "lucide-react";
+import { TriangleAlertIcon } from "lucide-react";
 import {
   createContext,
   type ReactNode,

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "biome lint . --fix --unsafe",
+    "lint": "biome lint .",
     "format": "prettier . -w",
     "generate": "openapi-typescript ../schema/server.openapi.yaml ../schema/models.openapi.yaml -o src/types/openapi.d.ts",
     "preview": "vite preview"

@@ -2,7 +2,9 @@ import type { Config } from "../types/config";
 import type { paths } from "../types/openapi";
 import createClient from "openapi-fetch";
 
-const client = createClient<paths>({ baseUrl: "http://localhost:8080" });
+const client = createClient<paths>({
+  baseUrl: `${window.location.origin}/api`,
+});
 
 export async function getConfig(): Promise<Config> {
   const { data, error } = await client.GET("/config", {});
