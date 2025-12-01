@@ -24,7 +24,7 @@ export function CommonFields({
         }}
       />
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <ConfigField
           label="Event Similarity"
           description="Required event name similarity, between 0.0 - 1.0"
