@@ -83,100 +83,96 @@ export function NotificationSettings() {
           </div>
 
           {draft.ntfy && (
-            <>
-              <div className="flex gap-2">
-                <div className="flex-auto flex-col space-y-2">
-                  <Label>URL</Label>
-                  <Input
-                    type="text"
-                    placeholder={defaultNtfyUrl}
-                    value={
-                      draft.ntfy?.url === defaultNtfyUrl ? "" : draft.ntfy?.url
-                    }
-                    onChange={(event) => {
-                      setDraft((prev) => ({
-                        ...prev,
-                        ntfy: {
-                          ...(prev.ntfy || newNtfyConfig()),
-                          url:
-                            event.target.value === ""
-                              ? defaultNtfyUrl
-                              : event.target.value,
-                        },
-                      }));
-                    }}
-                  />
-                </div>
-
-                <div className="flex-auto flex-col space-y-2">
-                  <Label>Topic</Label>
-                  <Input
-                    type="text"
-                    value={draft.ntfy?.topic}
-                    onChange={(event) => {
-                      setDraft((prev) => ({
-                        ...prev,
-                        ntfy: {
-                          ...(prev.ntfy || newNtfyConfig()),
-                          topic: event.target.value,
-                        },
-                      }));
-                    }}
-                  />
-                </div>
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>URL</Label>
+                <Input
+                  type="text"
+                  placeholder={defaultNtfyUrl}
+                  value={
+                    draft.ntfy?.url === defaultNtfyUrl ? "" : draft.ntfy?.url
+                  }
+                  onChange={(event) => {
+                    setDraft((prev) => ({
+                      ...prev,
+                      ntfy: {
+                        ...(prev.ntfy || newNtfyConfig()),
+                        url:
+                          event.target.value === ""
+                            ? defaultNtfyUrl
+                            : event.target.value,
+                      },
+                    }));
+                  }}
+                />
               </div>
 
-              <div className="flex space-x-2">
-                <div className="flex flex-1 flex-col space-y-2">
-                  <Label>Username</Label>
+              <div className="space-y-2">
+                <Label>Topic</Label>
+                <Input
+                  type="text"
+                  value={draft.ntfy?.topic}
+                  onChange={(event) => {
+                    setDraft((prev) => ({
+                      ...prev,
+                      ntfy: {
+                        ...(prev.ntfy || newNtfyConfig()),
+                        topic: event.target.value,
+                      },
+                    }));
+                  }}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Username</Label>
+                <Input
+                  type="text"
+                  placeholder="Optional"
+                  value={draft.ntfy?.username}
+                  onChange={(event) => {
+                    setDraft((prev) => ({
+                      ...prev,
+                      ntfy: {
+                        ...(prev.ntfy || newNtfyConfig()),
+                        username: event.target.value,
+                      },
+                    }));
+                  }}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Password</Label>
+                <div className="flex">
                   <Input
-                    type="text"
+                    type={showNtfyPassword ? "text" : "password"}
                     placeholder="Optional"
-                    value={draft.ntfy?.username}
+                    value={draft.ntfy?.password}
                     onChange={(event) => {
                       setDraft((prev) => ({
                         ...prev,
                         ntfy: {
                           ...(prev.ntfy || newNtfyConfig()),
-                          username: event.target.value,
+                          password: event.target.value,
                         },
                       }));
                     }}
                   />
-                </div>
-
-                <div className="flex flex-1 flex-col space-y-2">
-                  <Label>Password</Label>
-                  <div className="flex">
-                    <Input
-                      type={showNtfyPassword ? "text" : "password"}
-                      placeholder="Optional"
-                      value={draft.ntfy?.password}
-                      onChange={(event) => {
-                        setDraft((prev) => ({
-                          ...prev,
-                          ntfy: {
-                            ...(prev.ntfy || newNtfyConfig()),
-                            password: event.target.value,
-                          },
-                        }));
-                      }}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={toggleShowNtfyPassword}
-                    >
-                      {showNtfyPassword ? (
-                        <EyeOff className="size-5" />
-                      ) : (
-                        <Eye className="size-5" />
-                      )}
-                    </Button>
-                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={toggleShowNtfyPassword}
+                  >
+                    {showNtfyPassword ? (
+                      <EyeOff className="size-5" />
+                    ) : (
+                      <Eye className="size-5" />
+                    )}
+                  </Button>
                 </div>
               </div>
-            </>
+            </div>
           )}
         </div>
         <Separator />
