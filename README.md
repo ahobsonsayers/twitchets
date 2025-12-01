@@ -24,7 +24,7 @@ Powered by [twigots](https://github.com/ahobsonsayers/twigots), a Go package to 
 
 ### And a fancy configuration UI!
 
-![frontend](assets/frontend.mp4)
+https://github.com/user-attachments/assets/63e0fd3f-d767-4131-aae1-c18016008b20
 
 ## Getting an API Key
 
