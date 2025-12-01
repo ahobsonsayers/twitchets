@@ -57,7 +57,7 @@ services:
     image: arranhs/twitchets:latest
     restart: unless-stopped
     volumes:
-      - <path to config>:/twitchets
+      - <path to config file>:/twitchets/config.yaml
 ```
 
 ## Configuration
