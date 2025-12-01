@@ -1,0 +1,12 @@
+services:
+  twitchets:
+    container_name: twitchets
+    image: arranhs/twitchets:latest
+    build:
+      dockerfile: Dockerfile
+      context: .
+    restart: unless-stopped
+    ports:
+      - 9000:9000
+    volumes:
+      - ./config.yaml:/twitchets/config.yaml

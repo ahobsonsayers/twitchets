@@ -1,5 +1,5 @@
 # Frontend builder Image
-FROM node:25-slim AS frontend-builder
+FROM node:24-slim AS frontend-builder
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ RUN corepack enable
 # Install dependencies
 COPY ./frontend/package.json .
 COPY ./frontend/pnpm-lock.yaml .
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 # Build
 COPY ./frontend .
@@ -34,10 +34,13 @@ RUN go build -v -o ./bin/ .
 # Distribution Image
 FROM alpine:latest
 
+
 RUN apk add --no-cache libc6-compat
 
 COPY --from=backend-builder /app/bin/twitchets /usr/bin/twitchets
 
 EXPOSE 9000
+
+WORKDIR /twitchets
 
 ENTRYPOINT ["/usr/bin/twitchets"]

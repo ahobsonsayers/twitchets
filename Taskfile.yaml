@@ -67,10 +67,6 @@ tasks:
     cmds:
       - run build
 
-  build:docker:
-    cmds:
-      - docker build . -t arranhs/twitchets
-
   run:be:
     cmds:
       - go run .
@@ -80,11 +76,10 @@ tasks:
     cmds:
       - pnpm run dev
 
-  run:docker:
-    deps: [build:docker]
+  docker:build:
     cmds:
-      - |
-        docker run --rm \
-          --name twitchets \
-          -p 5656:5656 \
-          arranhs/twitchets
+      - docker compose build
+
+  docker:run:
+    cmds:
+      - docker compose up --build
