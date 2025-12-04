@@ -7,44 +7,45 @@ import { NumericFormat } from "react-number-format";
 interface ConfigFieldProps<T extends string | number> {
   label: string;
   description: string;
-  placeholder?: string;
   type: "text" | "number" | "integer" | "fraction" | "percentage" | "price";
   value?: T;
-  globalFallbackValue?: T;
-  withGlobalFallback?: boolean;
-  showReset?: boolean;
+  showReset?: boolean; // Whether to show reset button
+  resetValue?: T; // Value to set when reset is clicked
+  defaultValuePlaceholder?: string; // Placeholder to use when field will use the default value (i.e. reset)
+  showGlobalReset?: boolean; // Whether to show global reset button. Should only be true if field is not a global field
+  globalValuePlaceholder?: string; // Placeholder to use when field will use the global value (i.e. global reset)
   updateValue: (newValue?: T) => void;
 }
 
 export function ConfigField<T extends string | number>({
   label,
   description,
-  placeholder,
   type,
   value,
-  withGlobalFallback = false,
-  globalFallbackValue = undefined,
+  resetValue,
+  globalValuePlaceholder,
+  defaultValuePlaceholder,
   showReset = true,
+  showGlobalReset = false,
   updateValue,
 }: ConfigFieldProps<T>) {
-  // Determine the field value to display
   let fieldValue = value;
-  let isLinkedToGlobal = false;
-  if (fieldValue === undefined && withGlobalFallback) {
-    // If no value is set, and we want to use global fallback
-    fieldValue = globalFallbackValue;
-    isLinkedToGlobal = true;
-  } else if (typeof fieldValue === "number" && fieldValue < 0) {
-    // If value is negative number, set undefined to show placeholder
-    fieldValue = undefined;
-  }
 
-  // Determine the reset value based on type
-  let resetValue: T;
-  if (type === "text") {
-    resetValue = "" as T;
-  } else {
-    resetValue = -1 as T;
+  // Determine whether value means field will use global/default
+  // value, and there the placeholder to use.
+  let isLinkedToGlobal = false;
+  let placeholder = "";
+  if (showGlobalReset && fieldValue === undefined) {
+    placeholder = `${globalValuePlaceholder} (Global)`;
+    isLinkedToGlobal = true;
+  } else if (
+    showReset &&
+    (fieldValue === undefined ||
+      (typeof fieldValue === "string" && fieldValue === "") ||
+      (typeof fieldValue === "number" && fieldValue < 0))
+  ) {
+    placeholder = `${defaultValuePlaceholder} (Default)`;
+    fieldValue = undefined; // Unset value so placeholder is shown
   }
 
   const renderInput = () => {
@@ -93,13 +94,13 @@ export function ConfigField<T extends string | number>({
         <div className="flex items-center space-x-2">
           <Label>{label}</Label>
 
-          {withGlobalFallback && (
+          {showGlobalReset && (
             <LinkedStatusTooltip isLinked={isLinkedToGlobal} />
           )}
         </div>
 
         <div className="ml-auto flex items-center">
-          {withGlobalFallback && (
+          {showGlobalReset && (
             <ResetButton
               resetType="global"
               onClick={() => {

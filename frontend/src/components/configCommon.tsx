@@ -28,12 +28,15 @@ export function CommonFields({
         <ConfigField
           label="Event Similarity"
           description="Required event name similarity, between 0.0 - 1.0"
-          placeholder="0.9"
           type="fraction"
           value={config.eventSimilarity}
-          withGlobalFallback={!!globalConfig}
-          globalFallbackValue={globalConfig?.eventSimilarity}
           showReset={true}
+          resetValue={-1}
+          defaultValuePlaceholder="0.9"
+          showGlobalReset={!!globalConfig}
+          globalValuePlaceholder={
+            globalConfig?.eventSimilarity?.toString() || "0.9"
+          }
           updateValue={(value) => {
             updateConfig({ ...config, eventSimilarity: value });
           }}
@@ -42,12 +45,13 @@ export function CommonFields({
         <ConfigField
           label="Number of Tickets"
           description="Required number of tickets"
-          placeholder="Any"
           type="integer"
           value={config.numTickets}
-          globalFallbackValue={globalConfig?.numTickets}
-          withGlobalFallback={!!globalConfig}
           showReset={true}
+          resetValue={-1}
+          defaultValuePlaceholder="Any"
+          showGlobalReset={!!globalConfig}
+          globalValuePlaceholder={globalConfig?.numTickets?.toString() || "Any"}
           updateValue={(value) => {
             updateConfig({ ...config, numTickets: value });
           }}
@@ -56,12 +60,15 @@ export function CommonFields({
         <ConfigField
           label="Max Ticket Price"
           description="Maximum price per ticket (including fee) in pounds (£)"
-          placeholder="No Max"
           type="price"
           value={config.maxTicketPrice}
-          globalFallbackValue={globalConfig?.maxTicketPrice}
-          withGlobalFallback={!!globalConfig}
           showReset={true}
+          resetValue={-1}
+          defaultValuePlaceholder="No Max"
+          showGlobalReset={!!globalConfig}
+          globalValuePlaceholder={
+            globalConfig?.maxTicketPrice?.toString() || "No Max"
+          }
           updateValue={(value) => {
             updateConfig({ ...config, maxTicketPrice: value });
           }}
@@ -70,12 +77,15 @@ export function CommonFields({
         <ConfigField
           label="Minimum Discount"
           description="Minimum discount (including fee) on the original price as a percentage"
-          placeholder="No Min"
           type="percentage"
           value={config.discount}
-          globalFallbackValue={globalConfig?.discount}
-          withGlobalFallback={!!globalConfig}
           showReset={true}
+          resetValue={-1}
+          defaultValuePlaceholder="No Min"
+          showGlobalReset={!!globalConfig}
+          globalValuePlaceholder={
+            globalConfig?.discount?.toString() || "No Min"
+          }
           updateValue={(value) => {
             updateConfig({ ...config, discount: value });
           }}
