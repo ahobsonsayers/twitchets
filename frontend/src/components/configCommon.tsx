@@ -3,21 +3,24 @@ import { Regions } from "./configRegions";
 import type { CommonConfig } from "@/types/config";
 
 interface CommonFieldsProps {
-  commonConfig: CommonConfig;
-  globalCommonConfig?: CommonConfig; // Unset if common config IS global config
-  updateCommonConfig: (config: CommonConfig) => void;
+  config: CommonConfig;
+  globalConfig?: CommonConfig; // Unset if common config IS global config
+  updateConfig: (config: CommonConfig) => void;
 }
 
 export function CommonFields({
-  commonConfig: config,
-  globalCommonConfig: globalConfig,
-  updateCommonConfig: updateConfig,
+  config,
+  globalConfig,
+  updateConfig,
 }: CommonFieldsProps) {
+  // If fields are for global config, globalConfig will not be set
+  const isGlobal = !globalConfig;
+
   return (
     <div className="space-y-4">
       <Regions
         value={config.regions}
-        withGlobalFallback={!!globalConfig}
+        withGlobalFallback={!isGlobal}
         globalFallbackValue={globalConfig?.regions}
         updateValue={(value) => {
           updateConfig({ ...config, regions: value });
@@ -31,9 +34,9 @@ export function CommonFields({
           type="fraction"
           value={config.eventSimilarity}
           showReset={true}
-          resetValue={-1}
+          resetValue={!isGlobal ? -1 : undefined} // Reset value for global is undefined
           defaultValuePlaceholder="0.9"
-          showGlobalReset={!!globalConfig}
+          showGlobalReset={!isGlobal}
           globalValuePlaceholder={
             globalConfig?.eventSimilarity?.toString() || "0.9"
           }
@@ -48,9 +51,9 @@ export function CommonFields({
           type="integer"
           value={config.numTickets}
           showReset={true}
-          resetValue={-1}
+          resetValue={!isGlobal ? -1 : undefined} // Reset value for global is undefined
           defaultValuePlaceholder="Any"
-          showGlobalReset={!!globalConfig}
+          showGlobalReset={!isGlobal}
           globalValuePlaceholder={globalConfig?.numTickets?.toString() || "Any"}
           updateValue={(value) => {
             updateConfig({ ...config, numTickets: value });
@@ -63,9 +66,9 @@ export function CommonFields({
           type="price"
           value={config.maxTicketPrice}
           showReset={true}
-          resetValue={-1}
+          resetValue={!isGlobal ? -1 : undefined} // Reset value for global is undefined
           defaultValuePlaceholder="No Max"
-          showGlobalReset={!!globalConfig}
+          showGlobalReset={!isGlobal}
           globalValuePlaceholder={
             globalConfig?.maxTicketPrice?.toString() || "No Max"
           }
@@ -80,9 +83,9 @@ export function CommonFields({
           type="percentage"
           value={config.discount}
           showReset={true}
-          resetValue={-1}
+          resetValue={!isGlobal ? -1 : undefined} // Reset value for global is undefined
           defaultValuePlaceholder="No Min"
-          showGlobalReset={!!globalConfig}
+          showGlobalReset={!isGlobal}
           globalValuePlaceholder={
             globalConfig?.discount?.toString() || "No Min"
           }

@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import type { CommonConfig, TicketConfig } from "@/types/config";
 import { isEqual } from "lodash";
-import { Trash, } from "lucide-react";
+import { Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface TicketProps {
@@ -95,7 +95,6 @@ export function Ticket({
         <ConfigField
           label="Event Name"
           description="Name of the event to search for"
-          placeholder="Enter event name..."
           type="text"
           value={draft.event}
           showReset={false}
@@ -107,9 +106,9 @@ export function Ticket({
         />
 
         <CommonFields
-          commonConfig={draft}
-          globalCommonConfig={globalConfig}
-          updateCommonConfig={(commonConfig) => {
+          config={draft}
+          globalConfig={globalConfig}
+          updateConfig={(commonConfig) => {
             setDraft((prev) => ({ ...prev, ...commonConfig }));
           }}
         />
