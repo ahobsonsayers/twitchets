@@ -29,8 +29,11 @@ tasks:
       - pnpm run lint
 
   generate:
-    - task: build:be
-    - task: build:fe
+    aliases:
+      - gen
+    cmds:
+      - task: generate:be
+      - task: generate:fe
 
   generate:be:
     aliases:
@@ -65,7 +68,7 @@ tasks:
   build:fe:
     dir: frontend
     cmds:
-      - run build
+      - pnpm run build
 
   run:be:
     cmds:
