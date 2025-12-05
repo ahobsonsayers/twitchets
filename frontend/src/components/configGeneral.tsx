@@ -4,6 +4,7 @@ import { useConfig } from "../providers/config";
 import type { Country } from "../types/config";
 import { SaveDiscardButtons } from "./buttonsSaveDiscard";
 import { CollapsibleCard } from "./cardCollapsible";
+import { ConfigField } from "./configField";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -24,17 +25,23 @@ export function GeneralSettings() {
   const [draft, setDraft] = useState({
     apiKey: config.apiKey,
     country: config.country,
+    flaresolverrUrl: config.flaresolverrUrl,
   });
   const [showApiKey, setShowApiKey] = useState(false);
 
   // If the canonical config changes, reset the draft
   useEffect(() => {
-    setDraft({ apiKey: config.apiKey, country: config.country });
-  }, [config.apiKey, config.country]);
+    setDraft({
+      apiKey: config.apiKey,
+      country: config.country,
+      flaresolverrUrl: config.flaresolverrUrl,
+    });
+  }, [config.apiKey, config.country, config.flaresolverrUrl]);
 
   const hasChanges = !isEqual(draft, {
     apiKey: config.apiKey,
     country: config.country,
+    flaresolverrUrl: config.flaresolverrUrl,
   });
 
   const toggleShowApiKey = () => {
@@ -51,12 +58,14 @@ export function GeneralSettings() {
             onSave={() => {
               updateConfig((config) => {
                 config.apiKey = draft.apiKey;
+                config.flaresolverrUrl = draft.flaresolverrUrl;
                 config.country = draft.country;
               });
             }}
             onDiscard={() => {
               setDraft({
                 apiKey: config.apiKey,
+                flaresolverrUrl: config.flaresolverrUrl,
                 country: config.country,
               });
             }}
@@ -113,6 +122,17 @@ export function GeneralSettings() {
             </SelectContent>
           </Select>
         </div>
+
+        <ConfigField
+          label="FlareSolverr URL"
+          description="Optional: URL of FlareSolverr proxy server for bypassing Cloudflare (requires restart)"
+          type="text"
+          value={draft.flaresolverrUrl}
+          showReset={false}
+          updateValue={(value) => {
+            setDraft((prev) => ({ ...prev, flaresolverrUrl: value }));
+          }}
+        />
       </div>
     </CollapsibleCard>
   );

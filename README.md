@@ -71,6 +71,8 @@ apiKey: <your twickets api key> # REQUIRED: See README.md for details on how to 
 
 country: GB # Currently only GB is supported
 
+flaresolverrUrl: <your flaresolverr url> # Optional: URL of FlareSolverr proxy server for bypassing Cloudflare (Required restart)
+
 # Notification service configuration
 # Remove/comment out services you don't need
 notification:

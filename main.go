@@ -88,8 +88,14 @@ func main() {
 }
 
 func ticketScannerConfigFromUserConfig(conf config.Config) (scanner.TicketScannerConfig, error) {
+	clientOptions := []twigots.ClientOpt{}
+	if conf.FlaresolverrUrl != "" {
+		flaresolverrOpt := twigots.WithFlareSolverr(conf.FlaresolverrUrl)
+		clientOptions = append(clientOptions, flaresolverrOpt)
+	}
+
 	// Create twickets client
-	client, err := twigots.NewClient(conf.APIKey)
+	client, err := twigots.NewClient(conf.APIKey, clientOptions...)
 	if err != nil {
 		return scanner.TicketScannerConfig{}, fmt.Errorf("failed to create twickets client: %w", err)
 	}
