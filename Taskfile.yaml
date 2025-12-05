@@ -86,3 +86,7 @@ tasks:
   docker:run:
     cmds:
       - docker compose up --build
+  
+  docker:run:services:
+    cmds:
+      - docker compose up flaresolverr -d
