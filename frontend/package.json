@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "biome lint . --fix --unsafe",
+    "lint": "tsc --noEmit && biome lint . --fix --unsafe",
     "format": "prettier . -w",
     "generate": "openapi-typescript ../schema/server.openapi.yaml ../schema/models.openapi.yaml -o src/types/openapi.d.ts",
     "preview": "vite preview"
