@@ -50,6 +50,20 @@ export function NotificationSettings() {
             onSave={() => {
               updateConfig((config) => {
                 config.notification = draft;
+
+                // Add/remove ntfy from global config
+                const hasNtfy = !!draft.ntfy;
+                if (hasNtfy) {
+                  if (!config.global.notification?.includes("ntfy")) {
+                    config.global.notification = [
+                      ...(config.global.notification || []),
+                      "ntfy",
+                    ];
+                  }
+                } else {
+                  config.global.notification =
+                    config.global.notification?.filter((n) => n !== "ntfy");
+                }
               });
             }}
             onDiscard={() => {
