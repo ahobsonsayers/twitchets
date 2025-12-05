@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func (c *NotificationType) MarshalJSON() ([]byte, error) {
+func (c NotificationType) MarshalJSON() ([]byte, error) {
 	return json.Marshal(c.Value)
 }
 

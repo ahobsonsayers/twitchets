@@ -9,7 +9,7 @@ import (
 
 func Save(conf Config, filePath string) error {
 	// Marshal config
-	configBytes, err := yaml.Marshal(conf)
+	configBytes, err := yaml.MarshalWithOptions(conf, yaml.UseJSONMarshaler())
 	if err != nil {
 		return fmt.Errorf("error marshaling config: %w", err)
 	}
