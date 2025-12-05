@@ -95,7 +95,7 @@ func ticketScannerConfigFromUserConfig(conf config.Config) (scanner.TicketScanne
 	}
 
 	// Create twickets client
-	client, err := twigots.NewClient(conf.APIKey)
+	client, err := twigots.NewClient(conf.APIKey, clientOptions...)
 	if err != nil {
 		return scanner.TicketScannerConfig{}, fmt.Errorf("failed to create twickets client: %w", err)
 	}
