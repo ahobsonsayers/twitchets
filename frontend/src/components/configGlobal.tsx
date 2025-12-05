@@ -36,8 +36,8 @@ export function GlobalSettings() {
       }
     >
       <CommonFields
-        commonConfig={draft}
-        updateCommonConfig={(commonConfig) => {
+        config={draft}
+        updateConfig={(commonConfig) => {
           setDraft(commonConfig);
         }}
       />
