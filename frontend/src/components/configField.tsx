@@ -9,6 +9,7 @@ interface ConfigFieldProps<T extends string | number> {
   description: string;
   type: "text" | "number" | "integer" | "fraction" | "percentage" | "price";
   value?: T;
+  placeholder?: string; // Can be overridden by default or global value placeholder
   showReset?: boolean; // Whether to show reset button
   resetValue?: T; // Value to set when reset is clicked
   defaultValuePlaceholder?: string; // Placeholder to use when field will use the default value (i.e. reset)
@@ -22,6 +23,7 @@ export function ConfigField<T extends string | number>({
   description,
   type,
   value,
+  placeholder,
   resetValue,
   globalValuePlaceholder,
   defaultValuePlaceholder,
@@ -30,13 +32,13 @@ export function ConfigField<T extends string | number>({
   updateValue,
 }: ConfigFieldProps<T>) {
   let fieldValue = value;
+  let fieldPlaceholder = placeholder;
 
   // Determine whether value means field will use global/default
   // value, and there the placeholder to use.
   let isLinkedToGlobal = false;
-  let placeholder = "";
   if (showGlobalReset && fieldValue === undefined) {
-    placeholder = `${globalValuePlaceholder} (Global)`;
+    fieldPlaceholder = `${globalValuePlaceholder} (Global)`;
     isLinkedToGlobal = true;
   } else if (
     showReset &&
@@ -44,7 +46,7 @@ export function ConfigField<T extends string | number>({
       (typeof fieldValue === "string" && fieldValue === "") ||
       (typeof fieldValue === "number" && fieldValue < 0))
   ) {
-    placeholder = `${defaultValuePlaceholder} (Default)`;
+    fieldPlaceholder = `${defaultValuePlaceholder} (Default)`;
     fieldValue = undefined; // Unset value so placeholder is shown
   }
 
@@ -54,7 +56,7 @@ export function ConfigField<T extends string | number>({
         <Input
           type="text"
           value={fieldValue ?? ""}
-          placeholder={placeholder}
+          placeholder={fieldPlaceholder}
           onChange={(event) => updateValue(event.target.value as T)}
         />
       );
@@ -65,7 +67,7 @@ export function ConfigField<T extends string | number>({
       <NumericFormat
         customInput={Input}
         value={fieldValue ?? ""}
-        placeholder={placeholder}
+        placeholder={fieldPlaceholder}
         allowNegative={false}
         decimalScale={type === "integer" ? 0 : undefined}
         onValueChange={(values) => {

@@ -104,10 +104,10 @@ export interface components {
             url: string;
             /** @description If using https://ntfy.sh, make sure this is unique to you! */
             topic: string;
-            /** @description Optional: for authenticated instances */
-            username: string;
-            /** @description Optional: for authenticated instances */
-            password: string;
+            /** @description Username for authenticated instances (Optional) */
+            username?: string;
+            /** @description Password for authenticated instances (Optional) */
+            password?: string;
         };
         GotifyConfig: {
             /** @description Your Gotify server URL */
@@ -239,6 +239,8 @@ export interface components {
             /** @description REQUIRED: See README.md for details on how to obtain */
             apiKey: string;
             country: components["schemas"]["Country"];
+            /** @description URL of FlareSolverr proxy server for bypassing Cloudflare (Optional) */
+            flaresolverrUrl?: string;
             notification: components["schemas"]["NotificationConfig"];
             global: components["schemas"]["GlobalTicketListingConfig"];
             tickets: components["schemas"]["TicketListingConfig"][];
