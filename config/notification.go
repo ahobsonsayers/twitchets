@@ -66,6 +66,21 @@ func (c NotificationConfig) Validate() error {
 		}
 	}
 
+	if c.Pushover != nil {
+		if c.Pushover.Token == "" {
+			return errors.New("pushover token cannot be empty")
+		}
+		if c.Pushover.User == "" {
+			return errors.New("pushover user cannot be empty")
+		}
+		if c.Pushover.Priority != nil {
+			priority := *c.Pushover.Priority
+			if priority < -2 || priority > 1 {
+				return errors.New("pushover priority must be between -2 and 1")
+			}
+		}
+	}
+
 	return nil
 }
 

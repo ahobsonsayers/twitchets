@@ -21,6 +21,14 @@ notification:
     url: <your gotify url> # Your Gotify server URL
     token: <your gotify api token> # Application token from Gotify
 
+  pushover:
+    token: <your pushover api token> # Application API token from Pushover
+    user: <your pushover user key> # Your user key from Pushover
+    # Optional settings:
+    # device: <your device name> # Target specific device
+    # sound: pushover # Notification sound (pushover, bike, bugle, cosmic, etc.)
+    # priority: 0 # Message priority (-2=lowest, -1=low, 0=normal, 1=high, 2=emergency)
+
 # Global ticket configuration
 # All available settings are outlined below
 # These settings apply to all tickets by default

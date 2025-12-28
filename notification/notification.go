@@ -152,5 +152,14 @@ func GetNotificationClients(conf config.NotificationConfig) (map[config.Notifica
 		clients[config.NotificationTypeTelegram] = telegramClient
 	}
 
+	if conf.Pushover != nil {
+		pushoverClient, err := NewPushoverClient(*conf.Pushover)
+		if err != nil {
+			return nil, fmt.Errorf("failed to setup pushover client: %w", err)
+		}
+
+		clients[config.NotificationTypePushover] = pushoverClient
+	}
+
 	return clients, nil
 }
