@@ -63,6 +63,9 @@ components:
         telegram:
           x-order: 3
           $ref: "#/components/schemas/TelegramConfig"
+        pushover:
+          x-order: 4
+          $ref: "#/components/schemas/PushoverConfig"
 
     NtfyConfig:
       type: object
@@ -118,6 +121,33 @@ components:
       required:
         - token
         - chatId
+
+    PushoverConfig:
+      type: object
+      properties:
+        token:
+          x-order: 1
+          description: Application API token from Pushover
+          type: string
+        user:
+          x-order: 2
+          description: Your user key from Pushover
+          type: string
+        device:
+          x-order: 3
+          description: "Optional: specific device name to send to"
+          type: string
+        sound:
+          x-order: 4
+          description: "Optional: notification sound (see Pushover docs for valid sounds)"
+          type: string
+        priority:
+          x-order: 5
+          description: "Optional: message priority (-2 to 1, default 0). -2=lowest, -1=low, 0=normal, 1=high"
+          type: integer
+      required:
+        - token
+        - user
 
     GlobalTicketListingConfig:
       type: object
@@ -318,3 +348,4 @@ components:
         - ntfy
         - gotify
         - telegram
+        - pushover
