@@ -238,6 +238,8 @@ export interface components {
         Config: {
             /** @description REQUIRED: See README.md for details on how to obtain */
             apiKey: string;
+            /** @description Cookie string for bypassing captcha protection (Optional) */
+            cookie?: string;
             country: components["schemas"]["Country"];
             /** @description URL of FlareSolverr proxy server for bypassing Cloudflare (Optional) */
             flaresolverrUrl?: string;

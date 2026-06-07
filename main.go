@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -16,6 +17,7 @@ import (
 	"github.com/ahobsonsayers/twitchets/notification"
 	"github.com/ahobsonsayers/twitchets/scanner"
 	"github.com/ahobsonsayers/twitchets/server"
+	"github.com/imroc/req/v3"
 	"github.com/joho/godotenv"
 )
 
@@ -89,6 +91,9 @@ func main() {
 
 func ticketScannerConfigFromUserConfig(conf config.Config) (scanner.TicketScannerConfig, error) {
 	clientOptions := []twigots.ClientOpt{}
+	if conf.Cookie != "" {
+		clientOptions = append(clientOptions, withCookie(conf.Cookie))
+	}
 	if conf.FlaresolverrUrl != "" {
 		flaresolverrOpt := twigots.WithFlareSolverr(conf.FlaresolverrUrl)
 		clientOptions = append(clientOptions, flaresolverrOpt)
@@ -128,6 +133,17 @@ func getUserConfigUpdatedCallback(ticketScanner *scanner.TicketScanner) func(con
 		// Update scanner config
 		ticketScanner.UpdateConfig(scannerConfig)
 
+		return nil
+	}
+}
+
+func withCookie(cookieString string) twigots.ClientOpt {
+	return func(client *req.Client) error {
+		cookies, err := http.ParseCookie(cookieString)
+		if err != nil {
+			return fmt.Errorf("failed to parse cookie string: %w", err)
+		}
+		client.SetCommonCookies(cookies...)
 		return nil
 	}
 }
