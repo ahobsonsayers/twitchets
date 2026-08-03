@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"math"
+	"os"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -126,6 +127,7 @@ func (s *TicketScanner) fetchAndProcessTickets() {
 		twigots.FetchTicketListingsInput{
 			// Required
 			Country: twigots.CountryUnitedKingdom,
+			SessionCookie: os.Getenv("TWICKETS_SESSION_COOKIE"),
 			// Optional
 			CreatedBefore: time.Now(),
 			CreatedAfter:  s.latestTicketTime,
