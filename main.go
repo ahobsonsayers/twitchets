@@ -50,7 +50,7 @@ func main() {
 	}
 
 	// Load twickets keys
-	twicketsKeys, err := keys.LoadKeysFromURL(userConfig.KeysUrl)
+	twicketsKeys, err := keys.FromURL(userConfig.KeysUrl)
 	if err != nil {
 		log.Fatalf("failed to load twickets keys: %v", err)
 	}
@@ -126,28 +126,18 @@ func getTicketScannerConfig(conf config.Config, twicketsKeys *keys.Keys) (scanne
 
 func getUserConfigUpdatedCallback(ticketScanner *scanner.TicketScanner, twicketsKeys *keys.Keys) func(config.Config) error {
 	return func(userConfig config.Config) error {
-		// Load new twickets keys
-		newTwicketsKeys, err := keys.LoadKeysFromURL(userConfig.KeysUrl)
+		// Update keys source
+		newKeySource := keys.NewURLSource(userConfig.KeysUrl)
+		err := twicketsKeys.SetSource(newKeySource)
 		if err != nil {
-			return fmt.Errorf("failed to load twickets keys: %w", err)
+			return fmt.Errorf("failed to change twickets keys source: %w", err)
 		}
 
 		// Get new scanner config
-		scannerConfig, err := getTicketScannerConfig(userConfig, newTwicketsKeys)
+		scannerConfig, err := getTicketScannerConfig(userConfig, twicketsKeys)
 		if err != nil {
 			return err
 		}
-
-		// Start watching new keys
-		err = newTwicketsKeys.StartWatching()
-		if err != nil {
-			return fmt.Errorf("failed to watch twickets keys: %w", err)
-		}
-
-		// Start watching old
-		twicketsKeys.StopWatching()
-
-		twicketsKeys = newTwicketsKeys
 
 		// Update scanner config
 		ticketScanner.UpdateConfig(scannerConfig)
