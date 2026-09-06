@@ -2,6 +2,16 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/ahobsonsayers/twitchets)](https://goreportcard.com/report/github.com/ahobsonsayers/twitchets)
 [![License - MIT](https://img.shields.io/badge/License-MIT-9C27B0)](LICENSE)
+[![Artisan README - Not LLM](https://img.shields.io/static/v1?label=Artisan+README&message=Not+LLM&labelColor=37474F&color=D97757)](#arnl---artisan-readme-not-llm)
+
+> [!NOTE]
+> We're back! 💪
+>
+> After Twickets introduced measures to prevent unofficial access to their data - this project was broken for quite a while.
+>
+> After a significant amount of time and effort tinkering and hitting my head against a wall (more than I care to admit) I have now found a way to bring this project back to life and get it working again!
+>
+> Enjoy! 🎟️
 
 A tool to watch for chosen event ticket listings on [Twickets](https://www.twickets.live) that match custom filters and notify you so you can quickly snap them up!
 
@@ -20,21 +30,27 @@ Powered by [twigots](https://github.com/ahobsonsayers/twigots), a Go package to 
 - Show more details in the notifications, such as event date/time, number of tickets, and discount
 - Faster notifications than the official Twickets app
 - No need to have the Twickets app or an account
-- Choose from various notification services (Telegram, Ntfy, Gotify currently supported)
+- Choose from various notification services (Telegram, ntfy, Gotify currently supported)
 
 ### And a fancy configuration UI!
 
 https://github.com/user-attachments/assets/63e0fd3f-d767-4131-aae1-c18016008b20
 
-## Getting an API Key
+## Getting Keys
 
-To use this tool, you will need a Twickets API key. Although Twickets doesn't provide a free API, you can easily obtain a key by following these steps:
+To use this tool, you need a set of Twickets API keys, which this application will load from a URL (`keysUrl`).
 
-1. Visit the [Twickets Live Feed](https://www.twickets.live/app/catalog/browse)
-2. Open your browser's Developer Tools (F12) and navigate to the Network tab
-3. Look for the GET request to `https://www.twickets.live/services/catalogue` and copy the `api_key` query parameter. You might need to refresh the page first if nothing appears in this tab.
+These keys are extracted from Android and some rotate regularly. You can read more about what these keys are and how they are obtained in the [twigots](https://github.com/ahobsonsayers/twigots) and [twickets-key-extractor](https://github.com/ahobsonsayers/twickets-key-extractor) repos.
 
-This API key is not provided here due to liability concerns, but it appears to be a fixed, unchanging value.
+For the URL you have two options:
+
+1. **Use the public keys URL**: I maintain a public keys file that is regularly updated. Point `keysUrl` in your config at:
+
+   `https://gist.githubusercontent.com/ahobsonsayers/773acb763aafc8a39ac260e12a9b39d5/raw/keys.json`
+
+2. **Run `twickets-key-extractor` yourself**: Clone and run [twickets-key-extractor](https://github.com/ahobsonsayers/twickets-key-extractor) and point `keysUrl` at the URL of the produced key file.
+
+The keys are hot-reloaded automatically, so rotations are picked up without a restart.
 
 ## Installation & Running
 
@@ -67,7 +83,7 @@ twitchets looks for a `config.yaml` file in your current working directory and f
 The configuration file structure can be seen in [`config.example.yaml`](./config.example.yaml) or below:
 
 ```yaml
-apiKey: <your twickets api key> # REQUIRED: See README.md for details on how to obtain
+keysUrl: <your twickets keys url> # REQUIRED: See "Getting Keys" above
 
 country: GB # Currently only GB is supported
 
@@ -97,7 +113,7 @@ notification:
 global:
   # Geographic regions to search for tickets
   # Default: All regions if not specified
-  # Full list: https://github.com/ahobsonsayers/twigots/blob/main/location.go#L79-L90
+  # Full list: https://github.com/ahobsonsayers/twigots/blob/main/location.go#L87-L98
   regions:
     - GBLO # London only
 
@@ -160,5 +176,11 @@ You can see more about how this works in the [twigots readme here](https://githu
 ## Why the name twitchets?
 
 Because I feel like sometimes you need to have twitch-like reactions to snap up tickets on Twickets before someone else gets them - which this tool helps you do. Therefore the mangling together of **twitch** and **Twickets** seemed fun and appropriate.
+
+## AR;NL - Artisan Readme; Not LLM
+
+In the age of LLMs and coding agents, code is now cheap - for better or for worse. Your time however, is not ⌛
+
+Therefore this project, like most of my projects, uses a hand written "artisan" README to ensure it is clear, correct and concise. This makes it easy to read and in my opinion encourages reading and engagement - no one likes AI slop!
 
 [![Hits](https://hits.sh/github.com/ahobsonsayers/twitchets.svg?view=today-total&label=Visitors%20Day%20%2F%20Total)](https://hits.sh/github.com/ahobsonsayers/twitchets/)
