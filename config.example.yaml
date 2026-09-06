@@ -1,4 +1,4 @@
-apiKey: <your twickets api key> # REQUIRED: See README.md for details on how to obtain
+keysUrl: <your twickets keys url> # REQUIRED: See README.md for details
 
 country: GB # Currently only GB is supported
 

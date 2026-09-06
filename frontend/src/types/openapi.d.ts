@@ -236,8 +236,8 @@ export interface components {
             notification?: components["schemas"]["Notifications"];
         };
         Config: {
-            /** @description REQUIRED: See README.md for details on how to obtain */
-            apiKey: string;
+            /** @description URL of Twickets keys.json */
+            keysUrl: string;
             country: components["schemas"]["Country"];
             notification: components["schemas"]["NotificationConfig"];
             global: components["schemas"]["GlobalTicketListingConfig"];

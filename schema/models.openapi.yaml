@@ -12,10 +12,10 @@ components:
     Config:
       type: object
       properties:
-        apiKey:
-          x-go-name: APIKey
+        keysUrl:
+          x-go-name: KeysUrl
           x-order: 1
-          description: "REQUIRED: See README.md for details on how to obtain"
+          description: URL of Twickets keys.json
           type: string
         country:
           x-order: 2
@@ -38,7 +38,7 @@ components:
           items:
             $ref: "#/components/schemas/TicketListingConfig"
       required:
-        - apiKey
+        - keysUrl
         - country
         - notification
         - global
@@ -68,17 +68,17 @@ components:
           type: string
         topic:
           x-order: 2
-          description: "If using https://ntfy.sh, make sure this is unique to you!"
+          description: If using https://ntfy.sh, make sure this is unique to you!
           type: string
         username:
           x-order: 3
           x-go-type-skip-optional-pointer: true
-          description: "Username for authenticated instances (Optional)"
+          description: Username for authenticated instances (Optional)
           type: string
         password:
           x-order: 4
           x-go-type-skip-optional-pointer: true
-          description: "Password for authenticated instances (Optional)"
+          description: Password for authenticated instances (Optional)
           type: string
       required:
         - url
