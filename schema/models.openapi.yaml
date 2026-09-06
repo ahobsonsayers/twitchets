@@ -20,17 +20,12 @@ components:
         country:
           x-order: 2
           $ref: "#/components/schemas/Country"
-        flaresolverrUrl:
-          x-order: 3
-          x-go-type-skip-optional-pointer: true
-          description: "URL of FlareSolverr proxy server for bypassing Cloudflare (Optional)"
-          type: string
         notification:
-          x-order: 4
+          x-order: 3
           $ref: "#/components/schemas/NotificationConfig"
         global:
           x-go-name: GlobalTicketConfig
-          x-order: 5
+          x-order: 4
           allOf:
             # Hack to get x-* fields working with $ref
             # See:
@@ -38,7 +33,7 @@ components:
             - $ref: "#/components/schemas/GlobalTicketListingConfig"
         tickets:
           x-go-name: TicketConfigs
-          x-order: 6
+          x-order: 5
           type: array
           items:
             $ref: "#/components/schemas/TicketListingConfig"

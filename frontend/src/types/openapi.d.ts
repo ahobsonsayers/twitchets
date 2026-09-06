@@ -239,8 +239,6 @@ export interface components {
             /** @description REQUIRED: See README.md for details on how to obtain */
             apiKey: string;
             country: components["schemas"]["Country"];
-            /** @description URL of FlareSolverr proxy server for bypassing Cloudflare (Optional) */
-            flaresolverrUrl?: string;
             notification: components["schemas"]["NotificationConfig"];
             global: components["schemas"]["GlobalTicketListingConfig"];
             tickets: components["schemas"]["TicketListingConfig"][];
