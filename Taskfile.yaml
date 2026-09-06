@@ -1,6 +1,9 @@
 # Docs: https://taskfile.dev/#/usage
 version: "3"
 
+env:
+  DEBUG: true
+
 tasks:
   format:
     - task: format:be
