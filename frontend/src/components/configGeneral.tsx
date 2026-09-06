@@ -4,7 +4,6 @@ import { useConfig } from "../providers/config";
 import type { Country } from "../types/config";
 import { SaveDiscardButtons } from "./buttonsSaveDiscard";
 import { CollapsibleCard } from "./cardCollapsible";
-import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import {
@@ -15,34 +14,28 @@ import {
   SelectItem,
 } from "./ui/select";
 import { isEqual } from "lodash";
-import { Eye, EyeOff } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export function GeneralSettings() {
   const { config, updateConfig } = useConfig();
 
   const [draft, setDraft] = useState({
-    apiKey: config.apiKey,
+    keysUrl: config.keysUrl,
     country: config.country,
   });
-  const [showApiKey, setShowApiKey] = useState(false);
 
   // If the canonical config changes, reset the draft
   useEffect(() => {
     setDraft({
-      apiKey: config.apiKey,
+      keysUrl: config.keysUrl,
       country: config.country,
     });
-  }, [config.apiKey, config.country]);
+  }, [config.keysUrl, config.country]);
 
   const hasChanges = !isEqual(draft, {
-    apiKey: config.apiKey,
+    keysUrl: config.keysUrl,
     country: config.country,
   });
-
-  const toggleShowApiKey = () => {
-    setShowApiKey(!showApiKey);
-  };
 
   return (
     <CollapsibleCard
@@ -53,13 +46,13 @@ export function GeneralSettings() {
           <SaveDiscardButtons
             onSave={() => {
               updateConfig((config) => {
-                config.apiKey = draft.apiKey;
+                config.keysUrl = draft.keysUrl;
                 config.country = draft.country;
               });
             }}
             onDiscard={() => {
               setDraft({
-                apiKey: config.apiKey,
+                keysUrl: config.keysUrl,
                 country: config.country,
               });
             }}
@@ -69,32 +62,18 @@ export function GeneralSettings() {
     >
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label>API Key</Label>
+          <Label>Keys URL</Label>
           <p className="text-muted-foreground text-sm">
-            Twickets API key (required)
+            URL of Twickets keys.json (required) — see the README for details
           </p>
-          <div className="flex">
-            <Input
-              type={showApiKey ? "text" : "password"}
-              placeholder="Enter your API key"
-              value={draft.apiKey}
-              onChange={(event) => {
-                setDraft((prev) => ({ ...prev, apiKey: event.target.value }));
-              }}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              className="ml-auto"
-              onClick={toggleShowApiKey}
-            >
-              {showApiKey ? (
-                <EyeOff className="size-5" />
-              ) : (
-                <Eye className="size-5" />
-              )}
-            </Button>
-          </div>
+          <Input
+            type="text"
+            placeholder="Enter your keys URL"
+            value={draft.keysUrl}
+            onChange={(event) => {
+              setDraft((prev) => ({ ...prev, keysUrl: event.target.value }));
+            }}
+          />
         </div>
 
         <div className="space-y-2">

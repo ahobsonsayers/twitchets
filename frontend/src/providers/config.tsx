@@ -13,7 +13,7 @@ import {
 
 function newConfig(): Config {
   return {
-    apiKey: "",
+    keysUrl: "",
     country: "GB",
     notification: {},
     global: {},
