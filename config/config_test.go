@@ -24,7 +24,7 @@ func TestLoadConfig(t *testing.T) {
 	globalDiscount := 25.0
 
 	expectedConfig := config.Config{
-		APIKey:  "test",
+		KeysUrl: "example.com",
 		Country: country,
 		GlobalTicketConfig: config.GlobalTicketListingConfig{
 			EventSimilarity:       globalEventSimilarity,
