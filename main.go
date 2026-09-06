@@ -124,7 +124,10 @@ func getTicketScannerConfig(conf config.Config, twicketsKeys *keys.Keys) (scanne
 	}, nil
 }
 
-func getUserConfigUpdatedCallback(ticketScanner *scanner.TicketScanner, twicketsKeys *keys.Keys) func(config.Config) error {
+func getUserConfigUpdatedCallback(
+	ticketScanner *scanner.TicketScanner,
+	twicketsKeys *keys.Keys,
+) func(config.Config) error {
 	return func(userConfig config.Config) error {
 		// Update keys source
 		newKeySource := keys.NewURLSource(userConfig.KeysUrl)
