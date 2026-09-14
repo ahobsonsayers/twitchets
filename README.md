@@ -13,6 +13,7 @@
 >
 > Twickets - since I know you'll be reading this: I know these protections are to prevent scalping and doing dodgy stuff - I legitimately appreciate this as it improves the service for all (if anything, I'm glad my work improved this!) - but I built this project for benign notification purposes as your notification system is absolutely terrible. Please fix it.
 >
+> ---
 >
 > Update 1: We're back! 💪
 >
