@@ -5,7 +5,7 @@
 [![Artisan README - Not LLM](https://img.shields.io/static/v1?label=Artisan+README&message=Not+LLM&labelColor=37474F&color=D97757)](#arnl---artisan-readme-not-llm)
 
 > [!NOTE]
-> Update 2: We are so not back 😢
+> Update 2: We're not back 😢
 > 
 > Within 5 days of publishing my workaround and it working flawlessly, Twickets suddenly blocked my IP. It seems they have been actively monitoring this repo, and I have other evidence for this.
 >
